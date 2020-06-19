@@ -76,3 +76,33 @@ After executing the above command，`docs` will show in `server/`，then open yo
 - API: using Swagger to auto generate APIs docs。
 - Config: using `fsnotify` and `viper` to implement `yaml` config file。
 - Log: using `go-logging` record logs。
+### 6 Project Layout
+
+```
+    ├─server  	     （backend）
+    │  ├─api            （API entrance）
+    │  ├─config         （config file）
+    │  ├─core  	        （core code）
+    │  ├─db             （db scripts）
+    │  ├─docs  	        （swagger APIs docs）
+    │  ├─global         （global objet）
+    │  ├─initialiaze    （initialiazation）
+    │  ├─middleware     （middle ware）
+    │  ├─model          （model and services）
+    │  ├─resource       （resources, such as static pages, templates）
+    │  ├─router         （routers）
+    │  ├─service         (services)
+    │  └─utils	        （common utilities）
+    └─web            （frontend）
+        ├─public        （deploy templates）
+        └─src           （source code）
+            ├─api       （frontend APIs）
+            ├─assets	（static files）
+            ├─components（components）
+            ├─router	（frontend routers）
+            ├─store     （vuex state management）
+            ├─style     （common styles）
+            ├─utils     （frontend common utilitie）
+            └─view      （pages）
+
+```
