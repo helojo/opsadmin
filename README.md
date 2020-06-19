@@ -1,5 +1,5 @@
 
-## 2. Getting started
+## 1. Getting started
 ```
 - node version > v8.6.0
 - golang version >= v1.11
@@ -8,7 +8,7 @@
 - We recommend you to apply for your own cloud service in QINIU. Replace the public key, private key, warehouse name and default url address with your own, so as not to mess up the test database.
 ```
 
-### 2.1 Web
+### 2 Web
 
 ```bash
 # clone the project
@@ -24,7 +24,7 @@ npm install
 npm run serve
 ```
 
-### 2.2 Server
+### 3 Server
 
 ```bash
 # using go.mod
@@ -36,9 +36,9 @@ go list (go mod tidy)
 go build
 ```
 
-### 2.3 API docs auto-generation using swagger
+### 4 API docs auto-generation using swagger
 
-#### 2.3.1 install swagger 
+#### 4.1 install swagger 
 
 ##### (1) Using VPN or outside mainland China
 ````
@@ -58,7 +58,7 @@ gopm get -g -v github.com/swaggo/swag/cmd/swag
 go install
 ````
 
-#### 2.3.2 API docs generation
+#### 4.2 API docs generation
 
 ````
 cd server
@@ -67,7 +67,7 @@ swag init
 After executing the above command，`docs` will show in `server/`，then open your browser, jump into `http://localhost:8888/swagger/index.html` to see the swagger APIs.
 
 
-## 3. Technical selection
+## 5. Technical selection
 
 - Frontend: using `Element-UI` based on vue，to code the page.
 - Backend: using `Gin` to quickly build basic RESTful API. `Gin` is a web framework written in Go (Golang).
@@ -76,7 +76,3 @@ After executing the above command，`docs` will show in `server/`，then open yo
 - API: using Swagger to auto generate APIs docs。
 - Config: using `fsnotify` and `viper` to implement `yaml` config file。
 - Log: using `go-logging` record logs。
-
-## 4. Project Architecture
-
-### 4.1 Architecture Diagram
