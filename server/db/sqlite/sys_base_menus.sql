@@ -19,7 +19,7 @@ INSERT INTO sys_base_menus (id,created_at,updated_at,deleted_at,menu_level,paren
 INSERT INTO sys_base_menus (id,created_at,updated_at,deleted_at,menu_level,parent_id,"path",name,hidden,component,title,icon,nick_name,sort) VALUES (
 20,1571541491000,1571541491000,NULL,0,19,'table','table',0,'view/example/table/table.vue','表格示例','s-order','表格示例',1);
 INSERT INTO sys_base_menus (id,created_at,updated_at,deleted_at,menu_level,parent_id,"path",name,hidden,component,title,icon,nick_name,sort) VALUES (
-21,1571541592000,1576141095000,NULL,0,19,'form','form',0,'view/example/form/form.vue','表单示例','document','表单示例',2);
+21,1571541592000,1576141095000,NULL,0,19,'form','form',0,'view/example/form/index.vue','表单示例','document','表单示例',2);
 INSERT INTO sys_base_menus (id,created_at,updated_at,deleted_at,menu_level,parent_id,"path",name,hidden,component,title,icon,nick_name,sort) VALUES (
 22,1571541739000,1576141100000,NULL,0,19,'rte','rte',0,'view/example/rte/rte.vue','富文本编辑器','reading','富文本编辑器',3);
 INSERT INTO sys_base_menus (id,created_at,updated_at,deleted_at,menu_level,parent_id,"path",name,hidden,component,title,icon,nick_name,sort) VALUES (

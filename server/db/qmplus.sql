@@ -495,7 +495,7 @@ INSERT INTO `sys_base_menus` VALUES (17, '2019-10-09 15:12:29', '2020-05-09 17:4
 INSERT INTO `sys_base_menus` VALUES (18, '2019-10-15 22:27:22', '2020-05-09 17:41:29', NULL, 0, 0, 'person', 'person', 1, 'view/person/person.vue', '个人信息', 'user-solid', '个人信息', 4, 0, 0);
 INSERT INTO `sys_base_menus` VALUES (19, '2019-10-20 11:14:42', '2020-05-09 17:41:29', NULL, 0, 0, 'example', 'example', 0, 'view/example/index.vue', '示例文件', 's-management', '示例文件', 6, 0, 0);
 INSERT INTO `sys_base_menus` VALUES (20, '2019-10-20 11:18:11', '2020-05-09 17:41:29', NULL, 0, 19, 'table', 'table', 0, 'view/example/table/table.vue', '表格示例', 's-order', '表格示例', 1, 0, 0);
-INSERT INTO `sys_base_menus` VALUES (21, '2019-10-20 11:19:52', '2020-05-09 17:41:29', NULL, 0, 19, 'form', 'form', 0, 'view/example/form/form.vue', '表单示例', 'document', '表单示例', 2, 0, 0);
+INSERT INTO `sys_base_menus` VALUES (21, '2019-10-20 11:19:52', '2020-05-09 17:41:29', NULL, 0, 19, 'form', 'form', 0, 'view/example/form/index.vue', '表单示例', 'document', '表单示例', 2, 0, 0);
 INSERT INTO `sys_base_menus` VALUES (22, '2019-10-20 11:22:19', '2020-05-09 17:41:29', NULL, 0, 19, 'rte', 'rte', 0, 'view/example/rte/rte.vue', '富文本编辑器', 'reading', '富文本编辑器', 3, 0, 0);
 INSERT INTO `sys_base_menus` VALUES (23, '2019-10-20 11:23:39', '2020-05-09 17:41:29', NULL, 0, 19, 'excel', 'excel', 0, 'view/example/excel/excel.vue', 'excel导入导出', 's-marketing', 'excel导入导出', 4, 0, 0);
 INSERT INTO `sys_base_menus` VALUES (26, '2019-10-20 11:27:02', '2020-05-09 17:41:29', NULL, 0, 19, 'upload', 'upload', 0, 'view/example/upload/upload.vue', '上传下载', 'upload', '上传下载', 5, 0, 0);

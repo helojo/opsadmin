@@ -21,7 +21,7 @@ INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 460,1571541491000,1571541491000,NULL,0,8881,'table','table',0,'view/example/table/table.vue','表格示例','s-order',19,'20','表格示例','1');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
-461,1571541592000,1576141095000,NULL,0,8881,'form','form',0,'view/example/form/form.vue','表单示例','document',19,'21','表单示例','2');
+461,1571541592000,1576141095000,NULL,0,8881,'form','form',0,'view/example/form/index.vue','表单示例','document',19,'21','表单示例','2');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 462,1571541739000,1576141100000,NULL,0,8881,'rte','rte',0,'view/example/rte/rte.vue','富文本编辑器','reading',19,'22','富文本编辑器','3');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
@@ -53,7 +53,7 @@ INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 514,1571541491000,1571541491000,NULL,0,9528,'table','table',0,'view/example/table/table.vue','表格示例','s-order',19,'20','表格示例','1');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
-515,1571541592000,1576141095000,NULL,0,9528,'form','form',0,'view/example/form/form.vue','表单示例','document',19,'21','表单示例','2');
+515,1571541592000,1576141095000,NULL,0,9528,'form','form',0,'view/example/form/index.vue','表单示例','document',19,'21','表单示例','2');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 516,1571541739000,1576141100000,NULL,0,9528,'rte','rte',0,'view/example/rte/rte.vue','富文本编辑器','reading',19,'22','富文本编辑器','3');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
@@ -93,7 +93,7 @@ INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 573,1571541491000,1571541491000,NULL,0,888,'table','table',0,'view/example/table/table.vue','表格示例','s-order',19,'20','表格示例','1');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
-574,1571541592000,1576141095000,NULL,0,888,'form','form',0,'view/example/form/form.vue','表单示例','document',19,'21','表单示例','2');
+574,1571541592000,1576141095000,NULL,0,888,'form','form',0,'view/example/form/index.vue','表单示例','document',19,'21','表单示例','2');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
 575,1571541739000,1576141100000,NULL,0,888,'rte','rte',0,'view/example/rte/rte.vue','富文本编辑器','reading',19,'22','富文本编辑器','3');
 INSERT INTO sys_menus (id,created_at,updated_at,deleted_at,menu_level,authority_id,"path",name,hidden,component,title,icon,parent_id,menu_id,nick_name,sort) VALUES (
