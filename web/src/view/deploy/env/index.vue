@@ -1,32 +1,15 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('addApi')" type="primary">新增环境</el-button>
+      <el-button @click="openDialog('addEnv')" type="primary">新增环境</el-button>
     </div>
-    <el-table :data="tableData" @sort-change="sortChange" border stripe>
-      <el-table-column label="id" min-width="60" prop="ID" sortable="custom"></el-table-column>
-      <el-table-column label="api路径" min-width="150" prop="path" sortable="custom"></el-table-column>
-      <el-table-column label="api分组" min-width="150" prop="apiGroup" sortable="custom"></el-table-column>
-      <el-table-column label="api简介" min-width="150" prop="description" sortable="custom"></el-table-column>
-      <el-table-column label="请求" min-width="150" prop="method" sortable="custom">
-        <template slot-scope="scope">
-          <div>
-            {{scope.row.method}}
-            <el-tag
-                    :key="scope.row.methodFiletr"
-                    :type="scope.row.method|tagTypeFiletr"
-                    effect="dark"
-                    size="mini"
-            >{{scope.row.method|methodFiletr}}</el-tag>
-            <!-- {{scope.row.method|methodFiletr}} -->
-          </div>
-        </template>
-      </el-table-column>
-
+    <el-table :data="tableData" border stripe>
+      <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
+      <el-table-column label="名称" min-width="150" prop="name"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editApi(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteApi(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+          <el-button @click="deleteEnv(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -42,28 +25,11 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="apiForm">
-        <el-form-item label="路径" prop="path">
-          <el-input autocomplete="off" v-model="form.path"></el-input>
-        </el-form-item>
-        <el-form-item label="请求" prop="method">
-          <el-select placeholder="请选择" v-model="form.method">
-            <el-option
-                    :key="item.value"
-                    :label="`${item.label}(${item.value})`"
-                    :value="item.value"
-                    v-for="item in methodOptions"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="api分组" prop="apiGroup">
-          <el-input autocomplete="off" v-model="form.apiGroup"></el-input>
-        </el-form-item>
-        <el-form-item label="api简介" prop="description">
-          <el-input autocomplete="off" v-model="form.description"></el-input>
+      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="EnvForm">
+        <el-form-item label="名称" prop="name">
+          <el-input autocomplete="off" v-model="form.name"></el-input>
         </el-form-item>
       </el-form>
-      <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
@@ -75,91 +41,35 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-
-  import {
-    getApiById,
-    getApiList,
-    createApi,
-    updateApi,
-    deleteApi
-  } from '@/api/api'
+  import { getEnvList, envCreate, envUpdate, envDelete } from '@/api/deploy/env'
   import infoList from '@/components/mixins/infoList'
-  import { toSQLLine } from '@/utils/stringFun'
-  const methodOptions = [
-    {
-      value: 'POST',
-      label: '创建',
-      type: 'success'
-    },
-    {
-      value: 'GET',
-      label: '查看',
-      type: ''
-    },
-    {
-      value: 'PUT',
-      label: '更新',
-      type: 'warning'
-    },
-    {
-      value: 'DELETE',
-      label: '删除',
-      type: 'danger'
-    }
-  ]
-
   export default {
-    name: 'Api',
+    name: 'Env',
     mixins: [infoList],
     data() {
       return {
-        listApi: getApiList,
+        listApi: getEnvList,
         dialogFormVisible: false,
-        dialogTitle: '新增Api',
+        dialogTitle: '新增环境',
+        dialogType: '',
         form: {
-          path: '',
-          apiGroup: '',
-          method: '',
-          description: ''
+          id: '',
+          name: '',
         },
-        methodOptions: methodOptions,
         type: '',
         rules: {
-          path: [{ required: true, message: '请输入api路径', trigger: 'blur' }],
-          apiGroup: [
-            { required: true, message: '请输入组名称', trigger: 'blur' }
-          ],
-          method: [
-            { required: true, message: '请选择请求方式', trigger: 'blur' }
-          ],
-          description: [
-            { required: true, message: '请输入api介绍', trigger: 'blur' }
+          name: [
+            { required: true, message: '请输入环境名称', trigger: 'blur' }
           ]
         }
       }
     },
     methods: {
-      // 排序
-      sortChange({ prop, order }) {
-        if (prop) {
-          this.searchInfo.orderKey = toSQLLine(prop)
-          this.searchInfo.desc = order == 'descending'
-        }
-        this.getTableData()
-      },
-      //条件搜索前端看此方法
-      onSubmit() {
-        this.page = 1
-        this.pageSize = 10
-        this.getTableData()
-      },
       initForm() {
-        this.$refs.apiForm.resetFields()
+        this.$refs.EnvForm.resetFields()
         this.form= {
-          path: '',
-          apiGroup: '',
-          method: '',
-          description: ''
+          id: '',
+          name: '',
         }
       },
       closeDialog() {
@@ -168,31 +78,34 @@
       },
       openDialog(type) {
         switch (type) {
-          case 'addApi':
-            this.dialogTitlethis = '新增Api'
+          case 'addEnv':
+            this.dialogTitle = '新增环境'
             break
           case 'edit':
-            this.dialogTitlethis = '编辑Api'
+            this.dialogTitle = '编辑环境'
             break
           default:
             break
         }
-        this.type = type
+        this.dialogType = type
         this.dialogFormVisible = true
       },
-      async editApi(row) {
-        const res = await getApiById({ id: row.ID })
-        this.form = res.data.api
-        this.openDialog('edit')
+      async editEnv(row) {
+        this.dialogTitle = '编辑环境'
+        this.dialogType = 'edit'
+        for (let key in this.form) {
+          this.form[key] = row[key]
+        }
+        this.dialogFormVisible = true
       },
-      async deleteApi(row) {
-        this.$confirm('此操作将永久删除所有角色下该菜单, 是否继续?', '提示', {
+      async deleteEnv(row) {
+        this.$confirm('此操作将永久删除环境, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
                 .then(async () => {
-                  const res = await deleteApi(row)
+                  const res = await envDelete(row)
                   if (res.code == 0) {
                     this.$message({
                       type: 'success',
@@ -209,13 +122,13 @@
                 })
       },
       async enterDialog() {
-        this.$refs.apiForm.validate(async valid => {
+        this.$refs.EnvForm.validate(async valid => {
           if (valid) {
-            switch (this.type) {
-              case 'addApi':
+            switch (this.dialogType) {
+              case 'addEnv':
               {
-                const res = await createApi(this.form)
-                if (res.code == 0) {
+                const res = await envCreate(this.form)
+                if (res.code === 0) {
                   this.$message({
                     type: 'success',
                     message: '添加成功',
@@ -225,11 +138,10 @@
                 this.getTableData()
                 this.closeDialog()
               }
-
                 break
               case 'edit':
               {
-                const res = await updateApi(this.form)
+                const res = await envUpdate(this.form)
                 if (res.code == 0) {
                   this.$message({
                     type: 'success',
@@ -253,17 +165,6 @@
             }
           }
         })
-      }
-    },
-    filters: {
-      methodFiletr(value) {
-        const target = methodOptions.filter(item => item.value === value)[0]
-        // return target && `${target.label}(${target.value})`
-        return target && `${target.label}`
-      },
-      tagTypeFiletr(value) {
-        const target = methodOptions.filter(item => item.value === value)[0]
-        return target && `${target.type}`
       }
     },
     created(){

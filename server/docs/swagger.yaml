@@ -140,6 +140,14 @@ definitions:
       structName:
         type: string
     type: object
+  model.DepolyEnv:
+    properties:
+      id:
+        type: integer
+      name:
+        description: 环境名称
+        type: string
+    type: object
   model.ExaCustomer:
     properties:
       customerName:
@@ -957,7 +965,53 @@ paths:
       summary: 获取权限客户列表
       tags:
       - SysApi
-  /deploy/env/getDeployEnvList:
+  /deploy/env/envCreate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建环境
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.DepolyEnv'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建环境
+      tags:
+      - Deploy_Env
+  /deploy/env/envUpdate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 修改环境
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.DepolyEnv'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 修改环境
+      tags:
+      - Deploy_Env
+  /deploy/env/getEnvList:
     post:
       consumes:
       - application/json

@@ -920,7 +920,83 @@ var doc = `{
                 }
             }
         },
-        "/deploy/env/getDeployEnvList": {
+        "/deploy/env/envCreate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Env"
+                ],
+                "summary": "创建环境",
+                "parameters": [
+                    {
+                        "description": "创建环境",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DepolyEnv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/env/envUpdate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Env"
+                ],
+                "summary": "修改环境",
+                "parameters": [
+                    {
+                        "description": "修改环境",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DepolyEnv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/env/getEnvList": {
             "post": {
                 "security": [
                     {
@@ -2063,6 +2139,18 @@ var doc = `{
                     "type": "string"
                 },
                 "structName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DepolyEnv": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "环境名称",
                     "type": "string"
                 }
             }
