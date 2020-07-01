@@ -53,7 +53,7 @@ func GetAPIInfoList(api model.SysApi, info request.PageInfo, order string, desc 
 	var apiList []model.SysApi
 
 	if api.Path != "" {
-		db = db.Where("path LIKE ?", "%"+api.Path+"%")
+		db = db.Where("path LIKE ?", `"%"+api.Path+"%"`)
 	}
 
 	if api.Description != "" {
