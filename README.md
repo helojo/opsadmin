@@ -37,7 +37,7 @@
 
 ```bash
 # clone the project
-git clone https://github.com/piexlmax/gin-vue-admin.git
+git clone https://github.com/tridentss/opsadmin.git
 
 # enter the project directory
 cd web
