@@ -11,9 +11,9 @@ import service from '@/utils/request'
 //  page     int
 //	pageSize int
 // }
-export const getEnvList = (data) => {
+export const envList = (data) => {
     return service({
-        url: "/resource/env/getEnvList",
+        url: "/resource/env/envList",
         method: 'post',
         data
     })
