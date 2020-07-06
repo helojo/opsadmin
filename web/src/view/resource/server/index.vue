@@ -1,11 +1,22 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('addEnv')" type="primary">新增环境</el-button>
+      <el-button @click="openDialog('addEnv')" type="primary">新增主机信息</el-button>
     </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
       <el-table-column label="名称" min-width="150" prop="name"></el-table-column>
+      <el-table-column label="主机地址" min-width="150" prop="host"></el-table-column>
+      <el-table-column label="SSH端口" min-width="150" prop="port"></el-table-column>
+      <el-table-column label="用户名" min-width="150" prop="user"></el-table-column>
+      <el-table-column
+                    label="环境"
+                    prop="resourceenv"
+                    type="scope">
+                <template slot-scope="scope">
+                    {{ scope.row.resourceenv.name }}
+                </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
@@ -25,10 +36,22 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="EnvForm">
+      <el-form :model="form" :rules="rules" label-width="100px" ref="EnvForm">
         <el-form-item label="名称" prop="name">
           <el-input autocomplete="off" v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="主机地址" prop="host">
+          <el-input autocomplete="off" v-model="form.host"></el-input>
+        </el-form-item>
+        <el-form-item label="SSH端口" prop="port">
+          <el-input autocomplete="off"  v-model="form.port" type="number" ></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="user">
+          <el-input autocomplete="off"  v-model="form.user"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="pwd">
+          <el-input autocomplete="off"  v-model="form.pwd" type="password"></el-input>
+        </el-form-item>        
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -41,26 +64,44 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { envList, envCreate, envUpdate, envDelete } from '@/api/resource/env'
+  import { envCreate, envUpdate, envDelete } from '@/api/resource/env'
+    import { serverList } from '@/api/resource/server'
+
   import infoList from '@/components/mixins/infoList'
   export default {
     name: 'Env',
     mixins: [infoList],
     data() {
       return {
-        listApi: envList,
+        listApi: serverList,
         dialogFormVisible: false,
-        dialogTitle: '新增环境',
+        dialogTitle: '新增主机信息',
         dialogType: '',
         form: {
           id: '',
           name: '',
+          host: '',
+          port: '',
+          user: '',
+          pwd: '',
         },
         type: '',
         rules: {
           name: [
-            { required: true, message: '请输入环境名称', trigger: 'blur' }
-          ]
+            { required: true, message: '请输入名称', trigger: 'blur' }
+          ],
+          host: [
+            { required: true, message: '请输入主机地址', trigger: 'blur' }
+          ],
+          port: [
+            { required: true, message: '请输入SSh端口', trigger: 'blur' }
+          ],
+          user: [
+            { required: true, message: '请输入用户名', trigger: 'blur' }
+          ],   
+          pwd: [
+            { required: true, message: '请输入密码', trigger: 'blur' }
+          ],                               
         }
       }
     },
@@ -70,6 +111,10 @@
         this.form= {
           id: '',
           name: '',
+          host: '',
+          port: '',
+          user: '',
+          pwd: '',
         }
       },
       closeDialog() {
@@ -79,10 +124,10 @@
       openDialog(type) {
         switch (type) {
           case 'addEnv':
-            this.dialogTitle = '新增环境'
+            this.dialogTitle = '新增主机信息'
             break
           case 'edit':
-            this.dialogTitle = '编辑环境'
+            this.dialogTitle = '编辑主机信息'
             break
           default:
             break
@@ -91,7 +136,7 @@
         this.dialogFormVisible = true
       },
       async editEnv(row) {
-        this.dialogTitle = '编辑环境'
+        this.dialogTitle = '编辑主机信息'
         this.dialogType = 'edit'
         for (let key in this.form) {
           this.form[key] = row[key]
