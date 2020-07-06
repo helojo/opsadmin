@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitDeployEnvRouter(Router *gin.RouterGroup) {
-	ApiRouter := Router.Group("deploy/env").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+func InitResourceEnvRouter(Router *gin.RouterGroup) {
+	ApiRouter := Router.Group("resource/env").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
 		ApiRouter.POST("getEnvList", v1.GetEnvList) // 获取所有环境
 		ApiRouter.POST("envCreate", v1.EnvCreate)   // 创建环境

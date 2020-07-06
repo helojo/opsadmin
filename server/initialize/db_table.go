@@ -19,7 +19,8 @@ func DBTables() {
 		model.ExaFile{},
 		model.ExaFileChunk{},
 		model.ExaCustomer{},
-		model.DepolyEnv{},
+		model.ResourceEnv{},
+		model.ResourceServer{},
 	)
 	global.GVA_LOG.Debug("register table success")
 }

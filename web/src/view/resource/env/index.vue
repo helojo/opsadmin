@@ -41,7 +41,7 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { getEnvList, envCreate, envUpdate, envDelete } from '@/api/deploy/env'
+  import { getEnvList, envCreate, envUpdate, envDelete } from '@/api/resource/env'
   import infoList from '@/components/mixins/infoList'
   export default {
     name: 'Env',

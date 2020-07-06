@@ -11,14 +11,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Tags Deploy_Env
+// @Tags Resource_Env
 // @Summary 分页获取环境列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body request.PageInfo true "分页获取环境列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /deploy/env/getEnvList [post]
+// @Router /resource/env/getEnvList [post]
 func GetEnvList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
@@ -40,16 +40,16 @@ func GetEnvList(c *gin.Context) {
 	}
 }
 
-// @Tags Deploy_Env
+// @Tags Resource_Env
 // @Summary 创建环境
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body model.DepolyEnv true "创建环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /deploy/env/envCreate [post]
+// @Router /resource/env/envCreate [post]
 func EnvCreate(c *gin.Context) {
-	var env model.DepolyEnv
+	var env model.ResourceEnv
 	_ = c.ShouldBindJSON(&env)
 	EnvVerify := utils.Rules{
 		"Name": {utils.NotEmpty()},
@@ -67,16 +67,16 @@ func EnvCreate(c *gin.Context) {
 	}
 }
 
-// @Tags Deploy_Env
+// @Tags Resource_Env
 // @Summary 修改环境
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body model.DepolyEnv true "修改环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /deploy/env/envUpdate [post]
+// @Router /resource/env/envUpdate [post]
 func EnvUpdate(c *gin.Context) {
-	var env model.DepolyEnv
+	var env model.ResourceEnv
 	_ = c.ShouldBindJSON(&env)
 	ApiVerify := utils.Rules{
 		"Name": {utils.NotEmpty()},
@@ -94,14 +94,14 @@ func EnvUpdate(c *gin.Context) {
 	}
 }
 
-// @Tags Deploy_Env
+// @Tags Resource_Env
 // @Summary 删除环境
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body request.GetById true "删除环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /deploy/env/envDelete [delete]
+// @Router /resource/env/envDelete [delete]
 
 func EnvDelete(c *gin.Context) {
 	var reqId request.GetById
