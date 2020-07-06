@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('addEnv')" type="primary">新增主机信息</el-button>
+      <el-button @click="openDialog('add')" type="primary">新增主机信息</el-button>
     </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
@@ -19,8 +19,8 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteEnv(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-button @click="editServer(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+          <el-button @click="deleteServer(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -36,7 +36,7 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :model="form" :rules="rules" label-width="100px" ref="EnvForm">
+      <el-form :model="form" :rules="rules" label-width="100px" ref="ServerForm">
         <el-form-item label="名称" prop="name">
           <el-input autocomplete="off" v-model="form.name"></el-input>
         </el-form-item>
@@ -69,7 +69,7 @@
 
   import infoList from '@/components/mixins/infoList'
   export default {
-    name: 'Env',
+    name: 'Server',
     mixins: [infoList],
     data() {
       return {
@@ -107,7 +107,7 @@
     },
     methods: {
       initForm() {
-        this.$refs.EnvForm.resetFields()
+        this.$refs.ServerForm.resetFields()
         this.form= {
           id: '',
           name: '',
@@ -123,7 +123,7 @@
       },
       openDialog(type) {
         switch (type) {
-          case 'addEnv':
+          case 'add':
             this.dialogTitle = '新增主机信息'
             break
           case 'edit':
@@ -135,7 +135,7 @@
         this.dialogType = type
         this.dialogFormVisible = true
       },
-      async editEnv(row) {
+      async editServer(row) {
         this.dialogTitle = '编辑主机信息'
         this.dialogType = 'edit'
         for (let key in this.form) {
@@ -143,7 +143,7 @@
         }
         this.dialogFormVisible = true
       },
-      async deleteEnv(row) {
+      async deleteServer(row) {
         this.$confirm('此操作将永久删除环境, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -167,10 +167,10 @@
                 })
       },
       async enterDialog() {
-        this.$refs.EnvForm.validate(async valid => {
+        this.$refs.ServerForm.validate(async valid => {
           if (valid) {
             switch (this.dialogType) {
-              case 'addEnv':
+              case 'add':
               {
                 const res = await envCreate(this.form)
                 if (res.code === 0) {
