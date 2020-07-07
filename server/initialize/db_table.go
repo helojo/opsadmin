@@ -21,6 +21,7 @@ func DBTables() {
 		model.ExaCustomer{},
 		model.ResourceEnv{},
 		model.ResourceServer{},
+		model.DeployProject{},
 	)
 	global.GVA_LOG.Debug("register table success")
 }

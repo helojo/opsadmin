@@ -27,7 +27,7 @@ func ServerList(c *gin.Context) {
 		response.FailWithMessage(PageVerifyErr.Error(), c)
 		return
 	}
-	err, list, total := service.GetServerList(pageInfo)
+	err, list, total := service.ServerList(pageInfo)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
 	} else {

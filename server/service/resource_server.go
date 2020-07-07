@@ -7,7 +7,7 @@ import (
 	"gin-vue-admin/model/request"
 )
 
-// @title    GetServerList
+// @title    ServerList
 // @description   get server list by pagination, 分页获取数据
 // @auth                      （2020/04/05  20:22）
 // @param     info             request.PageInfo
@@ -15,14 +15,14 @@ import (
 // @return    list             interface{}
 // @return    total            int
 
-func GetServerList(info request.PageInfo) (err error, list interface{}, total int) {
+func ServerList(info request.PageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.ResourceServer{})
-	var envList []model.ResourceServer
+	var serverList []model.ResourceServer
 	err = db.Count(&total).Error
-	err = db.Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&envList).Error
-	return err, envList, total
+	err = db.Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error
+	return err, serverList, total
 }
 
 // @title    ServerCreate
