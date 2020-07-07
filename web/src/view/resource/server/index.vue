@@ -37,6 +37,15 @@
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" label-width="100px" ref="ServerForm">
+        <el-form-item label="环境:" prop="resource_env_id">
+          <el-select filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
+                <el-option
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                      v-for="item in env_list" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input autocomplete="off" v-model="form.name"></el-input>
         </el-form-item>
@@ -44,7 +53,7 @@
           <el-input autocomplete="off" v-model="form.host"></el-input>
         </el-form-item>
         <el-form-item label="SSH端口" prop="port">
-          <el-input autocomplete="off"  v-model="form.port" type="number" ></el-input>
+          <el-input autocomplete="off" pattern="[0-9]*" v-model="form.port" type="number" ></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="user">
           <el-input autocomplete="off"  v-model="form.user"></el-input>
@@ -64,8 +73,8 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { envCreate, envUpdate, envDelete } from '@/api/resource/env'
-    import { serverList } from '@/api/resource/server'
+  import { envList } from '@/api/resource/env'
+  import { serverList, serverCreate, serverUpdate, serverDelete } from '@/api/resource/server'
 
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -77,13 +86,15 @@
         dialogFormVisible: false,
         dialogTitle: '新增主机信息',
         dialogType: '',
+        env_list: [],
         form: {
           id: '',
           name: '',
           host: '',
-          port: '',
+          port: 22,
           user: '',
           pwd: '',
+          resource_env_id: '',
         },
         type: '',
         rules: {
@@ -101,7 +112,10 @@
           ],   
           pwd: [
             { required: true, message: '请输入密码', trigger: 'blur' }
-          ],                               
+          ],    
+          resource_env_id: [
+            { required: true, message: '请选择环境', trigger: 'blur' }
+          ],                                       
         }
       }
     },
@@ -112,9 +126,10 @@
           id: '',
           name: '',
           host: '',
-          port: '',
+          port: 22,
           user: '',
           pwd: '',
+          resource_env_id: '',
         }
       },
       closeDialog() {
@@ -144,22 +159,20 @@
         this.dialogFormVisible = true
       },
       async deleteServer(row) {
-        this.$confirm('此操作将永久删除环境, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除主机信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        })
-                .then(async () => {
-                  const res = await envDelete(row)
-                  if (res.code == 0) {
-                    this.$message({
+        }).then(async () => {
+                const res = await serverDelete(row)
+                if (res.code == 0) {
+                  this.$message({
                       type: 'success',
                       message: '删除成功!'
                     })
                     this.getTableData()
                   }
-                })
-                .catch(() => {
+                }).catch(() => {
                   this.$message({
                     type: 'info',
                     message: '已取消删除'
@@ -172,7 +185,8 @@
             switch (this.dialogType) {
               case 'add':
               {
-                const res = await envCreate(this.form)
+                this.form.port = parseInt(this.form.port)
+                const res = await serverCreate(this.form)
                 if (res.code === 0) {
                   this.$message({
                     type: 'success',
@@ -186,7 +200,8 @@
                 break
               case 'edit':
               {
-                const res = await envUpdate(this.form)
+                this.form.port = parseInt(this.form.port)
+                const res = await serverUpdate(this.form)
                 if (res.code == 0) {
                   this.$message({
                     type: 'success',
@@ -210,9 +225,17 @@
             }
           }
         })
-      }
+      },
+      async GetEnvList(){
+                this.env_list = []
+                const ret = await envList({"page": 1, "pageSize": 9999})
+                if(ret.code === 0){
+                    this.env_list = ret.data.list
+                }
+            },
     },
     created(){
+      this.GetEnvList()
       this.getTableData()
     }
   }
