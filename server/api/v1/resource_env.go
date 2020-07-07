@@ -45,7 +45,7 @@ func EnvList(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.DepolyEnv true "创建环境"
+// @Param data body model.ResourceEnv true "创建环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/env/envCreate [post]
 func EnvCreate(c *gin.Context) {
@@ -72,7 +72,7 @@ func EnvCreate(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.DepolyEnv true "修改环境"
+// @Param data body model.ResourceEnv true "修改环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/env/envUpdate [post]
 func EnvUpdate(c *gin.Context) {
@@ -102,7 +102,6 @@ func EnvUpdate(c *gin.Context) {
 // @Param data body request.GetById true "删除环境"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
 // @Router /resource/env/envDelete [delete]
-
 func EnvDelete(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)

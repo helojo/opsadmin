@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"gin-vue-admin/global/response"
+	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 	resp "gin-vue-admin/model/response"
 	"gin-vue-admin/service"
@@ -36,5 +37,34 @@ func ProjectList(c *gin.Context) {
 			Page:     pageInfo.Page,
 			PageSize: pageInfo.PageSize,
 		}, c)
+	}
+}
+
+// @Tags Deploy_Project
+// @Summary 创建项目
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.DeployProject true "创建主机"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /deploy/project/projectCreate [post]
+func ProjectCreate(c *gin.Context) {
+	var project model.DeployProject
+	_ = c.ShouldBindJSON(&project)
+	projectVerify := utils.Rules{
+		"Name":      {utils.NotEmpty()},
+		"GitUrl":    {utils.NotEmpty()},
+		"Directory": {utils.NotEmpty()},
+	}
+	ServerVerifyErr := utils.Verify(project, projectVerify)
+	if ServerVerifyErr != nil {
+		response.FailWithMessage(ServerVerifyErr.Error(), c)
+		return
+	}
+	err := service.ProjectCreate(project)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("创建失败，%v", err), c)
+	} else {
+		response.OkWithMessage("创建成功", c)
 	}
 }

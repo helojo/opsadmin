@@ -112,7 +112,6 @@ func ServerUpdate(c *gin.Context) {
 // @Param data body request.GetById true "删除主机信息"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
 // @Router /resource/server/serverDelete [delete]
-
 func ServerDelete(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)

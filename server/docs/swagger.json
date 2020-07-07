@@ -904,7 +904,7 @@
                 }
             }
         },
-        "/deploy/env/envCreate": {
+        "/deploy/project/projectCreate": {
             "post": {
                 "security": [
                     {
@@ -918,17 +918,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Deploy_Env"
+                    "Deploy_Project"
                 ],
-                "summary": "创建环境",
+                "summary": "创建项目",
                 "parameters": [
                     {
-                        "description": "创建环境",
+                        "description": "创建主机",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DepolyEnv"
+                            "$ref": "#/definitions/model.DeployProject"
                         }
                     }
                 ],
@@ -942,7 +942,7 @@
                 }
             }
         },
-        "/deploy/env/envUpdate": {
+        "/deploy/project/projectList": {
             "post": {
                 "security": [
                     {
@@ -956,50 +956,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Deploy_Env"
+                    "Deploy_Project"
                 ],
-                "summary": "修改环境",
+                "summary": "分页获取项目列表",
                 "parameters": [
                     {
-                        "description": "修改环境",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.DepolyEnv"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/deploy/env/getEnvList": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Deploy_Env"
-                ],
-                "summary": "分页获取环境列表",
-                "parameters": [
-                    {
-                        "description": "分页获取环境列表",
+                        "description": "分页获取项目列表",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -1598,6 +1560,310 @@
                 }
             }
         },
+        "/resource/env/EnvList": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Env"
+                ],
+                "summary": "分页获取环境列表",
+                "parameters": [
+                    {
+                        "description": "分页获取环境列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/env/envCreate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Env"
+                ],
+                "summary": "创建环境",
+                "parameters": [
+                    {
+                        "description": "创建环境",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ResourceEnv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/env/envDelete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Env"
+                ],
+                "summary": "删除环境",
+                "parameters": [
+                    {
+                        "description": "删除环境",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/env/envUpdate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Env"
+                ],
+                "summary": "修改环境",
+                "parameters": [
+                    {
+                        "description": "修改环境",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ResourceEnv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/server/serverCreate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "创建主机",
+                "parameters": [
+                    {
+                        "description": "创建主机",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ResourceEnv"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/server/serverDelete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "删除主机信息",
+                "parameters": [
+                    {
+                        "description": "删除主机信息",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/server/serverList": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "分页获取主机列表",
+                "parameters": [
+                    {
+                        "description": "分页获取主机列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/server/serverUpdate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "修改主机信息",
+                "parameters": [
+                    {
+                        "description": "修改主机信息",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ResourceServer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"修改成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/system/ReloadSystem": {
             "post": {
                 "security": [
@@ -2127,15 +2393,30 @@
                 }
             }
         },
-        "model.DepolyEnv": {
+        "model.DeployProject": {
             "type": "object",
             "properties": {
+                "directory": {
+                    "description": "项目目录绝对路径",
+                    "type": "string"
+                },
+                "git_url": {
+                    "description": "git项目地址",
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "description": "环境名称",
+                "ignore_files": {
+                    "description": "忽略文件",
                     "type": "string"
+                },
+                "name": {
+                    "description": "项目名称",
+                    "type": "string"
+                },
+                "release_version": {
+                    "type": "number"
                 }
             }
         },
@@ -2199,6 +2480,53 @@
                     "type": "string"
                 },
                 "fieldType": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ResourceEnv": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "环境名称",
+                    "type": "string"
+                }
+            }
+        },
+        "model.ResourceServer": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "description": "主机地址",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "主机名称",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "SSH端口",
+                    "type": "integer"
+                },
+                "pwd": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "resource_env_id": {
+                    "type": "integer"
+                },
+                "resourceenv": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.ResourceEnv"
+                },
+                "user": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }

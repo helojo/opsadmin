@@ -140,13 +140,24 @@ definitions:
       structName:
         type: string
     type: object
-  model.DepolyEnv:
+  model.DeployProject:
     properties:
+      directory:
+        description: 项目目录绝对路径
+        type: string
+      git_url:
+        description: git项目地址
+        type: string
       id:
         type: integer
-      name:
-        description: 环境名称
+      ignore_files:
+        description: 忽略文件
         type: string
+      name:
+        description: 项目名称
+        type: string
+      release_version:
+        type: number
     type: object
   model.ExaCustomer:
     properties:
@@ -188,6 +199,39 @@ definitions:
       fieldSearchType:
         type: string
       fieldType:
+        type: string
+    type: object
+  model.ResourceEnv:
+    properties:
+      id:
+        type: integer
+      name:
+        description: 环境名称
+        type: string
+    type: object
+  model.ResourceServer:
+    properties:
+      host:
+        description: 主机地址
+        type: string
+      id:
+        type: integer
+      name:
+        description: 主机名称
+        type: string
+      port:
+        description: SSH端口
+        type: integer
+      pwd:
+        description: 密码
+        type: string
+      resource_env_id:
+        type: integer
+      resourceenv:
+        $ref: '#/definitions/model.ResourceEnv'
+        type: object
+      user:
+        description: 用户名
         type: string
     type: object
   model.SysApi:
@@ -965,17 +1009,17 @@ paths:
       summary: 获取权限客户列表
       tags:
       - SysApi
-  /deploy/env/envCreate:
+  /deploy/project/projectCreate:
     post:
       consumes:
       - application/json
       parameters:
-      - description: 创建环境
+      - description: 创建主机
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.DepolyEnv'
+          $ref: '#/definitions/model.DeployProject'
       produces:
       - application/json
       responses:
@@ -985,38 +1029,15 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
-      summary: 创建环境
+      summary: 创建项目
       tags:
-      - Deploy_Env
-  /deploy/env/envUpdate:
+      - Deploy_Project
+  /deploy/project/projectList:
     post:
       consumes:
       - application/json
       parameters:
-      - description: 修改环境
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.DepolyEnv'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"获取成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 修改环境
-      tags:
-      - Deploy_Env
-  /deploy/env/getEnvList:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 分页获取环境列表
+      - description: 分页获取项目列表
         in: body
         name: data
         required: true
@@ -1031,9 +1052,9 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
-      summary: 分页获取环境列表
+      summary: 分页获取项目列表
       tags:
-      - Deploy_Env
+      - Deploy_Project
   /fileUploadAndDownload/breakpointContinue:
     post:
       consumes:
@@ -1385,6 +1406,190 @@ paths:
       summary: 更新菜单
       tags:
       - menu
+  /resource/env/EnvList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页获取环境列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取环境列表
+      tags:
+      - Resource_Env
+  /resource/env/envCreate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建环境
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ResourceEnv'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建环境
+      tags:
+      - Resource_Env
+  /resource/env/envDelete:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除环境
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除环境
+      tags:
+      - Resource_Env
+  /resource/env/envUpdate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 修改环境
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ResourceEnv'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 修改环境
+      tags:
+      - Resource_Env
+  /resource/server/serverCreate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建主机
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ResourceEnv'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建主机
+      tags:
+      - Resource_Server
+  /resource/server/serverDelete:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除主机信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除主机信息
+      tags:
+      - Resource_Server
+  /resource/server/serverList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页获取主机列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取主机列表
+      tags:
+      - Resource_Server
+  /resource/server/serverUpdate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 修改主机信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ResourceServer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"修改成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主机信息
+      tags:
+      - Resource_Server
   /system/ReloadSystem:
     post:
       parameters:
