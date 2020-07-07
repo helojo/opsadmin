@@ -42,7 +42,7 @@ export const envCreate = (data) => {
 // @Produce application/json
 // @Param data body true "更新环境"
 // @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /deploy/env/envUpdate [post]
+// @Router /resource/env/envUpdate [post]
 export const envUpdate = (data) => {
     return service({
         url: "/resource/env/envUpdate",
