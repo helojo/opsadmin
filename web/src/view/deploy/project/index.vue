@@ -61,6 +61,9 @@
         form: {
           id: '',
           name: '',
+          git_url: '',
+          directory: '',
+          ignore_files: '',
         },
         type: '',
         rules: {
@@ -76,6 +79,9 @@
         this.form= {
           id: '',
           name: '',
+          git_url: '',
+          directory: '',
+          ignore_files: '',
         }
       },
       closeDialog() {
