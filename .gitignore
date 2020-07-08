@@ -25,5 +25,5 @@ yarn-error.log*
 go.sum
 /server/log/
 /server/latest_log
-
+/server/resource/platformkey/
 *.iml
