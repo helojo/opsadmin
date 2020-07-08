@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
@@ -61,5 +62,16 @@ func ServerUpdate(server model.ResourceServer) (err error) {
 func ServerDelete(id float64) (err error) {
 	var server model.ResourceServer
 	err = global.GVA_DB.Where("id = ?", id).Delete(&server).Error
+	return err
+}
+
+// @title    ServerCreateKey
+// @description    创建平台密钥对
+// @auth                     （2020/07/08  9:51）
+// @param     id
+// @return    err             error
+
+func PlatformCreateKey() (err error) {
+	fmt.Println("我访问到这里了")
 	return err
 }

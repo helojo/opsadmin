@@ -127,3 +127,20 @@ func ServerDelete(c *gin.Context) {
 		response.OkWithMessage("删除成功", c)
 	}
 }
+
+// @Tags Resource_Server
+// @Summary 生成平台密钥对
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "生成平台密钥对"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
+// @Router /resource/server/platformCreateKey [get]
+func PlatformCreateKey(c *gin.Context) {
+	err := service.PlatformCreateKey()
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("创建失败，%v", err), c)
+	} else {
+		response.OkWithMessage("创建成功", c)
+	}
+}
