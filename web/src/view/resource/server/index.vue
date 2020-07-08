@@ -2,7 +2,7 @@
   <div>
     <el-row style="float: right">
       <el-button @click="openDialog('add')" type="primary">新增主机信息</el-button>
-      <el-button @click="enterplatformCreateKey()" type="primary">生成平台密钥</el-button>
+      <el-button @click="enterplatformCreateKey()" type="primary">生成平台密钥对</el-button>
     </el-row>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
@@ -20,9 +20,10 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-span @click="editServer(scope.row)" class="operate-span">编辑</el-span>
-          <el-span @click="editServer(scope.row)" class="operate-span">推送公钥</el-span>
-          <el-span @click="deleteServer(scope.row)" class="operate-span-danger">删除</el-span>
+          <span class="operate-span" @click="editServer(scope.row)" >编辑</span>
+          <span class="operate-span" @click="pushpubkey(scope.row)" >推送公钥</span>
+          <span class="operate-span" @click="connectserver(scope.row)" >测试连接</span>
+          <span class="operate-span-danger"@click="deleteServer(scope.row)" >删除</span>
         </template>
       </el-table-column>
     </el-table>
@@ -256,6 +257,13 @@
                   })
                 })
        },
+       async pushpubkey(row) {
+         console.log(row)
+
+       },
+       async connectserver(row) {
+         console.log(row)
+       }
     },
     created(){
       this.GetEnvList()
