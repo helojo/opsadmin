@@ -95,8 +95,8 @@ func PlatformCreateKey() (err error) {
 	pkey, pubkey, err := utils.MakeSSHKeyPair()
 	if err != nil {
 		return errors.New(fmt.Sprintf("平台生成密钥对失败, 报错信息: %s", err))
-
 	}
+	
 	err = ioutil.WriteFile(id_rsa, []byte(pkey), 0600|os.ModeAppend)
 	if err == nil {
 		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600|os.ModePerm)
