@@ -8,8 +8,8 @@
       <el-table-column label="名称" min-width="150" prop="name"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteEnv(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-span @click="editEnv(scope.row)" class="operate-span">编辑</el-span>
+          <el-span @click="deleteEnv(scope.row)" class="operate-span-danger">删除</el-span>
         </template>
       </el-table-column>
     </el-table>

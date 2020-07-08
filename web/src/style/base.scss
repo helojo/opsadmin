@@ -58,3 +58,26 @@
 .title-3 {
     text-align: center;
 }
+
+.operate-span {
+    color: #409EFF;
+    cursor: pointer;
+    font-weight:bold;
+}
+
+.operate-span-primary {
+    color: #409EFF;
+    cursor: pointer;
+    font-weight:bold;
+}
+
+.operate-span-warning {
+    color: #e6a23c;
+    cursor: pointer;
+    font-weight:bold;
+}
+.operate-span-danger {
+    color: red;
+    cursor: pointer;
+    font-weight:bold;
+}

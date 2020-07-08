@@ -20,8 +20,9 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editServer(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteServer(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-span @click="editServer(scope.row)" class="operate-span">编辑</el-span>
+          <el-span @click="editServer(scope.row)" class="operate-span">推送公钥</el-span>
+          <el-span @click="deleteServer(scope.row)" class="operate-span-danger">删除</el-span>
         </template>
       </el-table-column>
     </el-table>
