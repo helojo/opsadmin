@@ -49,6 +49,11 @@ definitions:
       username:
         type: string
     type: object
+  config.Platformkey:
+    properties:
+      path:
+        type: string
+    type: object
   config.Qiniu:
     properties:
       accessKey:
@@ -85,6 +90,9 @@ definitions:
         type: object
       mysql:
         $ref: '#/definitions/config.Mysql'
+        type: object
+      platformkey:
+        $ref: '#/definitions/config.Platformkey'
         type: object
       qiniu:
         $ref: '#/definitions/config.Qiniu'
@@ -230,6 +238,9 @@ definitions:
       resourceenv:
         $ref: '#/definitions/model.ResourceEnv'
         type: object
+      status:
+        description: 测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常
+        type: integer
       user:
         description: 用户名
         type: string
@@ -1498,6 +1509,52 @@ paths:
       summary: 修改环境
       tags:
       - Resource_Env
+  /resource/server/platformCreateKey:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 生成平台密钥对
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 生成平台密钥对
+      tags:
+      - Resource_Server
+  /resource/server/serverConnect:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 测试连接
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"连接成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 测试连接
+      tags:
+      - Resource_Server
   /resource/server/serverCreate:
     post:
       consumes:

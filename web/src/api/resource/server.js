@@ -80,3 +80,19 @@ export const platformCreateKey = () => {
         method: 'get'
     })
 }
+
+// @Tags Resource_Server
+// @Summary 连接测试
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body true "连接测试成功"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"连接测试成功"}"
+// @Router /resource/server/serverConnect [post]
+export const serverConnect = (data) => {
+    return service({
+        url: "/resource/server/serverConnect",
+        method: 'post',
+        data
+    })
+}

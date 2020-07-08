@@ -23,8 +23,8 @@ func RunWindowsServer() {
 	s := &http.Server{
 		Addr:           address,
 		Handler:        Router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		ReadTimeout:    60 * time.Second,
+		WriteTimeout:   60 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	// 保证文本顺序输出

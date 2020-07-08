@@ -3,6 +3,8 @@
     <el-row style="float: right">
       <el-button @click="openDialog('add')" type="primary">新增主机信息</el-button>
       <el-button @click="enterplatformCreateKey()" type="primary">生成平台密钥对</el-button>
+      <el-button type="primary" @click="RefreshStatus">刷新状态</el-button>
+
     </el-row>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
@@ -16,6 +18,20 @@
                     type="scope">
                 <template slot-scope="scope">
                     {{ scope.row.resourceenv.name }}
+                </template>
+      </el-table-column>
+      <el-table-column
+                    label="状态"
+                    prop="status"
+                    type="scope">
+                <template slot-scope="scope">
+                    <span class="operate-span-warning" v-if="scope.row.status === 0 " >未测试连接</span>
+                    <span class="operate-span-warning" v-else-if="scope.row.status === 1 " >未测试连接</span>
+                    <span class="operate-span-warning" v-else-if="scope.row.status === 2 " >连接中</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 3 " >连接成功</span>       
+                    <span class="operate-span-danger" v-else-if="scope.row.status === 4 " >连接失败</span>
+
+
                 </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
@@ -77,7 +93,7 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
-  import { serverList, serverCreate, serverUpdate, serverDelete, platformCreateKey } from '@/api/resource/server'
+  import { serverList, serverCreate, serverUpdate, serverDelete, platformCreateKey, serverConnect } from '@/api/resource/server'
 
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -262,8 +278,35 @@
 
        },
        async connectserver(row) {
-         console.log(row)
-       }
+        this.$confirm('您将, 测试平台与主机的连通性, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+                const res = await serverConnect(row)
+                if (res.code == 0) {
+                  this.$message({
+                      type: 'success',
+                      message: '操作，成功!'
+                    })
+                    this.getTableData()
+                  } else {
+                    this.$message({
+                      type: 'success',
+                      message: '操作，失败!'
+                    })
+                  }
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已经，取消连接测试'
+                  })
+                })
+       },
+       // 刷新状态
+      async RefreshStatus() {
+          await this.getTableData()
+      },
     },
     created(){
       this.GetEnvList()

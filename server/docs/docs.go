@@ -1728,6 +1728,82 @@ var doc = `{
                 }
             }
         },
+        "/resource/server/platformCreateKey": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "生成平台密钥对",
+                "parameters": [
+                    {
+                        "description": "生成平台密钥对",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"创建成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/resource/server/serverConnect": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "测试连接",
+                "parameters": [
+                    {
+                        "description": "测试连接",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"连接成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/resource/server/serverCreate": {
             "post": {
                 "security": [
@@ -2274,6 +2350,14 @@ var doc = `{
                 }
             }
         },
+        "config.Platformkey": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
         "config.Qiniu": {
             "type": "object",
             "properties": {
@@ -2327,6 +2411,10 @@ var doc = `{
                 "mysql": {
                     "type": "object",
                     "$ref": "#/definitions/config.Mysql"
+                },
+                "platformkey": {
+                    "type": "object",
+                    "$ref": "#/definitions/config.Platformkey"
                 },
                 "qiniu": {
                     "type": "object",
@@ -2540,6 +2628,10 @@ var doc = `{
                 "resourceenv": {
                     "type": "object",
                     "$ref": "#/definitions/model.ResourceEnv"
+                },
+                "status": {
+                    "description": "测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常",
+                    "type": "integer"
                 },
                 "user": {
                     "description": "用户名",

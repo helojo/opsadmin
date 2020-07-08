@@ -40,6 +40,7 @@ func ServerCreate(server model.ResourceServer) (err error) {
 	if findOne == nil {
 		return errors.New("存在相同主机地址")
 	} else {
+		server.Status = 1
 		err = global.GVA_DB.Create(&server).Error
 	}
 	return err
@@ -71,7 +72,6 @@ func ServerDelete(id float64) (err error) {
 // @title    isExist
 // @description  判断文件是否存在
 // @auth                     （2020/07/08  11:11)
-// @param     string  p
 // @return    bool             true|flase
 func isExist(p string) bool {
 	_, err := os.Stat(p)
@@ -101,5 +101,44 @@ func PlatformCreateKey() (err error) {
 	if err == nil {
 		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600|os.ModePerm)
 	}
+	return err
+}
+
+// @title    ServerConnect
+// @description    测试连接主机
+// @auth                     （2020/07/08  15:12）
+// @param     id
+// @return    err             error
+
+func ServerConnect(id float64) (err error) {
+	var server model.ResourceServer
+	findOne := global.GVA_DB.Where("id = ?", id).Find(&server).Error
+	if findOne != nil {
+		return errors.New("该主机不存在!")
+	}
+	sshClient, sftpClient, err := utils.SshClient(server.Host, server.Port, server.User, server.Pwd)
+	if err != nil {
+		server.Status = 4
+		err = ServerUpdate(server)
+		return err
+	}
+
+	var dstDir string
+	if server.User != "root" {
+		dstDir = "/home/" + server.User + "/.ssh"
+	} else {
+		dstDir = "/root/.ssh"
+	}
+
+	if err = utils.SshDirIsExist(sftpClient, dstDir); err != nil {
+		if err = utils.SshCreateDir(sshClient, dstDir); err != nil {
+			server.Status = 4
+			err = ServerUpdate(server)
+			return errors.New(fmt.Sprintf("%s 该主机上, %s 目录不存在, 且创建失败，报错信息：%s", server.Host, dstDir, err))
+		}
+	}
+	server.Status = 3
+	err = ServerUpdate(server)
+
 	return err
 }

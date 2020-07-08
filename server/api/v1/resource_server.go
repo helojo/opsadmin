@@ -144,3 +144,27 @@ func PlatformCreateKey(c *gin.Context) {
 		response.OkWithMessage("创建成功", c)
 	}
 }
+
+// @Tags Resource_Server
+// @Summary 测试连接
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "测试连接"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"连接成功"}"
+// @Router /resource/server/serverConnect [delete]
+func ServerConnect(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if IdVerifyErr != nil {
+		response.FailWithMessage(IdVerifyErr.Error(), c)
+		return
+	}
+	err := service.ServerConnect(reqId.Id)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("连接失败，%v", err), c)
+	} else {
+		response.OkWithMessage("连接成功", c)
+	}
+}
