@@ -41,6 +41,10 @@ func ServerCreate(server model.ResourceServer) (err error) {
 		return errors.New("存在相同主机地址")
 	} else {
 		server.Status = 1
+		server.Pwd, err = utils.EnPwdCode([]byte(server.Pwd))
+		if err != nil {
+			return err
+		}
 		err = global.GVA_DB.Create(&server).Error
 	}
 	return err
