@@ -68,6 +68,11 @@ func ServerDelete(id float64) (err error) {
 	return err
 }
 
+// @title    isExist
+// @description  判断文件是否存在
+// @auth                     （2020/07/08  11:11)
+// @param     string  p
+// @return    bool             true|flase
 func isExist(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil || os.IsExist(err)
