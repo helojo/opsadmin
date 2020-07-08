@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div class="button-box clearflex">
+    <el-row style="float: right">
       <el-button @click="openDialog('add')" type="primary">新增主机信息</el-button>
-    </div>
+      <el-button @click="enterplatformCreateKey()" type="primary">生成平台密钥</el-button>
+    </el-row>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
       <el-table-column label="名称" min-width="150" prop="name"></el-table-column>
@@ -74,7 +75,7 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
-  import { serverList, serverCreate, serverUpdate, serverDelete } from '@/api/resource/server'
+  import { serverList, serverCreate, serverUpdate, serverDelete, platformCreateKey } from '@/api/resource/server'
 
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -233,6 +234,27 @@
                     this.env_list = ret.data.list
                 }
             },
+      async enterplatformCreateKey() {
+        this.$confirm('您将，生成平台密钥对, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+                const res = await platformCreateKey()
+                if (res.code == 0) {
+                  this.$message({
+                      type: 'success',
+                      message: '平台密钥生成, 成功!'
+                    })
+                    this.getTableData()
+                  }
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '平台密钥生成, 失败'
+                  })
+                })
+       },
     },
     created(){
       this.GetEnvList()

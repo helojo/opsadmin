@@ -56,3 +56,7 @@ log:
     log-file: true
     stdout: 'DEBUG'
     file: 'DEBUG'
+
+# platformkey path
+platformkey:
+    path: './resource/platformkey/'

@@ -66,3 +66,17 @@ export const serverDelete = (data) => {
         data
     })
 }
+
+// @Tags Resource_Server
+// @Summary 平台生成密钥对
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"生成成功"}"
+// @Router /resource/server/platformCreateKey [delete]
+export const platformCreateKey = () => {
+    return service({
+        url: "/resource/server/platformCreateKey",
+        method: 'get'
+    })
+}

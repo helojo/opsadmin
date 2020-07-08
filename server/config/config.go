@@ -1,15 +1,16 @@
 package config
 
 type Server struct {
-	Mysql   Mysql   `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Sqlite  Sqlite  `mapstructure:"sqlite" json:"sqlite" yaml:"sqlite"`
-	Qiniu   Qiniu   `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
-	Casbin  Casbin  `mapstructure:"casbin" json:"casbin" yaml:"casbin"`
-	Redis   Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
-	System  System  `mapstructure:"system" json:"system" yaml:"system"`
-	JWT     JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
-	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
-	Log     Log     `mapstructure:"log" json:"log" yaml:"log"`
+	Mysql       Mysql       `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Sqlite      Sqlite      `mapstructure:"sqlite" json:"sqlite" yaml:"sqlite"`
+	Qiniu       Qiniu       `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
+	Casbin      Casbin      `mapstructure:"casbin" json:"casbin" yaml:"casbin"`
+	Redis       Redis       `mapstructure:"redis" json:"redis" yaml:"redis"`
+	System      System      `mapstructure:"system" json:"system" yaml:"system"`
+	JWT         JWT         `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Captcha     Captcha     `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+	Log         Log         `mapstructure:"log" json:"log" yaml:"log"`
+	Platformkey Platformkey `mapstructure:"platformkey" json:"platformkey" yaml:"platformkey"`
 }
 
 type System struct {
@@ -69,4 +70,8 @@ type Sqlite struct {
 	Path     string `mapstructure:"path" json:"path" yaml:"path"`
 	Config   string `mapstructure:"config" json:"config" yaml:"config"`
 	LogMode  bool   `mapstructure:"log-mode" json:"logMode" yaml:"log-mode"`
+}
+
+type Platformkey struct {
+	Path string `mapstructure:"path" json:"path" yaml:"path"`
 }

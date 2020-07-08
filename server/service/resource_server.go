@@ -6,6 +6,9 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
+	"gin-vue-admin/utils"
+	"io/ioutil"
+	"os"
 )
 
 // @title    ServerList
@@ -65,6 +68,11 @@ func ServerDelete(id float64) (err error) {
 	return err
 }
 
+func isExist(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil || os.IsExist(err)
+}
+
 // @title    ServerCreateKey
 // @description    创建平台密钥对
 // @auth                     （2020/07/08  9:51）
@@ -72,6 +80,21 @@ func ServerDelete(id float64) (err error) {
 // @return    err             error
 
 func PlatformCreateKey() (err error) {
-	fmt.Println("我访问到这里了")
+	id_rsa := global.GVA_CONFIG.Platformkey.Path + "id_rsa"
+	id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
+
+	if isExist(id_rsa) && isExist(id_rsa_pub) {
+		return errors.New("平台密钥对文件, 已经存在!")
+	}
+
+	pkey, pubkey, err := utils.MakeSSHKeyPair()
+	if err != nil {
+		return errors.New(fmt.Sprintf("平台生成密钥对失败, 报错信息: %s", err))
+
+	}
+	err = ioutil.WriteFile(id_rsa, []byte(pkey), 0600|os.ModeAppend)
+	if err == nil {
+		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600|os.ModePerm)
+	}
 	return err
 }
