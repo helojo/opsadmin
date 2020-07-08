@@ -88,7 +88,7 @@ func PlatformCreateKey() (err error) {
 	id_rsa := global.GVA_CONFIG.Platformkey.Path + "id_rsa"
 	id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
 
-	if isExist(id_rsa) && isExist(id_rsa_pub) {
+	if isExist(id_rsa) || isExist(id_rsa_pub) {
 		return errors.New("平台密钥对文件, 已经存在!")
 	}
 
@@ -96,7 +96,7 @@ func PlatformCreateKey() (err error) {
 	if err != nil {
 		return errors.New(fmt.Sprintf("平台生成密钥对失败, 报错信息: %s", err))
 	}
-	
+
 	err = ioutil.WriteFile(id_rsa, []byte(pkey), 0600|os.ModeAppend)
 	if err == nil {
 		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600|os.ModePerm)

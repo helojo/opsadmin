@@ -20,9 +20,9 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <span class="operate-span" @click="editServer(scope.row)" >编辑</span>
-          <span class="operate-span" @click="pushpubkey(scope.row)" >推送公钥</span>
+          <span class="operate-span" @click="editServer(scope.row)" >编辑</span>         
           <span class="operate-span" @click="connectserver(scope.row)" >测试连接</span>
+          <span class="operate-span" @click="pushpubkey(scope.row)" >推送公钥</span>
           <span class="operate-span-danger" @click="deleteServer(scope.row)" >删除</span>
         </template>
       </el-table-column>
