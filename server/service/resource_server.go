@@ -50,6 +50,17 @@ func ServerCreate(server model.ResourceServer) (err error) {
 	return err
 }
 
+// @title    ServerMsgUpdate
+// @description   更新主机信息
+// @auth                     （2020/04/05  20:22）
+// @param     env             model.ResourceServer
+// @return                    error
+
+func ServerMsgUpdate(server model.ResourceServer) (err error) {
+	err = global.GVA_DB.Where("id = ?", server.ID).First(&model.ResourceServer{}).Updates(&server).Error
+	return err
+}
+
 // @title    ServerUpdate
 // @description   更新主机信息
 // @auth                     （2020/07/07  11:36）
@@ -57,8 +68,18 @@ func ServerCreate(server model.ResourceServer) (err error) {
 // @return                    error
 
 func ServerUpdate(server model.ResourceServer) (err error) {
-	err = global.GVA_DB.Where("id = ?", server.ID).First(&model.ResourceServer{}).Updates(&server).Error
-	return err
+	var serverOld model.ResourceServer
+	findOne := global.GVA_DB.Where("id = ?", server.ID).Find(&serverOld).Error
+	if findOne != nil {
+		return errors.New("该主机不存在!")
+	}
+	newpassword, _ := utils.EnPwdCode([]byte(server.Pwd))
+	if newpassword != serverOld.Pwd {
+		server.Status = 1
+		server.Pwd = newpassword
+		return ServerMsgUpdate(server)
+	}
+	return ServerMsgUpdate(server)
 }
 
 // @title    ServerDelete
@@ -120,10 +141,16 @@ func ServerConnect(id float64) (err error) {
 	if findOne != nil {
 		return errors.New("该主机不存在!")
 	}
-	sshClient, sftpClient, err := utils.SshClient(server.Host, server.Port, server.User, server.Pwd)
+
+	password, err := utils.DePwdCode(server.Pwd)
 	if err != nil {
-		server.Status = 4
-		err = ServerUpdate(server)
+		return errors.New(fmt.Sprintf("服务器密码解密错误, 报错信息: %s", err))
+	}
+
+	sshClient, sftpClient, err := utils.SshClient(server.Host, server.Port, server.User, string(password))
+	if err != nil {
+		server.Status = 3
+		err = ServerMsgUpdate(server)
 		return err
 	}
 
@@ -137,12 +164,12 @@ func ServerConnect(id float64) (err error) {
 	if err = utils.SshDirIsExist(sftpClient, dstDir); err != nil {
 		if err = utils.SshCreateDir(sshClient, dstDir); err != nil {
 			server.Status = 4
-			err = ServerUpdate(server)
+			err = ServerMsgUpdate(server)
 			return errors.New(fmt.Sprintf("%s 该主机上, %s 目录不存在, 且创建失败，报错信息：%s", server.Host, dstDir, err))
 		}
 	}
 	server.Status = 3
-	err = ServerUpdate(server)
+	err = ServerMsgUpdate(server)
 
 	return err
 }
