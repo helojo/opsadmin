@@ -7,6 +7,7 @@ import (
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 	"gin-vue-admin/utils"
+	uuid "github.com/satori/go.uuid"
 	"io/ioutil"
 	"os"
 )
@@ -123,9 +124,9 @@ func PlatformCreateKey() (err error) {
 		return errors.New(fmt.Sprintf("平台生成密钥对失败, 报错信息: %s", err))
 	}
 
-	err = ioutil.WriteFile(id_rsa, []byte(pkey), 0600|os.ModeAppend)
+	err = ioutil.WriteFile(id_rsa, []byte(pkey), 0600)
 	if err == nil {
-		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600|os.ModePerm)
+		err = ioutil.WriteFile(id_rsa_pub, []byte(pubkey), 0600)
 	}
 	return err
 }
@@ -211,9 +212,9 @@ func ServerPushKey(id float64) (err error) {
 	}
 	//判断远程文件是否存在
 	err = utils.SshFileIsExist(sftpClient, dstFile)
+	id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
 	if err != nil {
 		// 文件不存在，则直接推送文件到机器
-		id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
 		err := utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
 		if err == nil {
 			cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
@@ -229,6 +230,43 @@ func ServerPushKey(id float64) (err error) {
 			return errors.New(fmt.Sprintf("密钥文件上传失败, 报错信息: %s", err))
 		}
 
+	} else {
+		// 如果文件存在，下载，写入公钥，传入远程主机
+		srcPath := global.GVA_CONFIG.Platformkey.Path + "/tmp/" + uuid.NewV4().String()
+		err := utils.SftpDownload(sftpClient, dstFile, srcPath)
+		if err != nil {
+			return errors.New(fmt.Sprintf("远程公钥文件下载失败, 报错信息: %s", err))
+		}
+
+		// 判断远程主机是否包含平台公钥
+		err, diff := utils.SshDiffPubkey(id_rsa_pub, srcPath)
+		if err == nil && diff {
+			server.Status = 5
+			_ = ServerMsgUpdate(server)
+			os.Remove(srcPath)
+			return errors.New("远程主机已经存在平台公钥, 请勿重复推送！")
+		} else {
+			err := utils.SshRemotePubkey(id_rsa_pub, srcPath)
+			if err != nil {
+				errors.New(fmt.Sprintf("公钥写入，本地远程公钥文件错误, 报错信息: %s", err))
+			}
+			// 文件不存在，则直接推送文件到机器
+			err = utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
+			if err == nil {
+				cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
+				err := utils.SshCmd(sshClient, cmd)
+				if err != nil {
+					server.Status = 6
+					os.Remove(srcPath)
+					return errors.New(fmt.Sprintf("密钥推送成功，文件授权失败, 报错信息: %s", err))
+				}
+				server.Status = 5
+				_ = ServerMsgUpdate(server)
+				return err
+			} else {
+				return errors.New(fmt.Sprintf("密钥文件上传失败, 报错信息: %s", err))
+			}
+		}
+
 	}
-	return err
 }

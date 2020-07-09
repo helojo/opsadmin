@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/pkg/sftp"
@@ -9,6 +10,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -97,6 +99,7 @@ func SftpDownload(sftp *sftp.Client, srcPath, dstPath string) (err error) {
 
 // 上传文件
 func SftpUpload(sftp *sftp.Client, srcPath, dstPath string) (err error) {
+	defer sftp.Close()
 	srcFile, err := os.Open(srcPath) //本地
 	if err != nil {
 		return errors.New(fmt.Sprintf("读取平台公钥文件错误，报错信息: %s", err))
@@ -123,6 +126,63 @@ func SftpUpload(sftp *sftp.Client, srcPath, dstPath string) (err error) {
 			}
 		}
 		_, _ = dstFile.Write(buf[:n])
+	}
+	return err
+}
+
+//  对比目标文件是否已经存在平台公钥
+func SshDiffPubkey(keyPath string, downkeyPath string) (err error, diff bool) {
+	var source_data string
+	keydata, err := os.Open(keyPath)
+	defer keydata.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("平台公钥读取错误，请检查是否生成平台密钥对, 报错信息: %s", err)), false
+	} else {
+		scanner := bufio.NewScanner(keydata)
+		for scanner.Scan() {
+			if scanner.Text() != "" {
+				source_data = scanner.Text()
+			}
+		}
+	}
+
+	file, err := os.Open(downkeyPath)
+	defer file.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("远程公钥文件本地读取错误, 报错信息: %s", err)), false
+	} else {
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			if strings.EqualFold(scanner.Text(), source_data) {
+				return err, true
+			}
+		}
+		return err, false
+	}
+}
+
+// 平台公钥写入远程主机文件
+func SshRemotePubkey(keyPath string, downkeyPath string) (err error) {
+	var source_data string
+	keydata, err := os.Open(keyPath)
+	defer keydata.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("平台公钥读取错误，请检查是否生成平台密钥对, 报错信息: %s", err))
+	} else {
+		scanner := bufio.NewScanner(keydata)
+		for scanner.Scan() {
+			if scanner.Text() != "" {
+				source_data = scanner.Text()
+			}
+		}
+	}
+
+	file, err := os.Open(downkeyPath)
+	defer file.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("本地远程公钥文件读取错误, 报错信息: %s", err))
+	} else {
+		file.WriteString(source_data)
 	}
 	return err
 }
