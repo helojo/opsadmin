@@ -46,6 +46,7 @@ func SshDirIsExist(sftp *sftp.Client, path string) (err error) {
 
 // 为用户创建.ssh 目录
 func SshCreateDir(ssh *ssh.Client, path string) (err error) {
+	defer ssh.Close()
 	//获取session，这个session是用来远程执行操作的
 	session, err := ssh.NewSession()
 	if err != nil {

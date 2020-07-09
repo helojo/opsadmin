@@ -79,6 +79,7 @@ func ServerUpdate(server model.ResourceServer) (err error) {
 		server.Pwd = newpassword
 		return ServerMsgUpdate(server)
 	}
+	server.Status = 1
 	return ServerMsgUpdate(server)
 }
 
@@ -149,8 +150,8 @@ func ServerConnect(id float64) (err error) {
 
 	sshClient, sftpClient, err := utils.SshClient(server.Host, server.Port, server.User, string(password))
 	if err != nil {
-		server.Status = 3
-		err = ServerMsgUpdate(server)
+		server.Status = 4
+		_ = ServerMsgUpdate(server)
 		return err
 	}
 
@@ -164,12 +165,12 @@ func ServerConnect(id float64) (err error) {
 	if err = utils.SshDirIsExist(sftpClient, dstDir); err != nil {
 		if err = utils.SshCreateDir(sshClient, dstDir); err != nil {
 			server.Status = 4
-			err = ServerMsgUpdate(server)
+			_ = ServerMsgUpdate(server)
 			return errors.New(fmt.Sprintf("%s 该主机上, %s 目录不存在, 且创建失败，报错信息：%s", server.Host, dstDir, err))
 		}
 	}
 	server.Status = 3
-	err = ServerMsgUpdate(server)
+	_ = ServerMsgUpdate(server)
 
 	return err
 }

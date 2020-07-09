@@ -30,6 +30,8 @@
                     <span class="operate-span-warning" v-else-if="scope.row.status === 2 " >连接中</span>
                     <span class="operate-span-primary" v-else-if="scope.row.status === 3 " >连接成功</span>       
                     <span class="operate-span-danger" v-else-if="scope.row.status === 4 " >连接失败</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 5 " >公钥推送成功</span>
+                    <span class="operate-span-danger" v-else-if="scope.row.status === 5 " >公钥推送失败</span>
 
 
                 </template>
@@ -187,7 +189,7 @@
                 if (res.code == 0) {
                   this.$message({
                       type: 'success',
-                      message: '删除成功!'
+                      message: res.msg
                     })
                     this.getTableData()
                   }
@@ -209,12 +211,11 @@
                 if (res.code === 0) {
                   this.$message({
                     type: 'success',
-                    message: '添加成功',
-                    showClose: true
+                    message: res.msg
                   })
-                }
-                this.getTableData()
+                this.RefreshStatus()
                 this.closeDialog()
+                }
               }
                 break
               case 'edit':
@@ -224,20 +225,18 @@
                 if (res.code == 0) {
                   this.$message({
                     type: 'success',
-                    message: '编辑成功',
-                    showClose: true
+                    message: res.msg
                   })
+                  this.RefreshStatus()
+                  this.closeDialog()
                 }
-                this.getTableData()
-                this.closeDialog()
               }
                 break
               default:
               {
                 this.$message({
                   type: 'error',
-                  message: '未知操作',
-                  showClose: true
+                  message: '未知操作'
                 })
               }
                 break
@@ -262,14 +261,14 @@
                 if (res.code == 0) {
                   this.$message({
                       type: 'success',
-                      message: '平台密钥生成, 成功!'
+                      message: res.msg
                     })
-                    this.getTableData()
                   }
+                  this.getTableData()
                 }).catch(() => {
                   this.$message({
                     type: 'info',
-                    message: '平台密钥生成, 失败'
+                    message: '已取消平台密钥生成'
                   })
                 })
        },
@@ -287,15 +286,10 @@
                 if (res.code == 0) {
                   this.$message({
                       type: 'success',
-                      message: '操作，成功!'
-                    })
-                    this.getTableData()
-                  } else {
-                    this.$message({
-                      type: 'success',
-                      message: '操作，失败!'
+                      message: res.msg
                     })
                   }
+                  this.getTableData()
                 }).catch(() => {
                   this.$message({
                     type: 'info',

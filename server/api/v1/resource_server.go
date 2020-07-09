@@ -98,9 +98,9 @@ func ServerUpdate(c *gin.Context) {
 	}
 	err := service.ServerUpdate(server)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("修改数据失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("编辑失败，%v", err), c)
 	} else {
-		response.OkWithMessage("修改数据成功", c)
+		response.OkWithMessage("编辑成功", c)
 	}
 }
 
@@ -139,9 +139,9 @@ func ServerDelete(c *gin.Context) {
 func PlatformCreateKey(c *gin.Context) {
 	err := service.PlatformCreateKey()
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("创建失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("生成平台密钥对创建失败，%v", err), c)
 	} else {
-		response.OkWithMessage("创建成功", c)
+		response.OkWithMessage("生成平台密钥对创建成功!", c)
 	}
 }
 
@@ -163,8 +163,8 @@ func ServerConnect(c *gin.Context) {
 	}
 	err := service.ServerConnect(reqId.Id)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("连接失败，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("测试连接失败，%v", err), c)
 	} else {
-		response.OkWithMessage("连接成功", c)
+		response.OkWithMessage("测试连接成功", c)
 	}
 }
