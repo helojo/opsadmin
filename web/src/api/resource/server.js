@@ -96,3 +96,19 @@ export const serverConnect = (data) => {
         data
     })
 }
+
+// @Tags Resource_Server
+// @Summary 连接测试
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body true "推送公钥成功"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"推送公钥成功"}"
+// @Router /resource/server/serverPushKey [post]
+export const serverPushKey = (data) => {
+    return service({
+        url: "/resource/server/serverPushKey",
+        method: 'post',
+        data
+    })
+}

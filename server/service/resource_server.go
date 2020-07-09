@@ -163,7 +163,8 @@ func ServerConnect(id float64) (err error) {
 	}
 
 	if err = utils.SshDirIsExist(sftpClient, dstDir); err != nil {
-		if err = utils.SshCreateDir(sshClient, dstDir); err != nil {
+		cmd := fmt.Sprintf("mkdir -p %s && chmod  0700 %s -R", dstDir, dstDir)
+		if err = utils.SshCmd(sshClient, cmd); err != nil {
 			server.Status = 4
 			_ = ServerMsgUpdate(server)
 			return errors.New(fmt.Sprintf("%s 该主机上, %s 目录不存在, 且创建失败，报错信息：%s", server.Host, dstDir, err))
@@ -172,5 +173,47 @@ func ServerConnect(id float64) (err error) {
 	server.Status = 3
 	_ = ServerMsgUpdate(server)
 
+	return err
+}
+
+// @title    ServerPushKey
+// @description    推送公钥
+// @auth                     （2020/07/09  11:52）
+// @param     id
+// @return    err             error
+
+func ServerPushKey(id float64) (err error) {
+	var server model.ResourceServer
+	findOne := global.GVA_DB.Where("id = ?", id).Find(&server).Error
+	if findOne != nil {
+		return errors.New("该主机不存在!")
+	}
+
+	password, err := utils.DePwdCode(server.Pwd)
+	if err != nil {
+		return errors.New(fmt.Sprintf("服务器密码解密错误, 报错信息: %s", err))
+	}
+
+	sshClient, sftpClient, err := utils.SshClient(server.Host, server.Port, server.User, string(password))
+	if err != nil {
+		return errors.New(fmt.Sprintf("连接远程主机失败, 报错信息: %s", err))
+	}
+
+	var dstFile string
+	if server.User != "root" {
+		dstFile = "/home/" + server.User + "/.ssh/authorized_keys"
+	} else {
+		dstFile = "/root/.ssh/authorized_keys"
+	}
+	//判断远程文件是否存在
+	err = utils.SshFileIsExist(sftpClient, dstFile)
+	if err != nil {
+		id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
+		err := utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
+		if err == nil {
+			cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
+			return utils.SshCmd(sshClient, cmd)
+		}
+	}
 	return err
 }

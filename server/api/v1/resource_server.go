@@ -168,3 +168,27 @@ func ServerConnect(c *gin.Context) {
 		response.OkWithMessage("测试连接成功", c)
 	}
 }
+
+// @Tags Resource_Server
+// @Summary 推送公钥
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "推送公钥"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"推送公钥成功"}"
+// @Router /resource/server/serverPushKey [delete]
+func ServerPushKey(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if IdVerifyErr != nil {
+		response.FailWithMessage(IdVerifyErr.Error(), c)
+		return
+	}
+	err := service.ServerPushKey(reqId.Id)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("推送公钥失败，%v", err), c)
+	} else {
+		response.OkWithMessage("推送公钥成功", c)
+	}
+}

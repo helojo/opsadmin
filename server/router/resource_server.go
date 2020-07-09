@@ -15,5 +15,6 @@ func InitResourceServerRouter(Router *gin.RouterGroup) {
 		ApiRouter.DELETE("serverDelete", v1.ServerDelete)        // 主机信息删除
 		ApiRouter.GET("platformCreateKey", v1.PlatformCreateKey) // 平台密钥对创建
 		ApiRouter.POST("serverConnect", v1.ServerConnect)        // 主机连接测试
+		ApiRouter.POST("serverPushKey", v1.ServerPushKey)        // 主机t推送公钥
 	}
 }

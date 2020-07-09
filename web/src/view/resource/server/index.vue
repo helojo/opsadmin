@@ -40,7 +40,7 @@
         <template slot-scope="scope">
           <span class="operate-span" @click="editServer(scope.row)" >编辑</span>         
           <span class="operate-span" @click="connectserver(scope.row)" >测试连接</span>
-          <span class="operate-span" @click="pushpubkey(scope.row)" >推送公钥</span>
+          <span class="operate-span" @click="pushserver(scope.row)" >推送公钥</span>
           <span class="operate-span-danger" @click="deleteServer(scope.row)" >删除</span>
         </template>
       </el-table-column>
@@ -95,7 +95,7 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
-  import { serverList, serverCreate, serverUpdate, serverDelete, platformCreateKey, serverConnect } from '@/api/resource/server'
+  import { serverList, serverCreate, serverUpdate, serverDelete, platformCreateKey, serverConnect, serverPushKey } from '@/api/resource/server'
 
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -272,9 +272,26 @@
                   })
                 })
        },
-       async pushpubkey(row) {
-         console.log(row)
-
+       async pushserver(row) {
+        this.$confirm('您将, 推送平台公钥至主机' + row.host + ' 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+                const res = await serverPushKey(row)
+                if (res.code == 0) {
+                  this.$message({
+                      type: 'success',
+                      message: res.msg
+                    })
+                  }
+                  this.getTableData()
+                }).catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已经，取消推送平台公钥'
+                  })
+                })
        },
        async connectserver(row) {
         this.$confirm('您将, 测试平台与主机的连通性, 是否继续?', '提示', {
