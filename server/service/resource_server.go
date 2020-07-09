@@ -212,6 +212,7 @@ func ServerPushKey(id float64) (err error) {
 	//判断远程文件是否存在
 	err = utils.SshFileIsExist(sftpClient, dstFile)
 	if err != nil {
+		// 文件不存在，则直接推送文件到机器
 		id_rsa_pub := global.GVA_CONFIG.Platformkey.Path + "id_rsa.pub"
 		err := utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
 		if err == nil {
@@ -219,11 +220,13 @@ func ServerPushKey(id float64) (err error) {
 			err := utils.SshCmd(sshClient, cmd)
 			if err != nil {
 				server.Status = 6
-				return errors.New(fmt.Sprintf("密钥推送失败, 报错信息: %s", err))
+				return errors.New(fmt.Sprintf("密钥推送成功，文件授权失败, 报错信息: %s", err))
 			}
 			server.Status = 5
 			_ = ServerMsgUpdate(server)
 			return err
+		} else {
+			return errors.New(fmt.Sprintf("密钥文件上传失败, 报错信息: %s", err))
 		}
 
 	}
