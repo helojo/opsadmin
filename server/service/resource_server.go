@@ -73,8 +73,8 @@ func ServerUpdate(server model.ResourceServer) (err error) {
 	if findOne != nil {
 		return errors.New("该主机不存在!")
 	}
-	newpassword, _ := utils.EnPwdCode([]byte(server.Pwd))
-	if newpassword != serverOld.Pwd {
+	if server.Pwd != serverOld.Pwd {
+		newpassword, _ := utils.EnPwdCode([]byte(server.Pwd))
 		server.Status = 1
 		server.Pwd = newpassword
 		return ServerMsgUpdate(server)
@@ -189,6 +189,10 @@ func ServerPushKey(id float64) (err error) {
 		return errors.New("该主机不存在!")
 	}
 
+	if server.Status != 3 {
+		return errors.New("请测试连接，再进行密钥推送!")
+	}
+
 	password, err := utils.DePwdCode(server.Pwd)
 	if err != nil {
 		return errors.New(fmt.Sprintf("服务器密码解密错误, 报错信息: %s", err))
@@ -212,8 +216,16 @@ func ServerPushKey(id float64) (err error) {
 		err := utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
 		if err == nil {
 			cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
-			return utils.SshCmd(sshClient, cmd)
+			err := utils.SshCmd(sshClient, cmd)
+			if err != nil {
+				server.Status = 6
+				return errors.New(fmt.Sprintf("密钥推送失败, 报错信息: %s", err))
+			}
+			server.Status = 5
+			_ = ServerMsgUpdate(server)
+			return err
 		}
+
 	}
 	return err
 }
