@@ -231,14 +231,14 @@ func ServerPushKey(id float64) (err error) {
 		}
 
 	} else {
-		// 如果文件存在，下载，写入公钥，传入远程主机
+		// 如果文件存在，对比文件是否包含平台公钥, 不包含则，下载，写入公钥，传入远程主机
 		srcPath := global.GVA_CONFIG.Platformkey.Path + "/tmp/" + uuid.NewV4().String()
 		err := utils.SftpDownload(sftpClient, dstFile, srcPath)
 		if err != nil {
 			return errors.New(fmt.Sprintf("远程公钥文件下载失败, 报错信息: %s", err))
 		}
 
-		// 判断远程主机是否包含平台公钥
+		//远程主机是否包含平台公钥
 		err, diff := utils.SshDiffPubkey(id_rsa_pub, srcPath)
 		if err == nil && diff {
 			server.Status = 5
@@ -246,12 +246,13 @@ func ServerPushKey(id float64) (err error) {
 			os.Remove(srcPath)
 			return errors.New("远程主机已经存在平台公钥, 请勿重复推送！")
 		} else {
-			// 文件存在，平台公钥，写入文件，推送至主机
+			// 合并公钥文件
 			err := utils.SshRemotePubkey(id_rsa_pub, srcPath)
 			if err != nil {
 				errors.New(fmt.Sprintf("公钥写入，本地远程公钥文件错误, 报错信息: %s", err))
 			}
-			// 文件，则直接推送文件到机器
+
+			//上传合并过的公钥文件
 			err = utils.SftpUpload(sftpClient, srcPath, dstFile)
 			if err == nil {
 				cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
@@ -264,6 +265,7 @@ func ServerPushKey(id float64) (err error) {
 				server.Status = 5
 				_ = ServerMsgUpdate(server)
 				return err
+
 			} else {
 				return errors.New(fmt.Sprintf("密钥文件上传失败, 报错信息: %s", err))
 			}
