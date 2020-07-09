@@ -177,12 +177,12 @@ func SshRemotePubkey(keyPath string, downkeyPath string) (err error) {
 		}
 	}
 
-	file, err := os.Open(downkeyPath)
+	file, err := os.OpenFile(downkeyPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
 	defer file.Close()
 	if err != nil {
 		return errors.New(fmt.Sprintf("本地远程公钥文件读取错误, 报错信息: %s", err))
 	} else {
-		file.WriteString(source_data)
+		file.Write([]byte(source_data))
 	}
 	return err
 }

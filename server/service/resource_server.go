@@ -178,7 +178,7 @@ func ServerConnect(id float64) (err error) {
 }
 
 // @title    ServerPushKey
-// @description    推送公钥
+// @description    推送公钥，分三种类型，1：公钥文件不存在直接发送平台公钥文件，2：存在，包含平台公钥则不再推送，3： 不包含，则推送公钥
 // @auth                     （2020/07/09  11:52）
 // @param     id
 // @return    err             error
@@ -246,12 +246,13 @@ func ServerPushKey(id float64) (err error) {
 			os.Remove(srcPath)
 			return errors.New("远程主机已经存在平台公钥, 请勿重复推送！")
 		} else {
+			// 文件存在，平台公钥，写入文件，推送至主机
 			err := utils.SshRemotePubkey(id_rsa_pub, srcPath)
 			if err != nil {
 				errors.New(fmt.Sprintf("公钥写入，本地远程公钥文件错误, 报错信息: %s", err))
 			}
-			// 文件不存在，则直接推送文件到机器
-			err = utils.SftpUpload(sftpClient, id_rsa_pub, dstFile)
+			// 文件，则直接推送文件到机器
+			err = utils.SftpUpload(sftpClient, srcPath, dstFile)
 			if err == nil {
 				cmd := fmt.Sprintf("chmod  0600 %s", dstFile)
 				err := utils.SshCmd(sshClient, cmd)
