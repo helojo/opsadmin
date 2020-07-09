@@ -21,7 +21,7 @@ func ProjectList(info request.PageInfo) (err error, list interface{}, total int)
 	db := global.GVA_DB.Model(&model.DeployProject{})
 	var projectList []model.DeployProject
 	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Find(&projectList).Error
+	err = db.Preload("ResourceServer.ResourceEnv").Limit(limit).Offset(offset).Find(&projectList).Error
 	return err, projectList, total
 }
 

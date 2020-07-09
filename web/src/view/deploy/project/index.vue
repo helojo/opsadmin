@@ -6,11 +6,26 @@
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
       <el-table-column label="项目" min-width="150" prop="name"></el-table-column>
-      <el-table-column label="线上版本" min-width="150" prop="release_version"></el-table-column>
+      <el-table-column label="当前版本" min-width="150" prop="release_version"></el-table-column>
       <el-table-column label="项目地址" min-width="150" prop="git_url"></el-table-column>
       <el-table-column label="项目目录" min-width="150" prop="directory"></el-table-column>
       <el-table-column label="忽略文件" min-width="150" prop="ignore_files"></el-table-column>
-
+      <el-table-column
+                    label="主机"
+                    prop="resourceserver"
+                    type="scope">
+                <template slot-scope="scope">
+                    {{ scope.row.resourceserver.name }}
+                </template>
+      </el-table-column>
+            <el-table-column
+                    label="环境"
+                    prop="resourceenv"
+                    type="scope">
+                <template slot-scope="scope">
+                    {{ scope.row.resourceserver.resourceenv.name }}
+                </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
