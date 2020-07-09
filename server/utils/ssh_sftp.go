@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -8,113 +10,179 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
-//连接的配置
-type ClientConfig struct {
-	Host       string       //ip
-	Port       int64        // 端口
-	Username   string       //用户名
-	Password   string       //密码
-	SshClient  *ssh.Client  //ssh client
-	SftpClient *sftp.Client //sftp client
-	LastResult string       //最近一次运行的结果
-}
-
-func (cliConf *ClientConfig) CreateClient(host string, port int64, username, password string) {
-	var (
-		sshClient  *ssh.Client
-		sftpClient *sftp.Client
-		err        error
-	)
-	cliConf.Host = host
-	cliConf.Port = port
-	cliConf.Username = username
-	cliConf.Password = password
-	cliConf.Port = port
-
+// 连接ssh 返回对象
+func SshClient(host string, port int64, username, password string) (sshClient *ssh.Client, sftpClient *sftp.Client, err error) {
 	config := ssh.ClientConfig{
-		User: cliConf.Username,
+		User: username,
 		Auth: []ssh.AuthMethod{ssh.Password(password)},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
 		},
 		Timeout: 10 * time.Second,
 	}
-	addr := fmt.Sprintf("%s:%d", cliConf.Host, cliConf.Port)
+	addr := fmt.Sprintf("%s:%d", host, port)
 
-	if sshClient, err = ssh.Dial("tcp", addr, &config); err != nil {
-		log.Fatalln("error occurred:", err)
+	sshClient, err = ssh.Dial("tcp", addr, &config)
+	if err != nil {
+		return sshClient, sftpClient, err
 	}
-	cliConf.SshClient = sshClient
 
 	//此时获取了sshClient，下面使用sshClient构建sftpClient
-	if sftpClient, err = sftp.NewClient(sshClient); err != nil {
-		log.Fatalln("error occurred:", err)
+	sftpClient, err = sftp.NewClient(sshClient)
+	if err != nil {
+		return sshClient, sftpClient, err
 	}
-	cliConf.SftpClient = sftpClient
+
+	return sshClient, sftpClient, err
 }
 
-func (cliConf *ClientConfig) RunShell(shell string) string {
-	var (
-		session *ssh.Session
-		err     error
-	)
+// 判断远程目录是否存在
+func SshDirIsExist(sftp *sftp.Client, path string) (err error) {
+	_, err = sftp.ReadDir(path)
+	if err != nil {
+		return err
+	}
+	return err
+}
 
+// 判断远程文件是否存在
+func SshFileIsExist(sftp *sftp.Client, path string) (err error) {
+	_, err = sftp.Open(path)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// 远程执行命令
+func SshCmd(ssh *ssh.Client, cmd string) (err error) {
+	defer ssh.Close()
 	//获取session，这个session是用来远程执行操作的
-	if session, err = cliConf.SshClient.NewSession(); err != nil {
-		log.Fatalln("error occurred:", err)
+	session, err := ssh.NewSession()
+	if err != nil {
+		return errors.New(fmt.Sprintf("SSH 创建 session 连接失败, 报错信息: %s", err))
 	}
 	//执行shell
-	if output, err := session.CombinedOutput(shell); err != nil {
-		fmt.Println(shell)
-		log.Fatalln("error occurred:", err)
-	} else {
-		cliConf.LastResult = string(output)
+	if _, err := session.CombinedOutput(cmd); err != nil {
+		return errors.New(fmt.Sprintf("SSH 执行命令失败, 报错信息: %s", err))
 	}
-	return cliConf.LastResult
+	return err
 }
 
-func (cliConf *ClientConfig) Upload(srcPath, dstPath string) {
-	srcFile, err := os.Open(srcPath) //本地
+// 下载文件
+func SftpDownload(sftp *sftp.Client, srcPath, dstPath string) (err error) {
+	srcFile, err := sftp.Open(srcPath) //远程
 	if err != nil {
-		panic(err)
+		return errors.New(fmt.Sprintf("文件不存在, 报错信息: %s", err))
 	}
-	//fs, err := cliConf.sftpClient.ReadDir(path)
-	dstFile, err := cliConf.SftpClient.Create(dstPath) //远程
+
+	dstFile, err := os.Create(dstPath) //创建本地文件
 	if err != nil {
-		panic(err)
+		return errors.New(fmt.Sprintf("本地文件创建失败, 报错信息: %s", err))
 	}
 	defer func() {
 		_ = srcFile.Close()
 		_ = dstFile.Close()
 	}()
+
+	_, err = srcFile.WriteTo(dstFile)
+	if err != nil {
+		return errors.New(fmt.Sprintf("文件下载失败, 报错信息: %s", err))
+	}
+
+	return err
+}
+
+// 上传文件
+func SftpUpload(sftp *sftp.Client, srcPath, dstPath string) (err error) {
+	defer sftp.Close()
+	srcFile, err := os.Open(srcPath) //本地
+	if err != nil {
+		return errors.New(fmt.Sprintf("读取平台公钥文件错误，报错信息: %s", err))
+	}
+
+	dstFile, err := sftp.Create(dstPath) //远程
+	if err != nil {
+		return errors.New(fmt.Sprintf("打开远程路径，错误，报错信息: %s", err))
+	}
+
+	defer func() {
+		_ = srcFile.Close()
+		_ = dstFile.Close()
+	}()
+
 	buf := make([]byte, 1024)
 	for {
 		n, err := srcFile.Read(buf)
 		if err != nil {
 			if err != io.EOF {
-				log.Fatalln("error occurred:", err)
+				log.Fatalln("上传文件错误, 报错信息:", err)
 			} else {
 				break
 			}
 		}
 		_, _ = dstFile.Write(buf[:n])
 	}
-	fmt.Println(cliConf.RunShell(fmt.Sprintf("ls %s", dstPath)))
+	return err
 }
 
-func (cliConf *ClientConfig) Download(srcPath, dstPath string) {
-	srcFile, _ := cliConf.SftpClient.Open(srcPath) //远程
-	dstFile, _ := os.Create(dstPath)               //本地
-	defer func() {
-		_ = srcFile.Close()
-		_ = dstFile.Close()
-	}()
-
-	if _, err := srcFile.WriteTo(dstFile); err != nil {
-		log.Fatalln("error occurred", err)
+//  对比目标文件是否已经存在平台公钥
+func ContainPubkey(keyPath string, downkeyPath string) (err error, diff bool) {
+	var source_data string
+	keydata, err := os.Open(keyPath)
+	defer keydata.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("平台公钥读取错误，请检查是否生成平台密钥对, 报错信息: %s", err)), false
+	} else {
+		scanner := bufio.NewScanner(keydata)
+		for scanner.Scan() {
+			if scanner.Text() != "" {
+				source_data = scanner.Text()
+			}
+		}
 	}
-	fmt.Println("文件下载完毕")
+
+	file, err := os.Open(downkeyPath)
+	defer file.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("远程公钥文件本地读取错误, 报错信息: %s", err)), false
+	} else {
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			if strings.EqualFold(scanner.Text(), source_data) {
+				return err, true
+			}
+		}
+		return err, false
+	}
+}
+
+// 合并公钥文件
+func MergePublicKey(keyPath string, downkeyPath string) (err error) {
+	var source_data string
+	keydata, err := os.Open(keyPath)
+	defer keydata.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("平台公钥读取错误，请检查是否生成平台密钥对, 报错信息: %s", err))
+	} else {
+		scanner := bufio.NewScanner(keydata)
+		for scanner.Scan() {
+			if scanner.Text() != "" {
+				source_data = scanner.Text()
+			}
+		}
+	}
+
+	file, err := os.OpenFile(downkeyPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+	defer file.Close()
+	if err != nil {
+		return errors.New(fmt.Sprintf("本地远程公钥文件读取错误, 报错信息: %s", err))
+	} else {
+		file.Write([]byte(source_data))
+	}
+	return err
 }

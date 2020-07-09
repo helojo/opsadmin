@@ -239,15 +239,15 @@ func ServerPushKey(id float64) (err error) {
 		}
 
 		//远程主机是否包含平台公钥
-		err, diff := utils.SshDiffPubkey(id_rsa_pub, srcPath)
-		if err == nil && diff {
+		err, contain := utils.ContainPubkey(id_rsa_pub, srcPath)
+		if err == nil && contain {
 			server.Status = 5
 			_ = ServerMsgUpdate(server)
 			os.Remove(srcPath)
 			return errors.New("远程主机已经存在平台公钥, 请勿重复推送！")
 		} else {
-			// 合并公钥文件
-			err := utils.SshRemotePubkey(id_rsa_pub, srcPath)
+			// 不包含平台公钥，合并公钥文件
+			err := utils.MergePublicKey(id_rsa_pub, srcPath)
 			if err != nil {
 				errors.New(fmt.Sprintf("公钥写入，本地远程公钥文件错误, 报错信息: %s", err))
 			}
