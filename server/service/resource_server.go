@@ -25,6 +25,7 @@ func ServerList(info request.ServerPageInfo) (err error, list interface{}, total
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.ResourceServer{})
 	var serverList []model.ResourceServer
+
 	if info.ResourceEnvId != 0 {
 		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Count(&total).Error
 		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error

@@ -55,7 +55,7 @@
                                 v-for="item in env_List" />
                     </el-select>
         </el-form-item>
-        <el-form-item label="主机" prop="resource_server_id">
+        <el-form-item  label="主机" prop="resource_server_id">
                     <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_server_id">
                         <el-option
                                 :key="item.id"
@@ -173,7 +173,7 @@
           this.form[key] = row[key]
         }
         this.dialogFormVisible = true
-        this.GetServerList()
+        this.GetServerList(this.form.resource_env_id)
 
       },
       async deleteProject(row) {
@@ -251,11 +251,10 @@
             this.env_List = ret.data.list
            }
      },
-     async GetServerList(){
-         this.serverList = []
-         const ret = await serverList({"page": 1, "pageSize": 9999})
+     async GetServerList(id){
+         const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": id})
          if(ret.code === 0){
-            this.serverList = ret.data.list
+            this.server_List = ret.data.list
         }
      },
      async EnvChange(row){
