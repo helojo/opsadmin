@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('addEnv')" type="primary">新增项目</el-button>
+      <el-button @click="openDialog('add')" type="primary">新增项目</el-button>
     </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
@@ -28,8 +28,8 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editEnv(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteEnv(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-button @click="editProject(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+          <el-button @click="deleteProject(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -47,7 +47,7 @@
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" label-width="80px" ref="projectForm">
         <el-form-item label="环境" prop="resource_env_id">
-                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
+                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -89,6 +89,7 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
+  import { serverList } from '@/api/resource/server'
   import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -153,7 +154,7 @@
       },
       openDialog(type) {
         switch (type) {
-          case 'addEnv':
+          case 'add':
             this.dialogTitle = '新增环境'
             break
           case 'edit':
@@ -165,15 +166,17 @@
         this.dialogType = type
         this.dialogFormVisible = true
       },
-      async editEnv(row) {
+      async editProject(row) {
         this.dialogTitle = '编辑环境'
         this.dialogType = 'edit'
         for (let key in this.form) {
           this.form[key] = row[key]
         }
         this.dialogFormVisible = true
+        this.GetServerList()
+
       },
-      async deleteEnv(row) {
+      async deleteProject(row) {
         this.$confirm('此操作将永久删除环境, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -200,7 +203,7 @@
         this.$refs.projectForm.validate(async valid => {
           if (valid) {
             switch (this.dialogType) {
-              case 'addEnv':
+              case 'add':
               {
                 const res = await projectCreate(this.form)
                 if (res.code === 0) {
@@ -248,6 +251,21 @@
             this.env_List = ret.data.list
            }
      },
+     async GetServerList(){
+         this.serverList = []
+         const ret = await serverList({"page": 1, "pageSize": 9999})
+         if(ret.code === 0){
+            this.serverList = ret.data.list
+        }
+     },
+     async EnvChange(row){
+        this.server_List = []
+        const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": row})
+        if(ret.code === 0){
+            this.form.resource_server_id = ''
+            this.server_List = ret.data.list
+          }
+     }
     },
     created(){
       this.GetEnvList()

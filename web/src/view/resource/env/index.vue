@@ -6,6 +6,16 @@
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
       <el-table-column label="名称" min-width="150" prop="name"></el-table-column>
+      <el-table-column
+                    label="标签">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.env_label === 0 " class="operate-span-primary" >无标签</span>
+                    <span v-else-if="scope.row.env_label === 1 " class="operate-span-primary" >开发</span>
+                    <span v-else-if="scope.row.env_label === 2 " class="operate-span-primary" >测试</span>
+                    <span v-else-if="scope.row.env_label === 3 " class="operate-span-primary" >灰度</span>
+                    <span v-else-if="scope.row.env_label === 4 " class="operate-span-primary" >生产</span>
+                </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-span @click="editEnv(scope.row)" class="operate-span">编辑</el-span>
@@ -25,9 +35,17 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="EnvForm">
+      <el-form :model="form" :rules="rules" label-width="80px" ref="EnvForm">
         <el-form-item label="名称" prop="name">
           <el-input autocomplete="off" v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="标签" prop="env_label">
+            <el-radio-group v-model="form.env_label">
+                  <el-radio :label="1">开发</el-radio>
+                  <el-radio :label="2">测试</el-radio>
+                  <el-radio :label="3">灰度</el-radio>
+                  <el-radio :label="4">生产</el-radio>
+              </el-radio-group>
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
@@ -55,11 +73,15 @@
         form: {
           id: '',
           name: '',
+          env_label: 1,
         },
         type: '',
         rules: {
           name: [
             { required: true, message: '请输入环境名称', trigger: 'blur' }
+          ],
+          env_label: [
+            { required: true, message: '请输选择标签', trigger: 'blur' }
           ]
         }
       }
@@ -70,6 +92,7 @@
         this.form= {
           id: '',
           name: '',
+          env_label: 1
         }
       },
       closeDialog() {

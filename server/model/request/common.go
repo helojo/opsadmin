@@ -10,3 +10,10 @@ type PageInfo struct {
 type GetById struct {
 	Id float64 `json:"id" form:"id"`
 }
+
+// Paging common input parameter structure
+type ServerPageInfo struct {
+	Page          int `json:"page" form:"page"`
+	PageSize      int `json:"pageSize" form:"pageSize"`
+	ResourceEnvId int `json:"resource_env_id"  form:"resource_env_id"`
+}

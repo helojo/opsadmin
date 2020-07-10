@@ -20,11 +20,16 @@ import (
 // @return    list             interface{}
 // @return    total            int
 
-func ServerList(info request.PageInfo) (err error, list interface{}, total int) {
+func ServerList(info request.ServerPageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.ResourceServer{})
 	var serverList []model.ResourceServer
+	if info.ResourceEnvId != 0 {
+		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Count(&total).Error
+		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error
+		return err, serverList, total
+	}
 	err = db.Count(&total).Error
 	err = db.Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error
 	return err, serverList, total

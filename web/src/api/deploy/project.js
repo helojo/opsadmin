@@ -19,49 +19,49 @@ export const projectList = (data) => {
     })
 }
 
-// @Tags Resource_Env
-// @Summary 创建环境
+// @Tags Deploy_Project
+// @Summary 创建项目
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body api.CreateApiParams true "创建环境"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /resource/env/envCreate [post]
-export const envCreate = (data) => {
+// @Param data body api.projectCreate true "创建项目"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"创建成功"}"
+// @Router /deploy/project/projectCreate [post]
+export const projectCreate = (data) => {
     return service({
-        url: "/resource/env/envCreate",
+        url: "/deploy/project/projectCreate",
         method: 'post',
         data
     })
 }
 
-// @Tags Resource_Env
-// @Summary 更新环境
+// @Tags Deploy_Project
+// @Summary 更新项目
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body true "更新环境"
+// @Param data body true "更新项目"
 // @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /resource/env/envUpdate [post]
-export const envUpdate = (data) => {
+// @Router /deploy/project/projectUpdate [post]
+export const projectUpdate = (data) => {
     return service({
-        url: "/resource/env/envUpdate",
+        url: "/deploy/project/projectUpdate",
         method: 'post',
         data
     })
 }
 
-// @Tags Resource_Env
-// @Summary 删除环境
+// @Tags Deploy_Project
+// @Summary 删除项目
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body true "删除环境"
+// @Param data body true "删除项目"
 // @Success 200 {string} json "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /resource/env/envDelete [delete]
-export const envDelete = (data) => {
+// @Router /deploy/project/projectDelete [delete]
+export const projectDelete = (data) => {
     return service({
-        url: "/resource/env/envDelete",
+        url: "/deploy/project/projectDelete",
         method: 'delete',
         data
     })
