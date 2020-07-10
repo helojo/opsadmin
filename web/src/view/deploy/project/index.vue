@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('addEnv')" type="primary">新增环境</el-button>
+      <el-button @click="openDialog('addEnv')" type="primary">新增项目</el-button>
     </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
-      <el-table-column label="项目" min-width="150" prop="name"></el-table-column>
+      <el-table-column label="项目名" min-width="150" prop="name"></el-table-column>
       <el-table-column label="当前版本" min-width="150" prop="release_version"></el-table-column>
-      <el-table-column label="项目地址" min-width="150" prop="git_url"></el-table-column>
-      <el-table-column label="项目目录" min-width="150" prop="directory"></el-table-column>
+      <el-table-column label="Git地址" min-width="150" prop="git_url"></el-table-column>
+      <el-table-column label="目录" min-width="150" prop="directory"></el-table-column>
       <el-table-column label="忽略文件" min-width="150" prop="ignore_files"></el-table-column>
       <el-table-column
                     label="主机"
@@ -23,7 +23,7 @@
                     prop="resourceenv"
                     type="scope">
                 <template slot-scope="scope">
-                    {{ scope.row.resourceserver.resourceenv.name }}
+                    {{ scope.row.resourceenv.name }}
                 </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
@@ -45,10 +45,37 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="EnvForm">
-        <el-form-item label="名称" prop="name">
+      <el-form :model="form" :rules="rules" label-width="80px" ref="projectForm">
+        <el-form-item label="环境" prop="resource_env_id">
+                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
+                        <el-option
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
+                                v-for="item in env_List" />
+                    </el-select>
+        </el-form-item>
+        <el-form-item label="主机" prop="resource_server_id">
+                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_server_id">
+                        <el-option
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
+                                v-for="item in server_List" />
+                    </el-select>
+        </el-form-item>
+        <el-form-item label="项目名" prop="name">
           <el-input autocomplete="off" v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="Git地址" prop="git_url">
+          <el-input autocomplete="off" v-model="form.git_url"></el-input>
+        </el-form-item>    
+        <el-form-item label="目录" prop="directory">
+          <el-input autocomplete="off" v-model="form.directory"></el-input>
+        </el-form-item>
+        <el-form-item label="忽略文件" prop="ignore_files">
+          <el-input autocomplete="off" v-model="form.ignore_files"></el-input>
+        </el-form-item>               
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -61,8 +88,8 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { envCreate, envUpdate, envDelete } from '@/api/resource/env'
-  import { projectList } from '@/api/deploy/project'
+  import { envList } from '@/api/resource/env'
+  import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
     name: 'Env',
@@ -73,30 +100,51 @@
         dialogFormVisible: false,
         dialogTitle: '新增环境',
         dialogType: '',
+        env_List: [],
+        server_List: [],
         form: {
           id: '',
           name: '',
           git_url: '',
           directory: '',
-          ignore_files: '',
+          ignore_files: '.git',
+          resource_env_id: '',
+          resource_server_id: '',
         },
         type: '',
         rules: {
           name: [
             { required: true, message: '请输入环境名称', trigger: 'blur' }
-          ]
+          ],
+          git_url: [
+            { required: true, message: '请输入Git地址', trigger: 'blur' }
+          ],
+          directory: [
+            { required: true, message: '请输入项目目录', trigger: 'blur' }
+          ],     
+          ignore_files: [
+            { required: true, message: '请输入忽略文件，多个空格区分 ', trigger: 'blur' }
+          ],   
+          resource_env_id: [
+            { required: true, message: '请输入选择环境', trigger: 'blur' }
+          ],         
+          resource_server_id: [
+            { required: true, message: '请输入选择主机', trigger: 'blur' }
+          ],             
         }
       }
     },
     methods: {
       initForm() {
-        this.$refs.EnvForm.resetFields()
+        this.$refs.projectForm.resetFields()
         this.form= {
           id: '',
           name: '',
           git_url: '',
           directory: '',
-          ignore_files: '',
+          ignore_files: '.git',
+          resource_env_id: '',
+          resource_server_id: '',
         }
       },
       closeDialog() {
@@ -132,7 +180,7 @@
           type: 'warning'
         })
                 .then(async () => {
-                  const res = await envDelete(row)
+                  const res = await projectDelete(row)
                   if (res.code == 0) {
                     this.$message({
                       type: 'success',
@@ -149,12 +197,12 @@
                 })
       },
       async enterDialog() {
-        this.$refs.EnvForm.validate(async valid => {
+        this.$refs.projectForm.validate(async valid => {
           if (valid) {
             switch (this.dialogType) {
               case 'addEnv':
               {
-                const res = await envCreate(this.form)
+                const res = await projectCreate(this.form)
                 if (res.code === 0) {
                   this.$message({
                     type: 'success',
@@ -168,7 +216,7 @@
                 break
               case 'edit':
               {
-                const res = await envUpdate(this.form)
+                const res = await projectUpdate(this.form)
                 if (res.code == 0) {
                   this.$message({
                     type: 'success',
@@ -192,9 +240,17 @@
             }
           }
         })
-      }
+      },
+      async GetEnvList(){
+         this.env_List = []
+         const ret = await envList({"page": 1, "pageSize": 9999})
+         if(ret.code === 0){
+            this.env_List = ret.data.list
+           }
+     },
     },
     created(){
+      this.GetEnvList()
       this.getTableData()
     }
   }

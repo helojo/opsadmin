@@ -21,7 +21,7 @@ func ProjectList(info request.PageInfo) (err error, list interface{}, total int)
 	db := global.GVA_DB.Model(&model.DeployProject{})
 	var projectList []model.DeployProject
 	err = db.Count(&total).Error
-	err = db.Preload("ResourceServer.ResourceEnv").Limit(limit).Offset(offset).Find(&projectList).Error
+	err = db.Preload("ResourceServer").Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&projectList).Error
 	return err, projectList, total
 }
 
@@ -39,5 +39,28 @@ func ProjectCreate(project model.DeployProject) (err error) {
 		project.ReleaseVersion = 0.1
 		err = global.GVA_DB.Create(&project).Error
 	}
+	return err
+}
+
+// @title    ProjectUpdate
+// @description   更新项目
+// @auth                     （2020/07/10  15:22）
+// @param     project         model.DeployProject
+// @return                    error
+
+func ProjectUpdate(project model.DeployProject) (err error) {
+	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
+	return err
+}
+
+// @title    ProjectDelete
+// @description    删除项目
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func ProjectDelete(id float64) (err error) {
+	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ?", id).Delete(&project).Error
 	return err
 }

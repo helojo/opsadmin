@@ -52,9 +52,12 @@ func ProjectCreate(c *gin.Context) {
 	var project model.DeployProject
 	_ = c.ShouldBindJSON(&project)
 	projectVerify := utils.Rules{
-		"Name":      {utils.NotEmpty()},
-		"GitUrl":    {utils.NotEmpty()},
-		"Directory": {utils.NotEmpty()},
+		"Name":             {utils.NotEmpty()},
+		"GitUrl":           {utils.NotEmpty()},
+		"Directory":        {utils.NotEmpty()},
+		"IgnoreFiles":      {utils.NotEmpty()},
+		"ResourceServerId": {utils.NotEmpty()},
+		"ResourceEnvId":    {utils.NotEmpty()},
 	}
 	ServerVerifyErr := utils.Verify(project, projectVerify)
 	if ServerVerifyErr != nil {
@@ -66,5 +69,61 @@ func ProjectCreate(c *gin.Context) {
 		response.FailWithMessage(fmt.Sprintf("创建失败，%v", err), c)
 	} else {
 		response.OkWithMessage("创建成功", c)
+	}
+}
+
+// @Tags Deploy_Project
+// @Summary 更新项目
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.DeployProject true "更新项目"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新项目成功"}"
+// @Router /deploy/project/projectUpdate [post]
+func ProjectUpdate(c *gin.Context) {
+	var project model.DeployProject
+	_ = c.ShouldBindJSON(&project)
+	projectVerify := utils.Rules{
+		"Name":             {utils.NotEmpty()},
+		"GitUrl":           {utils.NotEmpty()},
+		"Directory":        {utils.NotEmpty()},
+		"IgnoreFiles":      {utils.NotEmpty()},
+		"ResourceServerId": {utils.NotEmpty()},
+		"ResourceEnvId":    {utils.NotEmpty()},
+	}
+	ServerVerifyErr := utils.Verify(project, projectVerify)
+	if ServerVerifyErr != nil {
+		response.FailWithMessage(ServerVerifyErr.Error(), c)
+		return
+	}
+	err := service.ProjectUpdate(project)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("更新失败，%v", err), c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+// @Tags Deploy_Project
+// @Summary 删除项目
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "删除项目"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除项目成功"}"
+// @Router /deploy/project/projectDelete [delete]
+func ProjectDelete(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if IdVerifyErr != nil {
+		response.FailWithMessage(IdVerifyErr.Error(), c)
+		return
+	}
+	err := service.ProjectDelete(reqId.Id)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("删除失败，%v", err), c)
+	} else {
+		response.OkWithMessage("删除成功", c)
 	}
 }

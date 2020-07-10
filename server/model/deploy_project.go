@@ -9,4 +9,6 @@ type DeployProject struct {
 	ReleaseVersion   float64        `json:"release_version"`
 	ResourceServerId int            `json:"resource_server_id"`
 	ResourceServer   ResourceServer `json:"resourceserver" gorm:"ForeignKey:ResourceServerId"`
+	ResourceEnvId    int            `json:"resource_env_id"`
+	ResourceEnv      ResourceEnv    `json:"resourceenv" gorm:"ForeignKey:ResourceEnvId"`
 }

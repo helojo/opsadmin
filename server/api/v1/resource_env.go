@@ -52,7 +52,8 @@ func EnvCreate(c *gin.Context) {
 	var env model.ResourceEnv
 	_ = c.ShouldBindJSON(&env)
 	EnvVerify := utils.Rules{
-		"Name": {utils.NotEmpty()},
+		"Name":     {utils.NotEmpty()},
+		"EnvLabel": {utils.NotEmpty()},
 	}
 	EnvVerifyErr := utils.Verify(env, EnvVerify)
 	if EnvVerifyErr != nil {
@@ -79,7 +80,8 @@ func EnvUpdate(c *gin.Context) {
 	var env model.ResourceEnv
 	_ = c.ShouldBindJSON(&env)
 	ApiVerify := utils.Rules{
-		"Name": {utils.NotEmpty()},
+		"Name":     {utils.NotEmpty()},
+		"EnvLabel": {utils.NotEmpty()},
 	}
 	ApiVerifyErr := utils.Verify(env, ApiVerify)
 	if ApiVerifyErr != nil {
