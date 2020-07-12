@@ -18,8 +18,8 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-span @click="editEnv(scope.row)" class="operate-span">编辑</el-span>
-          <el-span @click="deleteEnv(scope.row)" class="operate-span-danger">删除</el-span>
+          <span @click="editEnv(scope.row)" class="operate-span">编辑</span>
+          <span @click="deleteEnv(scope.row)" class="operate-span-danger">删除</span>
         </template>
       </el-table-column>
     </el-table>
