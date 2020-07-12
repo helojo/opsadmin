@@ -62,27 +62,18 @@
                                 v-for="item in env_List" />
                     </el-select>
         </el-form-item>
-        <el-form-item  label="主机" prop="resource_server_id">
-                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_server_id">
+        <el-form-item  label="项目" prop="deploy_project_id">
+                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.deploy_project_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id"
-                                v-for="item in server_List" />
+                                v-for="item in project_List" />
                     </el-select>
         </el-form-item>
-        <el-form-item label="项目名" prop="name">
-          <el-input autocomplete="off" v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="Git地址" prop="git_url">
-          <el-input autocomplete="off" v-model="form.git_url"></el-input>
-        </el-form-item>    
-        <el-form-item label="目录" prop="directory">
-          <el-input autocomplete="off" v-model="form.directory"></el-input>
-        </el-form-item>
-        <el-form-item label="忽略文件" prop="ignore_files">
-          <el-input autocomplete="off" v-model="form.ignore_files"></el-input>
-        </el-form-item>               
+        <el-form-item label="提测Tag" prop="tag">
+          <el-input autocomplete="off" v-model="form.tag"></el-input>
+        </el-form-item>              
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -98,7 +89,7 @@
   import { envList } from '@/api/resource/env'
   import { testingList } from '@/api/deploy/test'
   import { serverList } from '@/api/resource/server'
-  import { projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
+  import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
     name: 'Env',
@@ -111,35 +102,21 @@
         dialogType: '',
         env_List: [],
         server_List: [],
+        project_List: [],
         form: {
           id: '',
-          name: '',
-          git_url: '',
-          directory: '',
-          ignore_files: '.git',
+          tag: '',
           resource_env_id: '',
-          resource_server_id: '',
+          deploy_project_id: '',       
         },
         type: '',
         rules: {
-          name: [
-            { required: true, message: '请输入环境名称', trigger: 'blur' }
-          ],
-          git_url: [
-            { required: true, message: '请输入Git地址', trigger: 'blur' }
-          ],
-          directory: [
-            { required: true, message: '请输入项目目录', trigger: 'blur' }
-          ],     
-          ignore_files: [
-            { required: true, message: '请输入忽略文件，多个空格区分 ', trigger: 'blur' }
-          ],   
+          tag: [
+            { required: true, message: '请选择tag', trigger: 'blur' }
+          ],  
           resource_env_id: [
             { required: true, message: '请输入选择环境', trigger: 'blur' }
-          ],         
-          resource_server_id: [
-            { required: true, message: '请输入选择主机', trigger: 'blur' }
-          ],             
+          ],           
         }
       }
     },
@@ -266,11 +243,11 @@
         }
      },
      async EnvChange(row){
-        this.server_List = []
-        const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": row})
+        this.project_List = []
+        const ret = await projectList({"page": 1, "pageSize": 9999, "resource_env_id": row})
         if(ret.code === 0){
-            this.form.resource_server_id = ''
-            this.server_List = ret.data.list
+            this.form.deploy_project_id = ''
+            this.project_List = ret.data.list
           }
      }
     },
