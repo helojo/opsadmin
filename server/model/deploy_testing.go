@@ -1,7 +1,9 @@
 package model
 
+import "github.com/jinzhu/gorm"
+
 type DeployTesting struct {
-	ID              int           `json:"id" gorm:"not null;primary_key"`
+	gorm.Model
 	Applicant       string        `json:"applicant"`                     // 申请人
 	DevAuditor      string        `json:"dev_auditor"`                   // 开发审核人
 	TestAuditor     string        `json:"test_auditor"`                  // 测试审核人
