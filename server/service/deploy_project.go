@@ -32,7 +32,7 @@ func ProjectList(info request.PageInfo) (err error, list interface{}, total int)
 // @return                    error
 
 func ProjectCreate(project model.DeployProject) (err error) {
-	findOne := global.GVA_DB.Where("name = ?", project.Name).Find(&model.DeployProject{}).Error
+	findOne := global.GVA_DB.Where("resource_env_id = ? and name = ?", project.ResourceEnvId, project.Name).Find(&model.DeployProject{}).Error
 	if findOne == nil {
 		return errors.New("存在相同项目")
 	} else {
