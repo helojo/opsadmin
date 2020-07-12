@@ -1,6 +1,6 @@
 package model
 
-type DeployTest struct {
+type DeployTesting struct {
 	ID              int           `json:"id" gorm:"not null;primary_key"`
 	Applicant       string        `json:"applicant"`                     // 申请人
 	DevAuditor      string        `json:"dev_auditor"`                   // 开发审核人
