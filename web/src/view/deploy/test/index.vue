@@ -23,10 +23,20 @@
                     <span><pre>{{ props.row.describe }}</pre></span>
                 </template>
             </el-table-column>
+      <el-table-column
+                    label="状态"
+                    prop="status"
+                    type="scope">
+                <template slot-scope="scope">
+                    <span class="operate-span-warning" v-if="scope.row.status === 0 " >提测中</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >提成成功</span>
+                    <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >提测失败</span>
+                </template>
+      </el-table-column>            
+      <el-table-column label="申请人" min-width="150" prop="applicant"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editProject(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
-          <el-button @click="deleteProject(scope.row)" size="small" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-button @click="editProject(scope.row)" size="small" type="primary" >日志</el-button>
         </template>
       </el-table-column>
     </el-table>

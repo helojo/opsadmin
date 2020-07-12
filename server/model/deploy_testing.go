@@ -13,3 +13,13 @@ type DeployTesting struct {
 	DeployProjectId int           `json:"deploy_project_id"`
 	DeployProject   DeployProject `json:"deployproject" gorm:"ForeignKey:DeployProjectId"`
 }
+
+type DeployTestLog struct {
+	gorm.Model
+	Applicant       string        `json:"applicant"` // 申请人
+	Version         float64       `json:"version"`   // 提测版本
+	Tag             string        `json:"tag"`       // tag
+	Status          int           `json:"status"`    //1：成功 2：失败
+	DeployTestingId int           `json:"deploy_testing_id"`
+	DeployTesting   DeployTesting `json:"deploytesting" gorm:"ForeignKey:DeployTestingId"`
+}

@@ -32,8 +32,6 @@
                     <span class="operate-span-danger" v-else-if="scope.row.status === 4 " >连接失败</span>
                     <span class="operate-span-primary" v-else-if="scope.row.status === 5 " >公钥推送成功</span>
                     <span class="operate-span-danger" v-else-if="scope.row.status === 5 " >公钥推送失败</span>
-
-
                 </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
