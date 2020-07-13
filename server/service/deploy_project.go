@@ -54,7 +54,11 @@ func ProjectCreate(project model.DeployProject) (err error) {
 	if findOne == nil {
 		return errors.New("存在相同项目")
 	} else {
-
+		var gitproject model.GitlabProject
+		notRegister := global.GVA_DB.Where("url = ?", project.GitUrl).First(&gitproject).RecordNotFound()
+		if notRegister {
+			return errors.New("项目地址未找到，请核对Git地址!")
+		}
 		project.ReleaseVersion = 0.1
 		err = global.GVA_DB.Create(&project).Error
 	}
@@ -68,6 +72,11 @@ func ProjectCreate(project model.DeployProject) (err error) {
 // @return                    error
 
 func ProjectUpdate(project model.DeployProject) (err error) {
+	var gitproject model.GitlabProject
+	notRegister := global.GVA_DB.Where("url = ?", project.GitUrl).First(&gitproject).RecordNotFound()
+	if notRegister {
+		return errors.New("项目地址未找到，请核对Git地址!")
+	}
 	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
 	return err
 }
