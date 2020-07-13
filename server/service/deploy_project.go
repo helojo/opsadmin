@@ -54,6 +54,7 @@ func ProjectCreate(project model.DeployProject) (err error) {
 	if findOne == nil {
 		return errors.New("存在相同项目")
 	} else {
+
 		project.ReleaseVersion = 0.1
 		err = global.GVA_DB.Create(&project).Error
 	}

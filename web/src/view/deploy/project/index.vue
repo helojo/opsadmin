@@ -1,7 +1,14 @@
 <template>
   <div>
     <div class="button-box clearflex">
-      <el-button @click="openDialog('add')" type="primary">新增项目</el-button>
+        <el-form :inline="true" class="demo-form-inline">
+           <el-form-item style="float: right" >
+              <el-button @click="ProjectImport()" type="primary">Gitlab项目导入</el-button>
+            </el-form-item>
+            <el-form-item style="float: right" >
+              <el-button @click="openDialog('add')" type="primary">新增项目</el-button>
+            </el-form-item>
+        </el-form>
     </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="id" min-width="60" prop="id" ></el-table-column>
@@ -90,6 +97,8 @@
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
   import { serverList } from '@/api/resource/server'
+  import { projectImport } from '@/api/gitlab'
+
   import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -264,7 +273,30 @@
             this.form.resource_server_id = ''
             this.server_List = ret.data.list
           }
-     }
+     },
+     async ProjectImport(){
+        this.$confirm('此操作将导入gitlab所有项目, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+                .then(async () => {
+                  const res = await projectImport()
+                  if (res.code == 0) {
+                    this.$message({
+                      type: 'success',
+                      message: '导入成功!'
+                    })
+                    this.getTableData()
+                  }
+                })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '已取消导入'
+                  })
+                })
+     },
     },
     created(){
       this.GetEnvList()

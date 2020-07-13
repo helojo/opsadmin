@@ -23,9 +23,7 @@ func ProjectImport() (err error) {
 					Url:  project["url"],
 				}
 				notRegister := global.GVA_DB.Where("id = ?", id).First(&gitproject).RecordNotFound()
-				if !notRegister {
-					continue
-				} else {
+				if notRegister {
 					err = global.GVA_DB.Create(&gitproject).Error
 				}
 			}
