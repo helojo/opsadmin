@@ -60,3 +60,7 @@ log:
 # platformkey path
 platformkey:
     path: './resource/platformkey/'
+
+gitlab:
+    url: 'http://git.wjh.com'
+    token: 'cNwcPatbFYxc85DHndtc'

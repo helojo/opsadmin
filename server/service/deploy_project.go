@@ -82,3 +82,13 @@ func ProjectDelete(id float64) (err error) {
 	err = global.GVA_DB.Where("id = ?", id).Delete(&project).Error
 	return err
 }
+
+// @title    ProjectImport
+// @description    Gitlab  项目导入
+// @auth                     （2020/07/13  18:58）
+// @param     id
+// @return    err             error
+
+func ProjectImport() (err error) {
+	return err
+}

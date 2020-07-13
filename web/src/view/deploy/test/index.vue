@@ -125,12 +125,9 @@
         this.$refs.projectForm.resetFields()
         this.form= {
           id: '',
-          name: '',
-          git_url: '',
-          directory: '',
-          ignore_files: '.git',
+          tag: '',
           resource_env_id: '',
-          resource_server_id: '',
+          deploy_project_id: '',  
         }
       },
       closeDialog() {

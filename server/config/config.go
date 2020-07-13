@@ -10,6 +10,7 @@ type Server struct {
 	JWT         JWT         `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	Captcha     Captcha     `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	Log         Log         `mapstructure:"log" json:"log" yaml:"log"`
+	Gitlab      Gitlab      `mapstructure:"gitlab" json:"gitlab" yaml:"gitlab"`
 	Platformkey Platformkey `mapstructure:"platformkey" json:"platformkey" yaml:"platformkey"`
 }
 
@@ -74,4 +75,9 @@ type Sqlite struct {
 
 type Platformkey struct {
 	Path string `mapstructure:"path" json:"path" yaml:"path"`
+}
+
+type Gitlab struct {
+	Token string `mapstructure:"token" json:"token" yaml:"token"`
+	Url   string `mapstructure:"url" json:"url" yaml:"url"`
 }

@@ -13,5 +13,7 @@ func InitDeployProjectRouter(Router *gin.RouterGroup) {
 		ApiRouter.POST("projectCreate", v1.ProjectCreate)   // 项目创建
 		ApiRouter.POST("projectUpdate", v1.ProjectUpdate)   // 项目更新
 		ApiRouter.DELETE("projectDelete", v1.ProjectDelete) // 项目删除
+		ApiRouter.GET("projectImport", v1.ProjectImport)    // Gitlab 项目导入
+
 	}
 }
