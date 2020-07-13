@@ -18,3 +18,10 @@ type ServerPageInfo struct {
 	PageSize      int     `json:"pageSize" form:"pageSize"`
 	ResourceEnvId int     `json:"resource_env_id"  form:"resource_env_id"`
 }
+
+type ProjectPageInfo struct {
+	Id            float64 `json:"id" form:"id"`
+	Page          int     `json:"page" form:"page"`
+	PageSize      int     `json:"pageSize" form:"pageSize"`
+	ResourceEnvId int     `json:"resource_env_id"  form:"resource_env_id"`
+}

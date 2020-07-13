@@ -20,7 +20,7 @@ import (
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /deploy/project/projectList [post]
 func ProjectList(c *gin.Context) {
-	var pageInfo request.PageInfo
+	var pageInfo request.ProjectPageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
 	PageVerifyErr := utils.Verify(pageInfo, utils.CustomizeMap["PageVerify"])
 	if PageVerifyErr != nil {

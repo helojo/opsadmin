@@ -2,10 +2,27 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 )
+
+// @title    PtList
+// @description   get PtList list by pagination, 获取筛选排序条件数据
+// @auth                      （2020/07/13  09:48）
+// @return    err              error
+// @return    list             interface{}
+// @return    total            int
+func PtList(ordercondition string, wherecondition string, limit, offset int) (err error, list interface{}, total int) {
+	db := global.GVA_DB
+	var projecList []model.DeployProject
+	err = db.Where(wherecondition).Find(&projecList).Count(&total).Error
+	err = db.Order(ordercondition).Where(wherecondition).
+		Preload("ResourceServer").Preload("ResourceEnv").
+		Limit(limit).Offset(offset).Find(&projecList).Error
+	return err, projecList, total
+}
 
 // @title    ProjectList
 // @description   get project list by pagination, 分页获取数据
@@ -15,14 +32,15 @@ import (
 // @return    list             interface{}
 // @return    total            int
 
-func ProjectList(info request.PageInfo) (err error, list interface{}, total int) {
+func ProjectList(info request.ProjectPageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GVA_DB.Model(&model.DeployProject{})
-	var projectList []model.DeployProject
-	err = db.Count(&total).Error
-	err = db.Preload("ResourceServer").Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&projectList).Error
-	return err, projectList, total
+	if info.ResourceEnvId != 0 {
+		wherecondition := fmt.Sprintf("resource_env_id = %d", info.ResourceEnvId)
+		return PtList("", wherecondition, limit, offset)
+
+	}
+	return PtList("", "", limit, offset)
 }
 
 // @title    ProjectCreate

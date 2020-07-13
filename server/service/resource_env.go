@@ -15,7 +15,7 @@ import (
 // @return    list             interface{}
 // @return    total            int
 
-func GetEnvList(info request.PageInfo) (err error, list interface{}, total int) {
+func EnvList(info request.PageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.ResourceEnv{})
