@@ -39,6 +39,7 @@ func Routers() *gin.Engine {
 	router.InitResourceServerRouter(ApiGroup)        // 资源管理-主机
 	router.InitDeployProjectRouter(ApiGroup)         // 上线系统-项目管理
 	router.InitDeployTestingRouter(ApiGroup)         // 上线系统-提测
+	router.InitGitlabProjectRouter(ApiGroup)         // Gitlab 项目管理
 	global.GVA_LOG.Info("router register success")
 	return Router
 }
