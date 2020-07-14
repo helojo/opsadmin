@@ -115,7 +115,7 @@
       return {
         listApi: testingList,
         dialogFormVisible: false,
-        dialogTitle: '新增环境',
+        dialogTitle: '项目提测',
         dialogType: '',
         env_List: [],
         project_List: [],
@@ -146,7 +146,7 @@
         renderFunc(h, option) {
           return <span title={ option.label}>{ option.label }</span>;
         },
-        value: [1, 4],
+        value: [],
         form: {
           id: '',
           tag: '',
@@ -189,7 +189,7 @@
       openDialog(type) {
         switch (type) {
           case 'add':
-            this.dialogTitle = '新增环境'
+            this.dialogTitle = '项目提测'
             break
           case 'edit':
             this.dialogTitle = '编辑环境'
