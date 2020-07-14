@@ -63,7 +63,7 @@
                     </el-select>
         </el-form-item>
         <el-form-item  label="项目" prop="deploy_project_id">
-                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.deploy_project_id">
+                    <el-select @change="ProjectChange" filterable placeholder="请选择" style="width:100%" v-model="form.deploy_project_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -71,9 +71,25 @@
                                 v-for="item in project_List" />
                     </el-select>
         </el-form-item>
-        <el-form-item label="提测Tag" prop="tag">
-          <el-input autocomplete="off" v-model="form.tag"></el-input>
-        </el-form-item>              
+        <el-form-item  label="Tag" prop="tag">
+                    <el-select filterable placeholder="请选择" style="width:100%" v-model="form.tag">
+                        <el-option
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
+                                v-for="item in tag_List" />
+                    </el-select>
+        </el-form-item>   
+        <el-form-item label="文件" prop="files">
+            <el-transfer 
+            filterable 
+            :render-content="renderFunc"
+            :titles="titles" 
+            v-model="value" 
+            :data="data" 
+            el-transfer/>          
+        </el-form-item>   
+
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -89,6 +105,7 @@
   import { envList } from '@/api/resource/env'
   import { testingList } from '@/api/deploy/test'
   import { serverList } from '@/api/resource/server'
+  import { projectTags } from '@/api/gitlab'
   import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
@@ -101,11 +118,39 @@
         dialogTitle: '新增环境',
         dialogType: '',
         env_List: [],
-        server_List: [],
         project_List: [],
+        tag_List: [],
+        titles: ["源文件", "目标文件"],
+        data: [
+          {
+            key: 1,
+            label: `备选项1111111111111111111111111111111111111111111`,
+            disabled: false
+          },
+          {
+            key: 2,
+            label: `备选项2`,
+            disabled: false
+          },
+          {
+            key: 3,
+            label: `备选项3`,
+            disabled: false
+          },
+          {
+            key: 4,
+            label: `备选项4`,
+            disabled: false
+          },
+        ],
+        renderFunc(h, option) {
+          return <span title={ option.label}>{ option.label }</span>;
+        },
+        value: [1, 4],
         form: {
           id: '',
           tag: '',
+          files: '',
           resource_env_id: '',
           deploy_project_id: '',       
         },
@@ -114,9 +159,15 @@
           tag: [
             { required: true, message: '请选择tag', trigger: 'blur' }
           ],  
+          files: [
+            { required: true, message: '请选择文件', trigger: 'blur' }
+          ],           
+          deploy_project_id: [
+            { required: true, message: '请输入选择项目', trigger: 'blur' }
+          ],  
           resource_env_id: [
             { required: true, message: '请输入选择环境', trigger: 'blur' }
-          ],           
+          ],                    
         }
       }
     },
@@ -126,6 +177,7 @@
         this.form= {
           id: '',
           tag: '',
+          files: '',
           resource_env_id: '',
           deploy_project_id: '',  
         }
@@ -246,7 +298,15 @@
             this.form.deploy_project_id = ''
             this.project_List = ret.data.list
           }
-     }
+     },
+     async ProjectChange(row){
+        this.tag_List = []
+        const ret = await projectTags({"id": row})
+        if(ret.code === 0){
+            this.form.tag = ''
+            this.tag_List = ret.data.list
+          }     
+        }
     },
     created(){
       this.GetEnvList()

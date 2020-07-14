@@ -67,7 +67,7 @@ func ProjectBranches(id int) (taglist []interface{}, err error) {
 	return tagList, err
 }
 
-func GetProjectBranches(id int) (branchelist []interface{}, taglist []interface{}, err error) {
+func GetProjectTags(id int) (taglist []interface{}, err error) {
 	// 获取项目列表
 	var url string = global.GVA_CONFIG.Gitlab.Url
 	var token string = global.GVA_CONFIG.Gitlab.Token
@@ -75,22 +75,6 @@ func GetProjectBranches(id int) (branchelist []interface{}, taglist []interface{
 	if err != nil {
 		panic(err)
 	}
-	// 获取项目分支
-	opt := &gitlab.ListBranchesOptions{
-		ListOptions: gitlab.ListOptions{
-			Page:    1,
-			PerPage: 100,
-		},
-	}
-	branches, _, err := git.Branches.ListBranches(id, opt)
-	var brancheList []interface{}
-	for _, branche := range branches {
-		brancheMap := make(map[string]string)
-		brancheMap["id"] = branche.Name
-		brancheMap["name"] = branche.Name
-		brancheList = append(brancheList, brancheMap)
-	}
-
 	//获取分支tag
 	opttag := &gitlab.ListTagsOptions{
 		ListOptions: gitlab.ListOptions{
@@ -106,5 +90,5 @@ func GetProjectBranches(id int) (branchelist []interface{}, taglist []interface{
 		tagMap["name"] = tag.Name
 		tagList = append(tagList, tagMap)
 	}
-	return brancheList, tagList, err
+	return tagList, err
 }

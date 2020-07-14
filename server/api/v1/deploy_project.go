@@ -59,9 +59,9 @@ func ProjectCreate(c *gin.Context) {
 		"ResourceServerId": {utils.NotEmpty()},
 		"ResourceEnvId":    {utils.NotEmpty()},
 	}
-	ServerVerifyErr := utils.Verify(project, projectVerify)
-	if ServerVerifyErr != nil {
-		response.FailWithMessage(ServerVerifyErr.Error(), c)
+	projectVerifyErr := utils.Verify(project, projectVerify)
+	if projectVerifyErr != nil {
+		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
 	}
 	err := service.ProjectCreate(project)

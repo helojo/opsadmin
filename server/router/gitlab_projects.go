@@ -10,6 +10,6 @@ func InitGitlabProjectRouter(Router *gin.RouterGroup) {
 	ApiRouter := Router.Group("gitlab/project").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
 		ApiRouter.GET("projectImport", v1.ProjectImport) // Gitlab 项目导入
-
+		ApiRouter.POST("projectTags", v1.ProjectTags)    // 获取项目tag
 	}
 }

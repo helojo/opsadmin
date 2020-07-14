@@ -31,3 +31,24 @@ func ProjectImport() (err error) {
 	}
 	return err
 }
+
+// @title    ProjectTags
+// @description    获取项目tag
+// @auth                     （2020/07/14  10:06）
+// @param     id
+// @return    err             error
+func ProjectTags(p model.DeployProject) (taglist []interface{}, err error) {
+	var project model.DeployProject
+	var gitlab model.GitlabProject
+	err = global.GVA_DB.Where("id = ?", p.ID).First(&project).Error
+	if err == nil {
+		err = global.GVA_DB.Where("url = ?", project.GitUrl).First(&gitlab).Error
+		if err == nil {
+			tagList, err := utils.GetProjectTags(gitlab.ID)
+			if err == nil {
+				return tagList, err
+			}
+		}
+	}
+	return taglist, err
+}
