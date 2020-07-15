@@ -38,3 +38,34 @@ func TestingList(c *gin.Context) {
 		}, c)
 	}
 }
+
+// @Tags Deploy_Testing
+// @Summary 文件对比
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.PageInfo true "文件对比"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"文件对比成功"}"
+// @Router /deploy/test/testingContrast [post]
+func TestingContrast(c *gin.Context) {
+	var testting request.ContrastInfo
+	_ = c.ShouldBindJSON(&testting)
+	projectVerify := utils.Rules{
+		"Tag":             {utils.NotEmpty()},
+		"ResourceEnvId":   {utils.NotEmpty()},
+		"DeployProjectId": {utils.NotEmpty()},
+	}
+	projectVerifyErr := utils.Verify(testting, projectVerify)
+	if projectVerifyErr != nil {
+		response.FailWithMessage(projectVerifyErr.Error(), c)
+		return
+	}
+	err, list := service.TestingContrast(testting)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.PageResult{
+			List: list,
+		}, c)
+	}
+}

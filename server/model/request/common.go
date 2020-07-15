@@ -25,3 +25,9 @@ type ProjectPageInfo struct {
 	PageSize      int     `json:"pageSize" form:"pageSize"`
 	ResourceEnvId int     `json:"resource_env_id"  form:"resource_env_id"`
 }
+
+type ContrastInfo struct {
+	Tag             string `json:"tag" form:"tag"`
+	ResourceEnvId   int    `json:"resource_env_id" form:"resource_env_id"`
+	DeployProjectId int    `json:"deploy_project_id" form:"deploy_project_id"`
+}

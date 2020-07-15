@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
@@ -22,4 +23,17 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 	err = db.Count(&total).Error
 	err = db.Preload("DeployProject").Limit(limit).Offset(offset).Find(&testingList).Error
 	return err, testingList, total
+}
+
+// @title    TestingContrast
+// @description   对比文件
+// @auth                      （2020/07/15  09:50）
+// @param     info             request.ContrastInfo
+// @return    err              error
+// @return    list             interface{}
+// @return    total            int
+
+func TestingContrast(info request.ContrastInfo) (err error, list interface{}) {
+	fmt.Println(info)
+	return err, list
 }

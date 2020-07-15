@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="button-box clearflex">
-      <el-button @click="openDialog('add')" type="primary">项目提测</el-button>
-    </div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="创建时间" min-width="150" prop="CreatedAt"></el-table-column>
       <el-table-column
@@ -52,7 +49,7 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :model="form" :rules="rules" label-width="80px" ref="projectForm">
+      <el-form :model="form" :rules="rules" label-width="50px" ref="projectForm">
         <el-form-item label="环境" prop="resource_env_id">
                     <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
                         <el-option
@@ -83,6 +80,7 @@
         <el-form-item label="文件" prop="files">
             <el-transfer 
             filterable 
+            tooltip-effect="dark"
             :render-content="renderFunc"
             :titles="titles" 
             v-model="value" 
@@ -144,7 +142,7 @@
           },
         ],
         renderFunc(h, option) {
-          return <span title={ option.label}>{ option.label }</span>;
+          return <span title="新增">新增-{ option.label }</span>;
         },
         value: [],
         form: {
