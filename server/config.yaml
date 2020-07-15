@@ -64,3 +64,6 @@ platformkey:
 gitlab:
     url: 'http://git.wjh.com'
     token: 'cNwcPatbFYxc85DHndtc'
+
+gitpull:
+    path: './resource/gittemp/'

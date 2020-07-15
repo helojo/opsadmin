@@ -19,50 +19,22 @@ export const testingList = (data) => {
     })
 }
 
-// @Tags Deploy_Project
-// @Summary 创建项目
+// @Tags Deploy_Testing
+// @Summary 文件对比
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body api.projectCreate true "创建项目"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /deploy/project/projectCreate [post]
-export const projectCreate = (data) => {
+// @Param data body modelInterface.PageInfo true "文件对比"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"文件对比成功"}"
+// @Router /deploy/test/testingContrast [post]
+// {
+//  page     int
+//	pageSize int
+// }
+export const testingContrast = (data) => {
     return service({
-        url: "/deploy/project/projectCreate",
+        url: "/deploy/test/testingContrast",
         method: 'post',
-        data
-    })
-}
-
-// @Tags Deploy_Project
-// @Summary 更新项目
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body true "更新项目"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /deploy/project/projectUpdate [post]
-export const projectUpdate = (data) => {
-    return service({
-        url: "/deploy/project/projectUpdate",
-        method: 'post',
-        data
-    })
-}
-
-// @Tags Deploy_Project
-// @Summary 删除项目
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body true "删除项目"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /deploy/project/projectDelete [delete]
-export const projectDelete = (data) => {
-    return service({
-        url: "/deploy/project/projectDelete",
-        method: 'delete',
         data
     })
 }

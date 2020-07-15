@@ -12,6 +12,7 @@ type Server struct {
 	Log         Log         `mapstructure:"log" json:"log" yaml:"log"`
 	Gitlab      Gitlab      `mapstructure:"gitlab" json:"gitlab" yaml:"gitlab"`
 	Platformkey Platformkey `mapstructure:"platformkey" json:"platformkey" yaml:"platformkey"`
+	Gitpull     Gitpull     `mapstructure:"gitpull" json:"gitpull" yaml:"gitpull"`
 }
 
 type System struct {
@@ -80,4 +81,8 @@ type Platformkey struct {
 type Gitlab struct {
 	Token string `mapstructure:"token" json:"token" yaml:"token"`
 	Url   string `mapstructure:"url" json:"url" yaml:"url"`
+}
+
+type Gitpull struct {
+	Path string `mapstructure:"path" json:"path" yaml:"path"`
 }
