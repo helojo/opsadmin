@@ -38,3 +38,23 @@ export const testingContrast = (data) => {
         data
     })
 }
+
+// @Tags Deploy_Testing
+// @Summary 项目提侧
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "项目提侧"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"项目提侧成功"}"
+// @Router /deploy/test/testingRelease [post]
+// {
+//  page     int
+//	pageSize int
+// }
+export const testingRelease = (data) => {
+    return service({
+        url: "/deploy/test/testingRelease",
+        method: 'post',
+        data
+    })
+}

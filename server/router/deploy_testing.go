@@ -11,6 +11,6 @@ func InitDeployTestingRouter(Router *gin.RouterGroup) {
 	{
 		ApiRouter.POST("testingList", v1.TestingList)         // 提测列表
 		ApiRouter.POST("testingContrast", v1.TestingContrast) // 提测对比
-
+		ApiRouter.POST("testingRelease", v1.TestingRelease)   // 提侧发布
 	}
 }

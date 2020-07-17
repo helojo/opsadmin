@@ -36,6 +36,7 @@
             :titles="titles" 
             v-model="value" 
             :data="files_list"
+            @change="handleChange"
             el-transfer/>          
         </el-form-item>   
 
@@ -43,7 +44,7 @@
       <div class="dialog-footer" slot="footer" style="float: right" >
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="Contrast" type="primary">比较</el-button>
-        <el-button @click="enterDialog" type="primary">提交</el-button>
+        <el-button :disabled="CommitButton"  @click="enterDialog" type="primary">提交</el-button>
       </div>
   </div>
 </template>
@@ -52,10 +53,10 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
-  import { testingList, testingContrast} from '@/api/deploy/test'
+  import { testingList, testingContrast, testingRelease} from '@/api/deploy/test'
   import { serverList } from '@/api/resource/server'
   import { projectTags } from '@/api/gitlab'
-  import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
+  import { projectList } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
     name: 'Testing',
@@ -71,7 +72,9 @@
         tag_List: [],
         titles: ["源文件", "目标文件"],
         files_list: [],
+        taget_file_list: [],
         path: "",
+        CommitButton: true,
         renderFunc(h, option) {
           return <span title={ option.label }>{ option.label }</span>;
         },
@@ -120,47 +123,9 @@
           case 'add':
             this.dialogTitle = '项目提测'
             break
-          case 'edit':
-            this.dialogTitle = '编辑环境'
-            break
-          default:
-            break
         }
         this.dialogType = type
         this.dialogFormVisible = true
-      },
-      async editProject(row) {
-        this.dialogTitle = '编辑环境'
-        this.dialogType = 'edit'
-        for (let key in this.form) {
-          this.form[key] = row[key]
-        }
-        this.dialogFormVisible = true
-        this.GetServerList(this.form.resource_env_id)
-
-      },
-      async deleteProject(row) {
-        this.$confirm('此操作将永久删除环境, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-                .then(async () => {
-                  const res = await projectDelete(row)
-                  if (res.code == 0) {
-                    this.$message({
-                      type: 'success',
-                      message: '删除成功!'
-                    })
-                    this.getTableData()
-                  }
-                })
-                .catch(() => {
-                  this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                  })
-                })
       },
       async Contrast(){
        this.$refs.projectForm.validate(async valid => {
@@ -172,55 +137,42 @@
                       this.form.files = ""
                      this.files_list = res.data.list
                      this.path = res.data.path
+                     this.CommitButton = false
                  }
                  console.log(this.path)
               }
           }
         })
       },
+      async handleChange(value, direction) {
+          if(direction === "right") {
+              this.taget_file_list = value
+          }
+      },
       async enterDialog() {
         this.$refs.projectForm.validate(async valid => {
           if (valid) {
-            switch (this.dialogType) {
-              case 'add':
-              {
-                const res = await projectCreate(this.form)
-                if (res.code === 0) {
+
+              if (this.taget_file_list.length <= 0) {
                   this.$message({
-                    type: 'success',
-                    message: '添加成功',
-                    showClose: true
+                      type: 'error',
+                      message: '请选择文件！',
+                      showClose: true
                   })
-                }
-                this.getTableData()
-                this.closeDialog()
+              } else {
+                  this.form.files = this.taget_file_list
+                  console.log(this.form)
+                  const res = await testingRelease(this.form)
+                  if (res.code === 0) {
+                      this.$message({
+                          type: 'success',
+                          message: '提侧成功',
+                          showClose: true
+                      })
+                  }
               }
-                break
-              case 'edit':
-              {
-                const res = await projectUpdate(this.form)
-                if (res.code == 0) {
-                  this.$message({
-                    type: 'success',
-                    message: '编辑成功',
-                    showClose: true
-                  })
-                }
-                this.getTableData()
-                this.closeDialog()
-              }
-                break
-              default:
-              {
-                this.$message({
-                  type: 'error',
-                  message: '未知操作',
-                  showClose: true
-                })
-              }
-                break
+
             }
-          }
         })
       },
       async GetEnvList(){
