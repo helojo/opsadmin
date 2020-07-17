@@ -72,19 +72,19 @@ func TestingContrast(c *gin.Context) {
 }
 
 // @Tags Deploy_Testing
-// @Summary 提侧发布
+// @Summary 提测发布
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.PageInfo true "提侧发布"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"提侧发布成功"}"
+// @Param data body request.PageInfo true "提测发布"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"提测发布成功"}"
 // @Router /deploy/test/testingRelease [post]
 func TestingRelease(c *gin.Context) {
 	var testting request.TestingReleaseInfo
 	_ = c.ShouldBindJSON(&testting)
-	fmt.Println(testting)
 	projectVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
+		"Path":            {utils.NotEmpty()},
 		"ResourceEnvId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 		"Files":           {utils.NotEmpty()},
@@ -95,15 +95,11 @@ func TestingRelease(c *gin.Context) {
 		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
 	}
-	response.OkWithMessage("发布成功", c)
 
-	//err, list, path := service.TestingContrast(testting)
-	//if err != nil {
-	//	response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
-	//} else {
-	//	response.OkWithData(resp.ContrastResult{
-	//		List: list,
-	//		Path: path,
-	//	}, c)
-	//}
+	err := service.TestingRelease(testting)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("提测失败，%v", err), c)
+	} else {
+		response.OkWithMessage("提测成功", c)
+	}
 }

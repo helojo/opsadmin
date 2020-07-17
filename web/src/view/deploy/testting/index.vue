@@ -138,8 +138,8 @@
                      this.files_list = res.data.list
                      this.path = res.data.path
                      this.CommitButton = false
+                     this.taget_file_list = []
                  }
-                 console.log(this.path)
               }
           }
         })
@@ -161,6 +161,7 @@
                   })
               } else {
                   this.form.files = this.taget_file_list
+                  this.form.path = this.path
                   console.log(this.form)
                   const res = await testingRelease(this.form)
                   if (res.code === 0) {

@@ -34,6 +34,7 @@ type ContrastInfo struct {
 
 type TestingReleaseInfo struct {
 	Tag             string   `json:"tag" form:"tag"`
+	Path            string   `json:"path" form:"path"`
 	Files           []string `json:"files" form:"files"`
 	ResourceEnvId   int      `json:"resource_env_id" form:"resource_env_id"`
 	DeployProjectId int      `json:"deploy_project_id" form:"deploy_project_id"`

@@ -34,7 +34,7 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 // @param     info             request.ContrastInfo
 // @return    err              error
 // @return    list             interface{}
-// @return    total            int
+// @return    path             string
 
 func TestingContrast(testting request.ContrastInfo) (err error, list interface{}, path string) {
 	var project model.DeployProject
@@ -47,6 +47,7 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 	if err != nil {
 		return errors.New(fmt.Sprint("Git拉取项目报错, 报错信息: %s", err)), list, path
 	}
+
 	exclude := strings.Fields(project.IgnoreFiles)
 	err, list = utils.FileContrast(path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
 	if err != nil {
@@ -54,4 +55,15 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 	}
 
 	return err, list, path
+}
+
+// @title    TestingRelease
+// @description   提交并同步要发布的文件
+// @auth                      （2020/07/17  19:45）
+// @param     info             request.TestingReleaseInfo
+// @return    err              error
+
+func TestingRelease(info request.TestingReleaseInfo) (err error) {
+	fmt.Println(info)
+	return err
 }

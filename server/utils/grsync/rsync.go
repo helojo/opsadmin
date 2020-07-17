@@ -187,7 +187,6 @@ type RsyncOptions struct {
 // StdoutPipe returns a pipe that will be connected to the command's
 // standard output when the command starts.
 func (r Rsync) StdoutPipe() (io.ReadCloser, error) {
-	fmt.Println("打印同步命令:", r.cmd)
 	return r.cmd.StdoutPipe()
 }
 
@@ -205,7 +204,6 @@ func (r Rsync) Run() error {
 		//	return err
 		//}
 	}
-
 	fmt.Println("执行前打印命令", r.cmd)
 	if err := r.cmd.Start(); err != nil {
 		return err
