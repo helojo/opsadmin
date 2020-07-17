@@ -100,6 +100,6 @@ func TestingRelease(c *gin.Context) {
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("提测失败，%v", err), c)
 	} else {
-		response.OkWithMessage("提测成功", c)
+		response.OkWithMessage("提测成功!", c)
 	}
 }

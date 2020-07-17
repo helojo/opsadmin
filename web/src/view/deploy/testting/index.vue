@@ -64,7 +64,6 @@
     data() {
       return {
         listApi: testingList,
-        dialogFormVisible: false,
         dialogTitle: '项目提测',
         dialogType: '',
         env_List: [],
@@ -116,7 +115,8 @@
       },
       closeDialog() {
         this.initForm()
-        this.dialogFormVisible = false
+        this.taget_file_list = []
+        this.files_list = []
       },
       openDialog(type) {
         switch (type) {
@@ -124,8 +124,6 @@
             this.dialogTitle = '项目提测'
             break
         }
-        this.dialogType = type
-        this.dialogFormVisible = true
       },
       async Contrast(){
        this.$refs.projectForm.validate(async valid => {
