@@ -2,7 +2,7 @@
   <div>
       <el-form :model="form" :rules="rules" label-width="50px" ref="projectForm">
         <el-form-item label="环境" prop="resource_env_id">
-                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:30%" v-model="form.resource_env_id">
+                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.resource_env_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -11,7 +11,7 @@
                     </el-select>
         </el-form-item>
         <el-form-item  label="项目" prop="deploy_project_id">
-                    <el-select @change="ProjectChange" filterable placeholder="请选择" style="width:30%" v-model="form.deploy_project_id">
+                    <el-select @change="ProjectChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.deploy_project_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -20,7 +20,7 @@
                     </el-select>
         </el-form-item>
         <el-form-item  label="Tag" prop="tag">
-                    <el-select filterable placeholder="请选择" style="width:30%" v-model="form.tag">
+                    <el-select filterable placeholder="请选择" style="width:32.4%" v-model="form.tag">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -35,14 +35,14 @@
             :render-content="renderFunc"
             :titles="titles" 
             v-model="value" 
-            :data="data" 
+            :data="files_list" 
             el-transfer/>          
         </el-form-item>   
 
       </el-form>
       <div class="dialog-footer" slot="footer" style="float: right" >
         <el-button @click="closeDialog">取 消</el-button>
-        <el-button @click="closeDialog" type="primary">比较</el-button>
+        <el-button @click="Contrast" type="primary">比较</el-button>
         <el-button @click="enterDialog" type="primary">提交</el-button>
       </div>
   </div>
@@ -52,13 +52,13 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { envList } from '@/api/resource/env'
-  import { testingList } from '@/api/deploy/test'
+  import { testingList, testingContrast} from '@/api/deploy/test'
   import { serverList } from '@/api/resource/server'
   import { projectTags } from '@/api/gitlab'
   import { projectList, projectCreate, projectUpdate, projectDelete } from '@/api/deploy/project'
   import infoList from '@/components/mixins/infoList'
   export default {
-    name: 'Env',
+    name: 'Testing',
     mixins: [infoList],
     data() {
       return {
@@ -70,24 +70,8 @@
         project_List: [],
         tag_List: [],
         titles: ["源文件", "目标文件"],
-        data: [
-          {
-            key: 1,
-            label: `备选项1111111111111111111111111111111111111111111`,
-          },
-          {
-            key: 2,
-            label: `备选项2`,
-          },
-          {
-            key: 3,
-            label: `备选项3`,
-          },
-          {
-            key: 4,
-            label: `备选项4`,
-          },
-        ],
+        files_list: [],
+        path: "",
         renderFunc(h, option) {
           return <span title={ option.label }>{ option.label }</span>;
         },
@@ -104,9 +88,9 @@
           tag: [
             { required: true, message: '请选择tag', trigger: 'blur' }
           ],  
-          files: [
-            { required: true, message: '请选择文件', trigger: 'blur' }
-          ],           
+          // files: [
+          //   { required: true, message: '请选择文件', trigger: 'blur' }
+          // ],           
           deploy_project_id: [
             { required: true, message: '请输入选择项目', trigger: 'blur' }
           ],  
@@ -177,6 +161,22 @@
                     message: '已取消删除'
                   })
                 })
+      },
+      async Contrast(){
+       this.$refs.projectForm.validate(async valid => {
+          if (valid) {
+              {
+                  this.files_list = []
+                  const res = await testingContrast(this.form)
+                  if (res.code === 0) {
+                      this.form.files = ""
+                     this.files_list = res.data.list
+                     this.path = res.data.path
+                 }
+                 console.log(this.path)
+              }
+          }
+        })
       },
       async enterDialog() {
         this.$refs.projectForm.validate(async valid => {

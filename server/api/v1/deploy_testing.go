@@ -60,12 +60,13 @@ func TestingContrast(c *gin.Context) {
 		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
 	}
-	err, list := service.TestingContrast(testting)
+	err, list, path := service.TestingContrast(testting)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
 	} else {
-		response.OkWithData(resp.PageResult{
+		response.OkWithData(resp.ContrastResult{
 			List: list,
+			Path: path,
 		}, c)
 	}
 }

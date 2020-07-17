@@ -1,10 +1,13 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
+	"gin-vue-admin/utils"
+	"strings"
 )
 
 // @title    TestingList
@@ -33,7 +36,22 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 // @return    list             interface{}
 // @return    total            int
 
-func TestingContrast(info request.ContrastInfo) (err error, list interface{}) {
-	fmt.Println(info)
-	return err, list
+func TestingContrast(testting request.ContrastInfo) (err error, list interface{}, path string) {
+	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("ResourceServer").First(&project).Error
+	if err != nil {
+		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
+	}
+
+	path, err = utils.Gitpull(testting.Tag, project.GitUrl)
+	if err != nil {
+		return errors.New(fmt.Sprint("Git拉取项目报错, 报错信息: %s", err)), list, path
+	}
+	exclude := strings.Fields(project.IgnoreFiles)
+	err, list = utils.FileContrast(path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
+	if err != nil {
+		return errors.New(fmt.Sprint("对比文件报错, 报错信息: %s", err)), list, path
+	}
+
+	return err, list, path
 }
