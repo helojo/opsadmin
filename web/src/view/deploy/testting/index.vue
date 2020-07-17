@@ -35,7 +35,7 @@
             :render-content="renderFunc"
             :titles="titles" 
             v-model="value" 
-            :data="files_list" 
+            :data="files_list"
             el-transfer/>          
         </el-form-item>   
 
@@ -90,7 +90,7 @@
           ],  
           // files: [
           //   { required: true, message: '请选择文件', trigger: 'blur' }
-          // ],           
+          // ],
           deploy_project_id: [
             { required: true, message: '请输入选择项目', trigger: 'blur' }
           ],  
