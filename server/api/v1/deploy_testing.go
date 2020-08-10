@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"gin-vue-admin/global/response"
+	"gin-vue-admin/middleware"
 	"gin-vue-admin/model/request"
 	resp "gin-vue-admin/model/response"
 	"gin-vue-admin/service"
@@ -89,14 +90,13 @@ func TestingRelease(c *gin.Context) {
 		"DeployProjectId": {utils.NotEmpty()},
 		"Files":           {utils.NotEmpty()},
 	}
-
 	projectVerifyErr := utils.Verify(testting, projectVerify)
 	if projectVerifyErr != nil {
 		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
 	}
-
-	err := service.TestingRelease(testting)
+	claims, _ := middleware.NewJWT().ParseToken(c.GetHeader("x-token"))
+	err := service.TestingRelease(testting, claims)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("提测失败，%v", err), c)
 	} else {

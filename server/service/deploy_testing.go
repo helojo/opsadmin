@@ -63,7 +63,7 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 // @param     info             request.TestingReleaseInfo
 // @return    err              error
 
-func TestingRelease(testting request.TestingReleaseInfo) (err error) {
+func TestingRelease(testting request.TestingReleaseInfo, username *request.CustomClaims) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("ResourceServer").First(&project).Error
 	if err != nil {
@@ -72,9 +72,23 @@ func TestingRelease(testting request.TestingReleaseInfo) (err error) {
 
 	exclude := strings.Fields(project.IgnoreFiles)
 	err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
-	if err != nil {
-		return errors.New(fmt.Sprint("同步文件报错, 报错信息:", err))
+
+	testOrder := &model.DeployTesting{
+		Tag:             testting.Tag,
+		Applicant:       username.NickName,
+		Result:          result,
+		DeployProjectId: testting.DeployProjectId,
 	}
-	fmt.Println(result)
+
+	if err != nil {
+		testOrder.Status = 2
+	}
+
+	testOrder.Status = 1
+	err = global.GVA_DB.Create(testOrder).Error
+	if err != nil {
+		return errors.New(fmt.Sprint("提测工单创建失败: %s", err))
+	}
+
 	return err
 }

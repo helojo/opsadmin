@@ -37,12 +37,12 @@ func FileContrast(sourceDir string, user string, tagetServer string, tagetDir st
 			if !strings.HasPrefix(v, "deleting") && v != "" {
 				v = strings.ReplaceAll(v, "\"", "")
 				if v != "" {
-					file["key"] = v
+					file["key"] = "更新 " + v
 					result_list = append(result_list, file)
 				}
 			} else {
 				if v != "" {
-					file["key"] = v
+					file["key"] = "删除" + strings.ReplaceAll(v, "deleting", "")
 					result_list = append(result_list, file)
 				}
 

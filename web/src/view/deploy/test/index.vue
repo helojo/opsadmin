@@ -10,7 +10,6 @@
                     <span class="operate-span"> {{ scope.row.deployproject.name }}</span>         
                 </template>
       </el-table-column>
-      <el-table-column label="提测版本" min-width="150" prop="version"></el-table-column>
       <el-table-column label="提测Tag" min-width="150" prop="tag"></el-table-column>
             <el-table-column
                     type="expand"

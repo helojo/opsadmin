@@ -52,7 +52,7 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :model="form" :rules="rules" label-width="80px" ref="projectForm">
+      <el-form :model="form" :rules="rules" label-width="100px" ref="projectForm">
         <el-form-item label="环境" prop="resource_env_id">
                     <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
                         <el-option
@@ -77,7 +77,7 @@
         <el-form-item label="Git地址" prop="git_url">
           <el-input autocomplete="off" v-model="form.git_url"></el-input>
         </el-form-item>    
-        <el-form-item label="目录" prop="directory">
+        <el-form-item label="项目目录" prop="directory">
           <el-input autocomplete="off" v-model="form.directory"></el-input>
         </el-form-item>
         <el-form-item label="忽略文件" prop="ignore_files">
