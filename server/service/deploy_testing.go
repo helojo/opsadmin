@@ -24,7 +24,7 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 	db := global.GVA_DB.Model(&model.DeployTesting{})
 	var testingList []model.DeployTesting
 	err = db.Count(&total).Error
-	err = db.Preload("DeployProject").Limit(limit).Offset(offset).Find(&testingList).Error
+	err = db.Order("id DESC ").Preload("DeployProject.ResourceEnv").Limit(limit).Offset(offset).Find(&testingList).Error
 	return err, testingList, total
 }
 
@@ -79,6 +79,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		Result:          result,
 		DeployProjectId: testting.DeployProjectId,
 		Describe:        testting.Describe,
+		Path:            testting.Path,
 	}
 
 	if err != nil {

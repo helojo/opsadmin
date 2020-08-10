@@ -2,9 +2,17 @@
   <div>
     <el-table :data="tableData" border stripe>
       <el-table-column label="创建时间" min-width="150" prop="CreatedAt"></el-table-column>
+        <el-table-column
+                label="环境"
+                prop="env"
+                type="scope">
+            <template slot-scope="scope">
+                <span class="operate-span"> {{ scope.row.deployproject.resourceenv.name }}</span>
+            </template>
+        </el-table-column>
       <el-table-column
                     label="项目"
-                    prop="resourceenv"
+                    prop="name"
                     type="scope">
                 <template slot-scope="scope">
                     <span class="operate-span"> {{ scope.row.deployproject.name }}</span>         
@@ -47,8 +55,8 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <div>
-          <pre> {{ result }} </pre>
+      <div style="background: #000000">
+          <pre style="color: #e8e8e8"> {{ result }} </pre>
       </div>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
