@@ -7,6 +7,7 @@ import (
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 	"gin-vue-admin/utils"
+	"strconv"
 	"strings"
 )
 
@@ -73,6 +74,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		exclude := strings.Fields(project.IgnoreFiles)
 		err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
 
+		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
 		testOrder := &model.DeployTesting{
 			Applicant:       username.NickName,
 			Tag:             testting.Tag,
@@ -80,6 +82,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 			DeployProjectId: testting.DeployProjectId,
 			Describe:        testting.Describe,
 			Path:            testting.Path,
+			Version:         version,
 		}
 
 		if err != nil {
@@ -88,6 +91,10 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 
 		testOrder.Status = 1
 		err = global.GVA_DB.Create(testOrder).Error
+		if err == nil {
+			project.ReleaseVersion = version
+			err = ProjectUpdate(project)
+		}
 	}()
 
 	return err

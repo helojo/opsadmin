@@ -18,6 +18,7 @@
                     <span class="operate-span"> {{ scope.row.deployproject.name }}</span>         
                 </template>
       </el-table-column>
+        <el-table-column label="提测版本" min-width="150" prop="version"></el-table-column>
       <el-table-column label="提测Tag" min-width="150" prop="tag"></el-table-column>
             <el-table-column
                     type="expand"
@@ -56,7 +57,6 @@
                     layout="total, sizes, prev, pager, next, jumper"
             ></el-pagination>
       </el-row>
-
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <div style="background: #000000">
           <pre style="color: #e8e8e8"> {{ result }} </pre>
@@ -65,6 +65,7 @@
         <el-button @click="closeDialog">取 消</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
