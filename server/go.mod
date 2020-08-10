@@ -3,6 +3,8 @@ module gin-vue-admin
 go 1.12
 
 require (
+	github.com/Redundancy/go-sync v0.0.0-20160424152509-8931874cad5c // indirect
+	github.com/ThomasRooney/gexpect v0.0.0-20161231170123-5482f0350944 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/casbin/casbin v1.9.1
 	github.com/casbin/gorm-adapter v1.0.0
@@ -21,6 +23,7 @@ require (
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
 	github.com/jinzhu/gorm v1.9.12
 	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/lestrrat/go-envload v0.0.0-20180220120943-6ed08b54a570 // indirect
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
 	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042 // indirect
@@ -31,6 +34,7 @@ require (
 	github.com/onsi/gomega v1.4.3 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/pelletier/go-toml v1.6.0 // indirect
+	github.com/petar/GoLLRB v0.0.0-20190514000832-33fb24c13b99 // indirect
 	github.com/piexlmax/gvaplug v0.0.8
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/sftp v1.11.0

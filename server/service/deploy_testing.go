@@ -64,29 +64,16 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 // @return    err              error
 
 func TestingRelease(testting request.TestingReleaseInfo) (err error) {
-	//处理路径与文件拼接
-	err, files := utils.FilePathStitching(testting.Path, testting.Files)
-	if err != nil {
-		return errors.New(fmt.Sprint("处理文件绝对路径拼接 报错信息: %s", err))
-	}
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("ResourceServer").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 
-	//testOrder := &model.DeployTesting{
-	//
-	//}
-	//err = global.GVA_DB.Create(testOrder).Error
-	//if err != nil {
-	//	return errors.New(fmt.Sprint("提测工单创建失败: %s", err))
-	//}
-
 	exclude := strings.Fields(project.IgnoreFiles)
-	err, result := utils.FileSync(files, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
+	err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
 	if err != nil {
-		return errors.New(fmt.Sprint("同步文件报错, 报错信息: %s", err))
+		return errors.New(fmt.Sprint("同步文件报错, 报错信息:", err))
 	}
 	fmt.Println(result)
 	return err

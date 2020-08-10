@@ -1,6 +1,6 @@
 <template>
   <div>
-      <el-form :model="form" :rules="rules" label-width="50px" ref="projectForm">
+      <el-form :model="form" :rules="rules" label-width="100px" ref="projectForm">
         <el-form-item label="环境" prop="resource_env_id">
                     <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.resource_env_id">
                         <el-option
@@ -28,16 +28,15 @@
                                 v-for="item in tag_List" />
                     </el-select>
         </el-form-item>   
-        <el-form-item label="文件" prop="files">
-            <el-transfer 
-            filterable 
-            tooltip-effect="dark"
-            :render-content="renderFunc"
-            :titles="titles" 
-            v-model="value" 
-            :data="files_list"
-            @change="handleChange"
-            el-transfer/>          
+        <el-form-item label="文件对比" prop="files">
+            <el-table
+                    :data="files_list"
+                    style="width: 100%">
+                <el-table-column
+                        prop="key"
+                        label="待同步文件">
+                </el-table-column>
+            </el-table>
         </el-form-item>   
 
       </el-form>
@@ -74,9 +73,6 @@
         taget_file_list: [],
         path: "",
         CommitButton: true,
-        renderFunc(h, option) {
-          return <span title={ option.label }>{ option.label }</span>;
-        },
         value: [],
         form: {
           id: '',
@@ -142,22 +138,11 @@
           }
         })
       },
-      async handleChange(value, direction) {
-          if(direction === "right") {
-              this.taget_file_list = value
-          }
-      },
       async enterDialog() {
         this.$refs.projectForm.validate(async valid => {
           if (valid) {
 
-              if (this.taget_file_list.length <= 0) {
-                  this.$message({
-                      type: 'error',
-                      message: '请选择文件！',
-                      showClose: true
-                  })
-              } else {
+              if (this.taget_file_list.length === 0) {
                   this.form.files = this.taget_file_list
                   this.form.path = this.path
                   console.log(this.form)

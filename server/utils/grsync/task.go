@@ -2,6 +2,7 @@ package grsync
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"math"
 	"strconv"
@@ -46,12 +47,14 @@ func (t Task) Log() Log {
 // Run starts rsync process with options
 func (t *Task) Run() error {
 	stderr, err := t.rsync.StderrPipe()
+	fmt.Println("StderrPipe:", err)
 	if err != nil {
 		return err
 	}
 	defer stderr.Close()
 
 	stdout, err := t.rsync.StdoutPipe()
+	fmt.Println("StdoutPipe:", err)
 	if err != nil {
 		return err
 	}
@@ -59,7 +62,6 @@ func (t *Task) Run() error {
 
 	go processStdout(t, stdout)
 	go processStderr(t, stderr)
-
 	return t.rsync.Run()
 }
 

@@ -1,7 +1,6 @@
 package grsync
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -198,22 +197,36 @@ func (r Rsync) StderrPipe() (io.ReadCloser, error) {
 
 // Run start rsync task
 func (r Rsync) Run() error {
-	if !isExist(r.Source) {
-		return errors.New("Source directory does not exist")
-		//if err := createDir(r.Source); err != nil {
-		//	return err
-		//}
-	}
+	//if !isExist(r.Source) {
+	//	return errors.New("Source directory does not exist")
+	//	//if err := createDir(r.Source); err != nil {
+	//	//	return err
+	//	//}
+	//}
 	fmt.Println("执行前打印命令", r.cmd)
 	if err := r.cmd.Start(); err != nil {
 		return err
 	}
-	return r.cmd.Wait()
+
+	if err := r.cmd.Wait(); err != nil {
+		fmt.Println("Wait", err)
+		return err
+	}
+	return nil
 }
 
 // NewRsync returns task with described options
 func NewRsync(source, destination string, options RsyncOptions) *Rsync {
-	arguments := append(getArguments(options), source, destination)
+	sourceList := strings.Fields(source)
+	arguments := append(getArguments(options))
+	if len(sourceList) > 1 {
+		for _, pattern := range sourceList {
+			arguments = append(arguments, pattern)
+		}
+		arguments = append(arguments, destination)
+	} else {
+		arguments = append(getArguments(options), source, destination)
+	}
 	return &Rsync{
 		Source:      source,
 		Destination: destination,
@@ -543,15 +556,15 @@ func getArguments(options RsyncOptions) []string {
 	return arguments
 }
 
-func createDir(dir string) error {
-	cmd := exec.Command("mkdir", "-p", dir)
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-	return cmd.Wait()
-}
+//func createDir(dir string) error {
+//	cmd := exec.Command("mkdir", "-p", dir)
+//	if err := cmd.Start(); err != nil {
+//		return err
+//	}
+//	return cmd.Wait()
+//}
 
-func isExist(p string) bool {
-	_, err := os.Stat(p)
-	return err == nil || os.IsExist(err)
-}
+//func isExist(p string) bool {
+//	_, err := os.Stat(p)
+//	return err == nil || os.IsExist(err)
+//}

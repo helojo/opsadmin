@@ -38,13 +38,11 @@ func FileContrast(sourceDir string, user string, tagetServer string, tagetDir st
 				v = strings.ReplaceAll(v, "\"", "")
 				if v != "" {
 					file["key"] = v
-					file["label"] = v
 					result_list = append(result_list, file)
 				}
 			} else {
 				if v != "" {
 					file["key"] = v
-					file["label"] = v
 					result_list = append(result_list, file)
 				}
 
@@ -54,18 +52,8 @@ func FileContrast(sourceDir string, user string, tagetServer string, tagetDir st
 	return err, result_list
 }
 
-// 目录与文件绝对路径拼接
-
-func FilePathStitching(path string, fileList []string) (err error, files string) {
-	for _, value := range fileList {
-		files += path + value + " "
-	}
-	return err, files
-}
-
 func FileSync(sourceDir string, user string, tagetServer string, tagetDir string, exclude []string) (err error, result string) {
 	destination := fmt.Sprintf("%s@%s:%s", user, tagetServer, tagetDir)
-	fmt.Println(sourceDir)
 	task := grsync.NewTask(
 		sourceDir,
 		destination,
