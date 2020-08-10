@@ -69,28 +69,26 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
+	go func() {
+		exclude := strings.Fields(project.IgnoreFiles)
+		err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
 
-	exclude := strings.Fields(project.IgnoreFiles)
-	err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
+		testOrder := &model.DeployTesting{
+			Applicant:       username.NickName,
+			Tag:             testting.Tag,
+			Result:          result,
+			DeployProjectId: testting.DeployProjectId,
+			Describe:        testting.Describe,
+			Path:            testting.Path,
+		}
 
-	testOrder := &model.DeployTesting{
-		Applicant:       username.NickName,
-		Tag:             testting.Tag,
-		Result:          result,
-		DeployProjectId: testting.DeployProjectId,
-		Describe:        testting.Describe,
-		Path:            testting.Path,
-	}
+		if err != nil {
+			testOrder.Status = 2
+		}
 
-	if err != nil {
-		testOrder.Status = 2
-	}
-
-	testOrder.Status = 1
-	err = global.GVA_DB.Create(testOrder).Error
-	if err != nil {
-		return errors.New(fmt.Sprint("提测工单创建失败: %s", err))
-	}
+		testOrder.Status = 1
+		err = global.GVA_DB.Create(testOrder).Error
+	}()
 
 	return err
 }
