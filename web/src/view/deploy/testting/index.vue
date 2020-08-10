@@ -27,8 +27,11 @@
                                 :value="item.id"
                                 v-for="item in tag_List" />
                     </el-select>
-        </el-form-item>   
-        <el-form-item label="文件对比" prop="files">
+        </el-form-item>
+          <el-form-item label="描述" prop="describe"  style="width:32.4%">
+              <el-input autocomplete="off" type="textarea" v-model="form.describe"></el-input>
+          </el-form-item>
+          <el-form-item label="文件对比" prop="files">
             <el-table
                     :data="files_list"
                     style="width: 100%">
@@ -83,7 +86,8 @@
           tag: '',
           files: '',
           resource_env_id: '',
-          deploy_project_id: '',       
+          deploy_project_id: '',
+          describe: '',
         },
         type: '',
         rules: {
@@ -111,7 +115,8 @@
           files: '',
           resource_env_id: '',
           deploy_project_id: '',  
-        }
+        },
+        this.files_list = []
       },
       closeDialog() {
         this.initForm()
@@ -145,7 +150,6 @@
       async enterDialog() {
         this.$refs.projectForm.validate(async valid => {
           if (valid) {
-
               if (this.taget_file_list.length === 0) {
                   this.form.files = this.taget_file_list
                   this.form.path = this.path
@@ -157,6 +161,7 @@
                           message: '提侧成功',
                           showClose: true
                       })
+                      this.initForm()
                   }
               }
 

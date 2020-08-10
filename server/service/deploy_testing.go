@@ -74,10 +74,11 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 	err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
 
 	testOrder := &model.DeployTesting{
-		Tag:             testting.Tag,
 		Applicant:       username.NickName,
+		Tag:             testting.Tag,
 		Result:          result,
 		DeployProjectId: testting.DeployProjectId,
+		Describe:        testting.Describe,
 	}
 
 	if err != nil {
