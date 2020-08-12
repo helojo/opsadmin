@@ -52,7 +52,16 @@
                     <span><pre>{{ props.row.describe }}</pre></span>
                 </template>
             </el-table-column>
-      <el-table-column
+        <el-table-column
+                label="备份是否删除"
+                prop="isdelete"
+                type="scope">
+            <template slot-scope="scope">
+                <span class="operate-span-primary" v-if="scope.row.isdelete === 1 " >否</span>
+                <span class="operate-span-danger" v-else-if="scope.row.isdelete === 2 " >是</span>
+            </template>
+        </el-table-column>
+        <el-table-column
                     label="状态"
                     prop="status"
                     type="scope">

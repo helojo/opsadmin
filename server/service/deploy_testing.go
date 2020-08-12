@@ -97,6 +97,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 			Describe:        testting.Describe,
 			Path:            testting.Path,
 			Version:         version,
+			Isdelete:        1,
 		}
 
 		if err != nil {
