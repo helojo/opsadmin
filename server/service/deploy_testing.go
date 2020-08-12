@@ -80,11 +80,11 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
 		for _, value := range project.Server {
+			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================</br>", value.Host)
 			err, ret := utils.FileSync(testting.Path, value.User, value.Host, value.Port, project.Directory, exclude)
 			if err != nil {
 				result += fmt.Sprintf("同步报错: %s", err)
 			}
-
 			result += ret
 		}
 
