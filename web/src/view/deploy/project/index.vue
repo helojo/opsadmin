@@ -19,18 +19,20 @@
       <el-table-column label="忽略文件" min-width="150" prop="ignore_files"></el-table-column>
       <el-table-column
                     label="主机"
-                    prop="resourceserver"
+                    prop="Server"
                     type="scope">
-                <template slot-scope="scope">
-                    {{ scope.row.resourceserver.name }}
-                </template>
+                      <template slot-scope="scope">
+                          <div :key="item.id" v-for="item in scope.row.Server">
+                              <span style="float: left">{{ item.name }} , </span>
+                          </div>
+                      </template>
       </el-table-column>
             <el-table-column
                     label="环境"
-                    prop="resourceenv"
+                    prop="environment"
                     type="scope">
                 <template slot-scope="scope">
-                    {{ scope.row.resourceenv.name }}
+                    {{ scope.row.environment.name }}
                 </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
@@ -55,8 +57,8 @@
       </el-row>
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" label-width="100px" ref="projectForm">
-        <el-form-item label="环境" prop="resource_env_id">
-                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
+        <el-form-item label="环境" prop="environment_id">
+                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:100%" v-model="form.environment_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -64,8 +66,8 @@
                                 v-for="item in env_List" />
                     </el-select>
         </el-form-item>
-        <el-form-item  label="主机" prop="resource_server_id">
-                    <el-select  filterable placeholder="请选择" style="width:100%" v-model="form.resource_server_id">
+        <el-form-item  label="主机" prop="server">
+                    <el-select  filterable multiple placeholder="请选择" style="width:100%" v-model="form.server">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -120,13 +122,13 @@
           git_url: '',
           directory: '',
           ignore_files: '.git',
-          resource_env_id: '',
-          resource_server_id: '',
+          environment_id: '',
+          server: '',
         },
         type: '',
         rules: {
           name: [
-            { required: true, message: '请输入环境名称', trigger: 'blur' }
+            { required: true, message: '请输入项目名称', trigger: 'blur' }
           ],
           git_url: [
             { required: true, message: '请输入Git地址', trigger: 'blur' }
@@ -136,11 +138,11 @@
           ],     
           ignore_files: [
             { required: true, message: '请输入忽略文件，多个空格区分 ', trigger: 'blur' }
-          ],   
-          resource_env_id: [
+          ],
+          environment_id: [
             { required: true, message: '请输入选择环境', trigger: 'blur' }
-          ],         
-          resource_server_id: [
+          ],
+          server: [
             { required: true, message: '请输入选择主机', trigger: 'blur' }
           ],             
         }
@@ -155,8 +157,8 @@
           git_url: '',
           directory: '',
           ignore_files: '.git',
-          resource_env_id: '',
-          resource_server_id: '',
+          environment_id: '',
+          server: '',
         }
       },
       closeDialog() {
@@ -166,10 +168,10 @@
       openDialog(type) {
         switch (type) {
           case 'add':
-            this.dialogTitle = '新增环境'
+            this.dialogTitle = '新增项目'
             break
           case 'edit':
-            this.dialogTitle = '编辑环境'
+            this.dialogTitle = '编辑项目'
             break
           default:
             break
@@ -184,7 +186,7 @@
           this.form[key] = row[key]
         }
         this.dialogFormVisible = true
-        this.GetServerList(this.form.resource_env_id)
+        this.GetServerList(this.form.environment_id)
 
       },
       async deleteProject(row) {
@@ -195,7 +197,7 @@
         })
                 .then(async () => {
                   const res = await projectDelete(row)
-                  if (res.code == 0) {
+                  if (res.code === 0) {
                     this.$message({
                       type: 'success',
                       message: '删除成功!'
@@ -263,16 +265,16 @@
            }
      },
      async GetServerList(id){
-         const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": id})
+         const ret = await serverList({"page": 1, "pageSize": 9999, "environment_id": id})
          if(ret.code === 0){
             this.server_List = ret.data.list
         }
      },
      async EnvChange(row){
         this.server_List = []
-        const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": row})
+        const ret = await serverList({"page": 1, "pageSize": 9999, "environment_id": row})
         if(ret.code === 0){
-            this.form.resource_server_id = ''
+            this.form.resource_server = ''
             this.server_List = ret.data.list
           }
      },

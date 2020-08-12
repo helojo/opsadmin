@@ -49,7 +49,7 @@ func EnvList(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/env/envCreate [post]
 func EnvCreate(c *gin.Context) {
-	var env model.ResourceEnv
+	var env model.Environment
 	_ = c.ShouldBindJSON(&env)
 	EnvVerify := utils.Rules{
 		"Name":     {utils.NotEmpty()},
@@ -77,7 +77,7 @@ func EnvCreate(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/env/envUpdate [post]
 func EnvUpdate(c *gin.Context) {
-	var env model.ResourceEnv
+	var env model.Environment
 	_ = c.ShouldBindJSON(&env)
 	ApiVerify := utils.Rules{
 		"Name":     {utils.NotEmpty()},

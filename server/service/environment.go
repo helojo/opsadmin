@@ -18,8 +18,8 @@ import (
 func EnvList(info request.PageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GVA_DB.Model(&model.ResourceEnv{})
-	var envList []model.ResourceEnv
+	db := global.GVA_DB.Model(&model.Environment{})
+	var envList []model.Environment
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&envList).Error
 	return err, envList, total
@@ -31,8 +31,8 @@ func EnvList(info request.PageInfo) (err error, list interface{}, total int) {
 // @param     api             model.DepolyEnv
 // @return                    error
 
-func EnvCreate(env model.ResourceEnv) (err error) {
-	findOne := global.GVA_DB.Where("name = ?", env.Name).Find(&model.ResourceEnv{}).Error
+func EnvCreate(env model.Environment) (err error) {
+	findOne := global.GVA_DB.Where("name = ?", env.Name).Find(&model.Environment{}).Error
 	if findOne == nil {
 		return errors.New("存在相同环境")
 	} else {
@@ -47,8 +47,8 @@ func EnvCreate(env model.ResourceEnv) (err error) {
 // @param     env             model.DepolyEnv
 // @return                    error
 
-func EnvUpdate(env model.ResourceEnv) (err error) {
-	err = global.GVA_DB.Where("id = ?", env.ID).First(&model.ResourceEnv{}).Updates(&env).Error
+func EnvUpdate(env model.Environment) (err error) {
+	err = global.GVA_DB.Where("id = ?", env.ID).First(&model.Environment{}).Updates(&env).Error
 	return err
 }
 
@@ -59,7 +59,7 @@ func EnvUpdate(env model.ResourceEnv) (err error) {
 // @return    err             error
 
 func EnvDelete(id float64) (err error) {
-	var env model.ResourceEnv
+	var env model.Environment
 	err = global.GVA_DB.Where("id = ?", id).Delete(&env).Error
 	return err
 }

@@ -49,7 +49,7 @@ func ServerList(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/server/serverCreate [post]
 func ServerCreate(c *gin.Context) {
-	var server model.ResourceServer
+	var server model.Server
 	_ = c.ShouldBindJSON(&server)
 	ServerVerify := utils.Rules{
 		"Name":          {utils.NotEmpty()},
@@ -57,7 +57,7 @@ func ServerCreate(c *gin.Context) {
 		"Port":          {utils.NotEmpty()},
 		"User":          {utils.NotEmpty()},
 		"Pwd":           {utils.NotEmpty()},
-		"ResourceEnvId": {utils.NotEmpty()},
+		"EnvironmentId": {utils.NotEmpty()},
 	}
 	ServerVerifyErr := utils.Verify(server, ServerVerify)
 	if ServerVerifyErr != nil {
@@ -81,7 +81,7 @@ func ServerCreate(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"修改成功"}"
 // @Router /resource/server/serverUpdate [post]
 func ServerUpdate(c *gin.Context) {
-	var server model.ResourceServer
+	var server model.Server
 	_ = c.ShouldBindJSON(&server)
 	ServerVerify := utils.Rules{
 		"Name":          {utils.NotEmpty()},
@@ -89,7 +89,7 @@ func ServerUpdate(c *gin.Context) {
 		"Port":          {utils.NotEmpty()},
 		"User":          {utils.NotEmpty()},
 		"Pwd":           {utils.NotEmpty()},
-		"ResourceEnvId": {utils.NotEmpty()},
+		"EnvironmentId": {utils.NotEmpty()},
 	}
 	ApiVerifyErr := utils.Verify(server, ServerVerify)
 	if ApiVerifyErr != nil {

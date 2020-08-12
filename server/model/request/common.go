@@ -16,14 +16,14 @@ type ServerPageInfo struct {
 	Id            float64 `json:"id" form:"id"`
 	Page          int     `json:"page" form:"page"`
 	PageSize      int     `json:"pageSize" form:"pageSize"`
-	ResourceEnvId int     `json:"resource_env_id"  form:"resource_env_id"`
+	EnvironmentId int     `json:"environment_id"  form:"environment_id"`
 }
 
 type ProjectPageInfo struct {
 	Id            float64 `json:"id" form:"id"`
 	Page          int     `json:"page" form:"page"`
 	PageSize      int     `json:"pageSize" form:"pageSize"`
-	ResourceEnvId int     `json:"resource_env_id"  form:"resource_env_id"`
+	EnvironmentId int     `json:"environment_id"  form:"environment_id"`
 }
 
 type ContrastInfo struct {

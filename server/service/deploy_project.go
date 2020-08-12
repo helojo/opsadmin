@@ -19,7 +19,7 @@ func PtList(ordercondition string, wherecondition string, limit, offset int) (er
 	var projecList []model.DeployProject
 	err = db.Where(wherecondition).Find(&projecList).Count(&total).Error
 	err = db.Order(ordercondition).Where(wherecondition).
-		Preload("ResourceServer").Preload("ResourceEnv").
+		Preload("Server").Preload("Environment").
 		Limit(limit).Offset(offset).Find(&projecList).Error
 	return err, projecList, total
 }
@@ -35,8 +35,8 @@ func PtList(ordercondition string, wherecondition string, limit, offset int) (er
 func ProjectList(info request.ProjectPageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	if info.ResourceEnvId != 0 {
-		wherecondition := fmt.Sprintf("resource_env_id = %d", info.ResourceEnvId)
+	if info.EnvironmentId != 0 {
+		wherecondition := fmt.Sprintf("environment_id = %d", info.EnvironmentId)
 		return PtList("", wherecondition, limit, offset)
 
 	}
@@ -49,18 +49,37 @@ func ProjectList(info request.ProjectPageInfo) (err error, list interface{}, tot
 // @param     api             model.ResourceServer
 // @return                    error
 
-func ProjectCreate(project model.DeployProject) (err error) {
-	findOne := global.GVA_DB.Where("resource_env_id = ? and name = ?", project.ResourceEnvId, project.Name).Find(&model.DeployProject{}).Error
+func ProjectCreate(p request.DeployProject) (err error) {
+	findOne := global.GVA_DB.Where("resource_env_id = ? and name = ?", p.EnvironmentId, p.Name).Find(&model.DeployProject{}).Error
 	if findOne == nil {
 		return errors.New("存在相同项目")
 	} else {
 		var gitproject model.GitlabProject
-		notRegister := global.GVA_DB.Where("url = ?", project.GitUrl).First(&gitproject).RecordNotFound()
+		notRegister := global.GVA_DB.Where("url = ?", p.GitUrl).First(&gitproject).RecordNotFound()
 		if notRegister {
 			return errors.New("项目地址未找到，请核对Git地址!")
 		}
-		project.ReleaseVersion = 0.1
-		err = global.GVA_DB.Create(&project).Error
+
+		var servers []model.Server
+		fmt.Println("打印：", p.Server)
+		err = global.GVA_DB.Where("id in (?)", p.Server).Find(&servers).Error
+		fmt.Println(servers)
+		if err == nil {
+			p.ReleaseVersion = 0.1
+			project := model.DeployProject{
+				Name:           p.Name,
+				GitUrl:         p.GitUrl,
+				Directory:      p.Directory,
+				IgnoreFiles:    p.IgnoreFiles,
+				ReleaseVersion: 0.1,
+				EnvironmentId:  p.EnvironmentId,
+			}
+			err = global.GVA_DB.Create(&project).Error
+			if err == nil {
+				err = global.GVA_DB.Model(&project).Association("Server").Replace(&servers).Error
+			}
+		}
+
 	}
 	return err
 }
@@ -71,7 +90,7 @@ func ProjectCreate(project model.DeployProject) (err error) {
 // @param     project         model.DeployProject
 // @return                    error
 
-func ProjectUpdate(project model.DeployProject) (err error) {
+func ProjectUpdate(project request.DeployProject) (err error) {
 	var gitproject model.GitlabProject
 	notRegister := global.GVA_DB.Where("url = ?", project.GitUrl).First(&gitproject).RecordNotFound()
 	if notRegister {

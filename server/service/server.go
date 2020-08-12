@@ -23,16 +23,16 @@ import (
 func ServerList(info request.ServerPageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GVA_DB.Model(&model.ResourceServer{})
-	var serverList []model.ResourceServer
+	db := global.GVA_DB.Model(&model.Server{})
+	var serverList []model.Server
 
-	if info.ResourceEnvId != 0 {
-		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Count(&total).Error
-		err = db.Where("resource_env_id = ?", info.ResourceEnvId).Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error
+	if info.EnvironmentId != 0 {
+		err = db.Where("environment_id = ?", info.EnvironmentId).Count(&total).Error
+		err = db.Where("environment_id = ?", info.EnvironmentId).Preload("Environment").Limit(limit).Offset(offset).Find(&serverList).Error
 		return err, serverList, total
 	}
 	err = db.Count(&total).Error
-	err = db.Preload("ResourceEnv").Limit(limit).Offset(offset).Find(&serverList).Error
+	err = db.Preload("Environment").Limit(limit).Offset(offset).Find(&serverList).Error
 	return err, serverList, total
 }
 
@@ -42,8 +42,8 @@ func ServerList(info request.ServerPageInfo) (err error, list interface{}, total
 // @param     api             model.ResourceServer
 // @return                    error
 
-func ServerCreate(server model.ResourceServer) (err error) {
-	findOne := global.GVA_DB.Where("host = ? and resource_env_id = ?", server.Host, server.ResourceEnvId).Find(&model.ResourceServer{}).Error
+func ServerCreate(server model.Server) (err error) {
+	findOne := global.GVA_DB.Where("host = ? and environment_id = ?", server.Host, server.EnvironmentId).Find(&model.Server{}).Error
 	if findOne == nil {
 		return errors.New("存在相同主机地址")
 	} else {
@@ -63,8 +63,8 @@ func ServerCreate(server model.ResourceServer) (err error) {
 // @param     env             model.ResourceServer
 // @return                    error
 
-func ServerMsgUpdate(server model.ResourceServer) (err error) {
-	err = global.GVA_DB.Where("id = ?", server.ID).First(&model.ResourceServer{}).Updates(&server).Error
+func ServerMsgUpdate(server model.Server) (err error) {
+	err = global.GVA_DB.Where("id = ?", server.ID).First(&model.Server{}).Updates(&server).Error
 	return err
 }
 
@@ -74,8 +74,8 @@ func ServerMsgUpdate(server model.ResourceServer) (err error) {
 // @param     env             model.ResourceServer
 // @return                    error
 
-func ServerUpdate(server model.ResourceServer) (err error) {
-	var serverOld model.ResourceServer
+func ServerUpdate(server model.Server) (err error) {
+	var serverOld model.Server
 	findOne := global.GVA_DB.Where("id = ?", server.ID).Find(&serverOld).Error
 	if findOne != nil {
 		return errors.New("该主机不存在!")
@@ -97,7 +97,7 @@ func ServerUpdate(server model.ResourceServer) (err error) {
 // @return    err             error
 
 func ServerDelete(id float64) (err error) {
-	var server model.ResourceServer
+	var server model.Server
 	err = global.GVA_DB.Where("id = ?", id).Delete(&server).Error
 	return err
 }
@@ -144,7 +144,7 @@ func PlatformCreateKey() (err error) {
 // @return    err             error
 
 func ServerConnect(id float64) (err error) {
-	var server model.ResourceServer
+	var server model.Server
 	findOne := global.GVA_DB.Where("id = ?", id).Find(&server).Error
 	if findOne != nil {
 		return errors.New("该主机不存在!")
@@ -190,7 +190,7 @@ func ServerConnect(id float64) (err error) {
 // @return    err             error
 
 func ServerPushKey(id float64) (err error) {
-	var server model.ResourceServer
+	var server model.Server
 	findOne := global.GVA_DB.Where("id = ?", id).Find(&server).Error
 	if findOne != nil {
 		return errors.New("该主机不存在!")

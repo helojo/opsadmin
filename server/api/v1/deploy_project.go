@@ -3,7 +3,6 @@ package v1
 import (
 	"fmt"
 	"gin-vue-admin/global/response"
-	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
 	resp "gin-vue-admin/model/response"
 	"gin-vue-admin/service"
@@ -49,15 +48,15 @@ func ProjectList(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /deploy/project/projectCreate [post]
 func ProjectCreate(c *gin.Context) {
-	var project model.DeployProject
+	var project request.DeployProject
 	_ = c.ShouldBindJSON(&project)
+	fmt.Println(project)
 	projectVerify := utils.Rules{
-		"Name":             {utils.NotEmpty()},
-		"GitUrl":           {utils.NotEmpty()},
-		"Directory":        {utils.NotEmpty()},
-		"IgnoreFiles":      {utils.NotEmpty()},
-		"ResourceServerId": {utils.NotEmpty()},
-		"ResourceEnvId":    {utils.NotEmpty()},
+		"Name":          {utils.NotEmpty()},
+		"GitUrl":        {utils.NotEmpty()},
+		"Directory":     {utils.NotEmpty()},
+		"IgnoreFiles":   {utils.NotEmpty()},
+		"ResourceEnvId": {utils.NotEmpty()},
 	}
 	projectVerifyErr := utils.Verify(project, projectVerify)
 	if projectVerifyErr != nil {
@@ -81,7 +80,7 @@ func ProjectCreate(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新项目成功"}"
 // @Router /deploy/project/projectUpdate [post]
 func ProjectUpdate(c *gin.Context) {
-	var project model.DeployProject
+	var project request.DeployProject
 	_ = c.ShouldBindJSON(&project)
 	projectVerify := utils.Rules{
 		"Name":             {utils.NotEmpty()},

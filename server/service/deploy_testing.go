@@ -50,7 +50,10 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 	}
 
 	exclude := strings.Fields(project.IgnoreFiles)
-	err, list = utils.FileContrast(path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
+	for _, value := range project.Server {
+		err, list = utils.FileContrast(path, value.User, value.Host, project.Directory, exclude)
+	}
+
 	if err != nil {
 		return errors.New(fmt.Sprint("对比文件报错, 报错信息: %s", err)), list, path
 	}
@@ -71,8 +74,11 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 	go func() {
+		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
-		err, result := utils.FileSync(testting.Path, project.ResourceServer.User, project.ResourceServer.Host, project.Directory, exclude)
+		for _, value := range project.Server {
+			err, result = utils.FileSync(testting.Path, value.User, value.Host, project.Directory, exclude)
+		}
 
 		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
 		testOrder := &model.DeployTesting{
@@ -93,7 +99,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		err = global.GVA_DB.Create(testOrder).Error
 		if err == nil {
 			project.ReleaseVersion = version
-			err = ProjectUpdate(project)
+			//err = ProjectUpdate(project)
 		}
 	}()
 
