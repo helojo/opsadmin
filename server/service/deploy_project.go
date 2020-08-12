@@ -96,7 +96,14 @@ func ProjectUpdate(project request.DeployProject) (err error) {
 	if notRegister {
 		return errors.New("项目地址未找到，请核对Git地址!")
 	}
+	var servers []model.Server
 	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
+	if err == nil {
+		err = global.GVA_DB.Where("id in (?)", project.Server).Find(&servers).Error
+		if err == nil {
+			err = global.GVA_DB.Model(&model.DeployProject{ID: project.ID}).Association("Server").Replace(&servers).Error
+		}
+	}
 	return err
 }
 

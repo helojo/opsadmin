@@ -50,15 +50,18 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 	}
 
 	exclude := strings.Fields(project.IgnoreFiles)
+
+	var result []map[string]string
+	var errMsg string
 	for _, value := range project.Server {
-		err, list = utils.FileContrast(path, value.User, value.Host, project.Directory, exclude)
+		err, ret := utils.FileContrast(path, value.User, value.Host, value.Port, project.Directory, exclude)
+		if err != nil {
+			errMsg += fmt.Sprint("对比文件报错, 报错信息: %s", err)
+		}
+		result = append(result, ret...)
 	}
 
-	if err != nil {
-		return errors.New(fmt.Sprint("对比文件报错, 报错信息: %s", err)), list, path
-	}
-
-	return err, list, path
+	return err, result, path
 }
 
 // @title    TestingRelease
@@ -74,30 +77,37 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 	go func() {
+		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
 		for _, value := range project.Server {
-			err, result := utils.FileSync(testting.Path, value.User, value.Host, project.Directory, exclude)
-			version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
-			testOrder := &model.DeployTesting{
-				Applicant:       username.NickName,
-				Tag:             testting.Tag,
-				Result:          result,
-				DeployProjectId: testting.DeployProjectId,
-				Describe:        testting.Describe,
-				Path:            testting.Path,
-				Version:         version,
-			}
-
+			err, ret := utils.FileSync(testting.Path, value.User, value.Host, value.Port, project.Directory, exclude)
 			if err != nil {
-				testOrder.Status = 2
+				result += fmt.Sprintf("同步报错: %s", err)
 			}
 
-			testOrder.Status = 1
-			err = global.GVA_DB.Create(testOrder).Error
-			if err == nil {
-				project.ReleaseVersion = version
-				err = ProjectStatusUpdate(project)
-			}
+			result += ret
+		}
+
+		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
+		testOrder := &model.DeployTesting{
+			Applicant:       username.NickName,
+			Tag:             testting.Tag,
+			Result:          result,
+			DeployProjectId: testting.DeployProjectId,
+			Describe:        testting.Describe,
+			Path:            testting.Path,
+			Version:         version,
+		}
+
+		if err != nil {
+			testOrder.Status = 2
+		}
+
+		testOrder.Status = 1
+		err = global.GVA_DB.Create(testOrder).Error
+		if err == nil {
+			project.ReleaseVersion = version
+			err = ProjectStatusUpdate(project)
 		}
 
 	}()
