@@ -16,6 +16,7 @@
       <el-table-column label="当前版本" min-width="150" prop="release_version"></el-table-column>
       <el-table-column label="Git地址" min-width="150" prop="git_url"></el-table-column>
       <el-table-column label="目录" min-width="150" prop="directory"></el-table-column>
+        <el-table-column label="保留版本数" min-width="150" prop="reservedversion"></el-table-column>
       <el-table-column label="忽略文件" min-width="150" prop="ignore_files"></el-table-column>
       <el-table-column
                     label="主机"
@@ -84,6 +85,9 @@
         <el-form-item label="项目目录" prop="directory">
           <el-input autocomplete="off" v-model="form.directory"></el-input>
         </el-form-item>
+          <el-form-item label="保留版本" prop="reservedversion">
+              <el-input autocomplete="off" type="number" v-model="form.reservedversion"></el-input>
+          </el-form-item>
         <el-form-item label="忽略文件" prop="ignore_files">
           <el-input autocomplete="off" v-model="form.ignore_files"></el-input>
         </el-form-item>               
@@ -124,6 +128,7 @@
           ignore_files: '.git',
           environment_id: '',
           server: [],
+          reservedversion: 30,
         },
         type: '',
         rules: {
@@ -142,6 +147,9 @@
           environment_id: [
             { required: true, message: '请输入选择环境', trigger: 'blur' }
           ],
+          reservedversion: [
+              { required: true, message: '请输入保留版本数', trigger: 'blur' }
+          ],
           server: [
             { required: true, message: '请输入选择主机', trigger: 'blur' }
           ],             
@@ -159,6 +167,7 @@
           ignore_files: '.git',
           environment_id: '',
           server: [],
+          reservedversion: 30,
         }
       },
       closeDialog() {

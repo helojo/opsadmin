@@ -66,7 +66,8 @@
                     prop="status"
                     type="scope">
                 <template slot-scope="scope">
-                    <span class="operate-span-primary" v-if="scope.row.status === 1 " >提成成功</span>
+                    <span class="operate-span-danger" v-if="scope.row.status === 0 " >提侧中</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >提测成功</span>
                     <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >提测失败</span>
                 </template>
       </el-table-column>            
@@ -211,6 +212,7 @@
             this.form= {
                 id: '',
                 tag: '',
+                path: '',
                 files: '',
                 environment_id: '',
                 deploy_project_id: '',
@@ -222,6 +224,7 @@
       },
       closeDialog() {
         this.initForm()
+        this.path = ""
         this.dialogFormTesttingVisible = false
         this.taget_file_list = []
         this.files_list = []
@@ -292,6 +295,7 @@
                 if (valid) {
                     {
                         this.files_list = []
+                        this.form.path = this.path
                         const res = await testingContrast(this.form)
                         if (res.code === 0) {
                             this.form.files = ""

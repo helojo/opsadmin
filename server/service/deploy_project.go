@@ -6,6 +6,8 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
+	"os"
+	"strconv"
 )
 
 // @title    PtList
@@ -96,10 +98,13 @@ func ProjectUpdate(project request.DeployProject) (err error) {
 	if notRegister {
 		return errors.New("项目地址未找到，请核对Git地址!")
 	}
-	var servers []model.Server
+
 	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
+
 	if err == nil {
+		var servers []model.Server
 		err = global.GVA_DB.Where("id in (?)", project.Server).Find(&servers).Error
+
 		if err == nil {
 			err = global.GVA_DB.Model(&model.DeployProject{ID: project.ID}).Association("Server").Replace(&servers).Error
 		}
@@ -127,5 +132,41 @@ func ProjectStatusUpdate(project model.DeployProject) (err error) {
 func ProjectDelete(id float64) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", id).Delete(&project).Error
+	return err
+}
+
+// @title    ProjectversionDelete
+// @description    删除多余的备份版本
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func ReservedVersionDelete(id float64) (err error) {
+	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ?", id).Find(&project).Error
+	if err == nil {
+
+		Reservedversion, _ := strconv.ParseFloat(project.Reservedversion, 64)
+		deleteVersion := project.ReleaseVersion - Reservedversion*0.1
+
+		var testting []model.DeployTesting
+		err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", project.ID).Find(&testting).Error
+		fmt.Println(testting)
+		if err == nil {
+			for _, testOrder := range testting {
+				if testOrder.Version <= deleteVersion {
+					err = os.RemoveAll(testOrder.Path)
+					fmt.Println("删除目录", err)
+					if err == nil {
+						var testorder model.DeployTesting
+						testorder.Isdelete = 2
+						err = global.GVA_DB.Where("id = ?", testOrder.ID).First(&model.DeployTesting{}).Updates(&testorder).Error
+					}
+				}
+			}
+
+		}
+	}
+
 	return err
 }

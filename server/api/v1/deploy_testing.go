@@ -9,6 +9,7 @@ import (
 	"gin-vue-admin/service"
 	"gin-vue-admin/utils"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 // @Tags Deploy_Testing
@@ -60,6 +61,10 @@ func TestingContrast(c *gin.Context) {
 	if projectVerifyErr != nil {
 		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
+	}
+	//多次对比，删除之前对比的目录
+	if testting.Path != "" {
+		os.RemoveAll(testting.Path)
 	}
 	err, list, path := service.TestingContrast(testting)
 	if err != nil {

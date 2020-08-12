@@ -60,7 +60,7 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 		}
 		result = append(result, ret...)
 	}
-
+	_ = ReservedVersionDelete(float64(project.ID))
 	return err, result, path
 }
 
@@ -77,6 +77,19 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 	go func() {
+		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
+		testOrder := &model.DeployTesting{
+			Applicant:       username.NickName,
+			Tag:             testting.Tag,
+			DeployProjectId: testting.DeployProjectId,
+			Describe:        testting.Describe,
+			Path:            testting.Path,
+			Version:         version,
+			Isdelete:        1,
+		}
+
+		err = global.GVA_DB.Create(testOrder).Error
+
 		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
 		for _, value := range project.Server {
@@ -88,29 +101,28 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 			result += ret
 		}
 
-		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
-		testOrder := &model.DeployTesting{
-			Applicant:       username.NickName,
-			Tag:             testting.Tag,
-			Result:          result,
-			DeployProjectId: testting.DeployProjectId,
-			Describe:        testting.Describe,
-			Path:            testting.Path,
-			Version:         version,
-			Isdelete:        1,
-		}
-
 		if err != nil {
-			testOrder.Status = 2
+			err = TestingUpdate(testOrder.ID, 2, result)
 		}
+		err = TestingUpdate(testOrder.ID, 1, result)
 
-		testOrder.Status = 1
-		err = global.GVA_DB.Create(testOrder).Error
 		if err == nil {
 			project.ReleaseVersion = version
 			err = ProjectStatusUpdate(project)
 		}
+		_ = ReservedVersionDelete(float64(project.ID))
 	}()
 
+	return err
+}
+
+// @title    TestingUpdate
+// @description    更新上线工单
+// @auth                     （2020/04/05  20:22）
+// @param     env             model.DeployTesting
+// @return                    error
+
+func TestingUpdate(id uint, status int, result string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployTesting{}).Updates(&model.DeployTesting{Status: status, Result: result}).Error
 	return err
 }
