@@ -123,7 +123,7 @@
           directory: '',
           ignore_files: '.git',
           environment_id: '',
-          server: '',
+          server: [],
         },
         type: '',
         rules: {
@@ -158,7 +158,7 @@
           directory: '',
           ignore_files: '.git',
           environment_id: '',
-          server: '',
+          server: [],
         }
       },
       closeDialog() {
@@ -183,8 +183,14 @@
         this.dialogTitle = '编辑环境'
         this.dialogType = 'edit'
         for (let key in this.form) {
-          this.form[key] = row[key]
+            if (this.form[key] !== this.form.server) {
+                this.form[key] = row[key]
+            }
         }
+          for(let key in row.Server){
+              this.form.server.push(row.Server[key].id)
+          }
+
         this.dialogFormVisible = true
         this.GetServerList(this.form.environment_id)
 

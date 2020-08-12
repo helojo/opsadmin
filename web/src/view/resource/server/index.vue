@@ -14,10 +14,10 @@
       <el-table-column label="用户名" min-width="150" prop="user"></el-table-column>
       <el-table-column
                     label="环境"
-                    prop="resourceenv"
+                    prop="environment_id"
                     type="scope">
                 <template slot-scope="scope">
-                    {{ scope.row.resourceenv.name }}
+                    {{ scope.row.environment.name }}
                 </template>
       </el-table-column>
       <el-table-column
@@ -56,8 +56,8 @@
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" label-width="100px" ref="ServerForm">
-        <el-form-item label="环境:" prop="resource_env_id">
-          <el-select filterable placeholder="请选择" style="width:100%" v-model="form.resource_env_id">
+        <el-form-item label="环境:" prop="environment_id">
+          <el-select filterable placeholder="请选择" style="width:100%" v-model="form.environment_id">
                 <el-option
                       :key="item.id"
                       :label="item.name"
@@ -113,7 +113,7 @@
           port: 22,
           user: '',
           pwd: '',
-          resource_env_id: '',
+          environment_id: '',
         },
         type: '',
         rules: {
@@ -131,8 +131,8 @@
           ],   
           pwd: [
             { required: true, message: '请输入密码', trigger: 'blur' }
-          ],    
-          resource_env_id: [
+          ],
+          environment_id: [
             { required: true, message: '请选择环境', trigger: 'blur' }
           ],                                       
         }
@@ -148,7 +148,7 @@
           port: 22,
           user: '',
           pwd: '',
-          resource_env_id: '',
+          environment_id: '',
         }
       },
       closeDialog() {
