@@ -45,7 +45,7 @@ func ServerList(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.ResourceEnv true "创建主机"
+// @Param data body model.Environment true "创建主机"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /resource/server/serverCreate [post]
 func ServerCreate(c *gin.Context) {

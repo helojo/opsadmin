@@ -25,7 +25,7 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 	db := global.GVA_DB.Model(&model.DeployTesting{})
 	var testingList []model.DeployTesting
 	err = db.Count(&total).Error
-	err = db.Order("id DESC ").Preload("DeployProject.ResourceEnv").Limit(limit).Offset(offset).Find(&testingList).Error
+	err = db.Order("id DESC ").Preload("DeployProject.Environment").Preload("DeployProject.Server").Limit(limit).Offset(offset).Find(&testingList).Error
 	return err, testingList, total
 }
 
@@ -39,7 +39,7 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 
 func TestingContrast(testting request.ContrastInfo) (err error, list interface{}, path string) {
 	var project model.DeployProject
-	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("ResourceServer").First(&project).Error
+	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
 	}
@@ -69,38 +69,37 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 
 func TestingRelease(testting request.TestingReleaseInfo, username *request.CustomClaims) (err error) {
 	var project model.DeployProject
-	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("ResourceServer").First(&project).Error
+	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 	go func() {
-		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
 		for _, value := range project.Server {
-			err, result = utils.FileSync(testting.Path, value.User, value.Host, project.Directory, exclude)
+			err, result := utils.FileSync(testting.Path, value.User, value.Host, project.Directory, exclude)
+			version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
+			testOrder := &model.DeployTesting{
+				Applicant:       username.NickName,
+				Tag:             testting.Tag,
+				Result:          result,
+				DeployProjectId: testting.DeployProjectId,
+				Describe:        testting.Describe,
+				Path:            testting.Path,
+				Version:         version,
+			}
+
+			if err != nil {
+				testOrder.Status = 2
+			}
+
+			testOrder.Status = 1
+			err = global.GVA_DB.Create(testOrder).Error
+			if err == nil {
+				project.ReleaseVersion = version
+				err = ProjectStatusUpdate(project)
+			}
 		}
 
-		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
-		testOrder := &model.DeployTesting{
-			Applicant:       username.NickName,
-			Tag:             testting.Tag,
-			Result:          result,
-			DeployProjectId: testting.DeployProjectId,
-			Describe:        testting.Describe,
-			Path:            testting.Path,
-			Version:         version,
-		}
-
-		if err != nil {
-			testOrder.Status = 2
-		}
-
-		testOrder.Status = 1
-		err = global.GVA_DB.Create(testOrder).Error
-		if err == nil {
-			project.ReleaseVersion = version
-			//err = ProjectUpdate(project)
-		}
 	}()
 
 	return err

@@ -28,7 +28,7 @@ type ProjectPageInfo struct {
 
 type ContrastInfo struct {
 	Tag             string `json:"tag" form:"tag"`
-	ResourceEnvId   int    `json:"resource_env_id" form:"resource_env_id"`
+	EnvironmentId   int    `json:"environment_id" form:"environment_id"`
 	DeployProjectId int    `json:"deploy_project_id" form:"deploy_project_id"`
 }
 
@@ -37,6 +37,6 @@ type TestingReleaseInfo struct {
 	Path            string   `json:"path" form:"path"`
 	Files           []string `json:"files" form:"files"`
 	Describe        string   `json:"describe" form:"describe"`
-	ResourceEnvId   int      `json:"resource_env_id" form:"resource_env_id"`
+	EnvironmentId   int      `json:"environment_id" form:"environment_id"`
 	DeployProjectId int      `json:"deploy_project_id" form:"deploy_project_id"`
 }

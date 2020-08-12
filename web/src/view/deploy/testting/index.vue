@@ -1,8 +1,8 @@
 <template>
   <div>
       <el-form :model="form" :rules="rules" label-width="100px" ref="projectForm">
-        <el-form-item label="环境" prop="resource_env_id">
-                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.resource_env_id">
+        <el-form-item label="环境" prop="environment_id">
+                    <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.environment_id">
                         <el-option
                                 :key="item.id"
                                 :label="item.name"
@@ -85,7 +85,7 @@
           id: '',
           tag: '',
           files: '',
-          resource_env_id: '',
+          environment_id: '',
           deploy_project_id: '',
           describe: '',
         },
@@ -93,14 +93,11 @@
         rules: {
           tag: [
             { required: true, message: '请选择tag', trigger: 'blur' }
-          ],  
-          // files: [
-          //   { required: true, message: '请选择文件', trigger: 'blur' }
-          // ],
+          ],
           deploy_project_id: [
             { required: true, message: '请输入选择项目', trigger: 'blur' }
-          ],  
-          resource_env_id: [
+          ],
+          environment_id: [
             { required: true, message: '请输入选择环境', trigger: 'blur' }
           ],                    
         }
@@ -113,7 +110,7 @@
           id: '',
           tag: '',
           files: '',
-          resource_env_id: '',
+          environment_id: '',
           deploy_project_id: '',  
         },
         this.files_list = []
@@ -176,14 +173,14 @@
            }
      },
      async GetServerList(id){
-         const ret = await serverList({"page": 1, "pageSize": 9999, "resource_env_id": id})
+         const ret = await serverList({"page": 1, "pageSize": 9999, "environment_id": id})
          if(ret.code === 0){
             this.server_List = ret.data.list
         }
      },
      async EnvChange(row){
         this.project_List = []
-        const ret = await projectList({"page": 1, "pageSize": 9999, "resource_env_id": row})
+        const ret = await projectList({"page": 1, "pageSize": 9999, "environment_id": row})
         if(ret.code === 0){
             this.form.deploy_project_id = ''
             this.project_List = ret.data.list

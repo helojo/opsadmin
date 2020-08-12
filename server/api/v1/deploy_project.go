@@ -56,7 +56,8 @@ func ProjectCreate(c *gin.Context) {
 		"GitUrl":        {utils.NotEmpty()},
 		"Directory":     {utils.NotEmpty()},
 		"IgnoreFiles":   {utils.NotEmpty()},
-		"ResourceEnvId": {utils.NotEmpty()},
+		"Server":        {utils.Gt("0")},
+		"EnvironmentId": {utils.NotEmpty()},
 	}
 	projectVerifyErr := utils.Verify(project, projectVerify)
 	if projectVerifyErr != nil {
@@ -83,12 +84,12 @@ func ProjectUpdate(c *gin.Context) {
 	var project request.DeployProject
 	_ = c.ShouldBindJSON(&project)
 	projectVerify := utils.Rules{
-		"Name":             {utils.NotEmpty()},
-		"GitUrl":           {utils.NotEmpty()},
-		"Directory":        {utils.NotEmpty()},
-		"IgnoreFiles":      {utils.NotEmpty()},
-		"ResourceServerId": {utils.NotEmpty()},
-		"ResourceEnvId":    {utils.NotEmpty()},
+		"Name":          {utils.NotEmpty()},
+		"GitUrl":        {utils.NotEmpty()},
+		"Directory":     {utils.NotEmpty()},
+		"IgnoreFiles":   {utils.NotEmpty()},
+		"Server":        {utils.Gt("0")},
+		"EnvironmentId": {utils.NotEmpty()},
 	}
 	ServerVerifyErr := utils.Verify(project, projectVerify)
 	if ServerVerifyErr != nil {

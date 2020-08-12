@@ -46,11 +46,11 @@ func ProjectList(info request.ProjectPageInfo) (err error, list interface{}, tot
 // @title    ProjectCreate
 // @description   create base project, 新增项目
 // @auth                     （2020/07/07  17:56）
-// @param     api             model.ResourceServer
+// @param     api             model.Server
 // @return                    error
 
 func ProjectCreate(p request.DeployProject) (err error) {
-	findOne := global.GVA_DB.Where("resource_env_id = ? and name = ?", p.EnvironmentId, p.Name).Find(&model.DeployProject{}).Error
+	findOne := global.GVA_DB.Where("environment_id = ? and name = ?", p.EnvironmentId, p.Name).Find(&model.DeployProject{}).Error
 	if findOne == nil {
 		return errors.New("存在相同项目")
 	} else {
@@ -96,6 +96,17 @@ func ProjectUpdate(project request.DeployProject) (err error) {
 	if notRegister {
 		return errors.New("项目地址未找到，请核对Git地址!")
 	}
+	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
+	return err
+}
+
+// @title    ProjectStatusUpdate
+// @description   更新项目状态
+// @auth                     （2020/07/10  15:22）
+// @param     project         model.DeployProject
+// @return                    error
+
+func ProjectStatusUpdate(project model.DeployProject) (err error) {
 	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
 	return err
 }

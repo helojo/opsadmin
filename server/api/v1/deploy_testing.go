@@ -53,7 +53,7 @@ func TestingContrast(c *gin.Context) {
 	_ = c.ShouldBindJSON(&testting)
 	projectVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
-		"ResourceEnvId":   {utils.NotEmpty()},
+		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 	}
 	projectVerifyErr := utils.Verify(testting, projectVerify)
@@ -86,7 +86,7 @@ func TestingRelease(c *gin.Context) {
 	projectVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
 		"Path":            {utils.NotEmpty()},
-		"ResourceEnvId":   {utils.NotEmpty()},
+		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 		"Files":           {utils.NotEmpty()},
 	}

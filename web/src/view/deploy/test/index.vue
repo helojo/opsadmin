@@ -7,7 +7,17 @@
                 prop="env"
                 type="scope">
             <template slot-scope="scope">
-                <span class="operate-span"> {{ scope.row.deployproject.resourceenv.name }}</span>
+                <span class="operate-span"> {{ scope.row.deployproject.environment.name }}</span>
+            </template>
+        </el-table-column>
+        <el-table-column
+                label="主机"
+                prop="server"
+                type="scope">
+            <template slot-scope="scope">
+                <div :key="item.id" v-for="item in scope.row.deployproject.Server">
+                    <span style="float: left">{{ item.name }} , </span>
+                </div>
             </template>
         </el-table-column>
       <el-table-column
