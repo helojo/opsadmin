@@ -13,17 +13,17 @@ func FileContrast(sourceDir string, user string, tagetServer string, port int64,
 		sourceDir,
 		destination,
 		grsync.RsyncOptions{
-			Archive:   true,                                                             //归档模式，表示以递归方式传输文件
-			Compress:  true,                                                             //压缩处理
-			Recursive: true,                                                             //对子目录以递归模式处理
-			Progress:  true,                                                             //显示过程
-			Delete:    true,                                                             //删除那些DST中SRC没有的文件
-			Force:     true,                                                             //强制删除目录，即使不为空
-			DryRun:    true,                                                             //显示哪些文件将被传输
-			Checksum:  true,                                                             //打开校验开关，强制对文件传输进行校验
-			OutFormat: true,                                                             //输出日志格式化
-			Exclude:   exclude,                                                          //过滤文件
-			Rsh:       fmt.Sprintf("ssh -p %d  -i ./resource/platformkey/id_rsa", port), //指定平台私钥
+			Archive:   true,                                                                                         //归档模式，表示以递归方式传输文件
+			Compress:  true,                                                                                         //压缩处理
+			Recursive: true,                                                                                         //对子目录以递归模式处理
+			Progress:  true,                                                                                         //显示过程
+			Delete:    true,                                                                                         //删除那些DST中SRC没有的文件
+			Force:     true,                                                                                         //强制删除目录，即使不为空
+			DryRun:    true,                                                                                         //显示哪些文件将被传输
+			Checksum:  true,                                                                                         //打开校验开关，强制对文件传输进行校验
+			OutFormat: true,                                                                                         //输出日志格式化
+			Exclude:   exclude,                                                                                      //过滤文件
+			Rsh:       fmt.Sprintf("ssh -p %d -o StrictHostKeyChecking=no  -i ./resource/platformkey/id_rsa", port), //指定平台私钥
 		},
 	)
 	if err := task.Run(); err != nil {
@@ -62,15 +62,15 @@ func FileSync(sourceDir string, user string, tagetServer string, port int64, tag
 		sourceDir,
 		destination,
 		grsync.RsyncOptions{
-			Archive:   true,                                                             //归档模式，表示以递归方式传输文件
-			Compress:  true,                                                             //压缩处理
-			Recursive: true,                                                             //对子目录以递归模式处理
-			Progress:  true,                                                             //显示过程
-			Delete:    true,                                                             //删除那些DST中SRC没有的文件
-			Force:     true,                                                             //强制删除目录，即使不为空
-			Checksum:  true,                                                             //打开校验开关，强制对文件传输进行校验
-			Exclude:   exclude,                                                          //过滤文件
-			Rsh:       fmt.Sprintf("ssh -p %d  -i ./resource/platformkey/id_rsa", port), //指定平台私钥
+			Archive:   true,                                                                                        //归档模式，表示以递归方式传输文件
+			Compress:  true,                                                                                        //压缩处理
+			Recursive: true,                                                                                        //对子目录以递归模式处理
+			Progress:  true,                                                                                        //显示过程
+			Delete:    true,                                                                                        //删除那些DST中SRC没有的文件
+			Force:     true,                                                                                        //强制删除目录，即使不为空
+			Checksum:  true,                                                                                        //打开校验开关，强制对文件传输进行校验
+			Exclude:   exclude,                                                                                     //过滤文件
+			Rsh:       fmt.Sprintf("ssh -p %d -o StrictHostKeyChecking=no -i ./resource/platformkey/id_rsa", port), //指定平台私钥
 		},
 	)
 	if err := task.Run(); err != nil {
