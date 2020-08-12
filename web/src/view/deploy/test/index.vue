@@ -102,7 +102,7 @@
       <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTesttingVisible">
           <el-form :model="form" :rules="rules" label-width="100px" ref="TesttingForm">
               <el-form-item label="环境" prop="environment_id">
-                  <el-select  @change="EnvChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.environment_id">
+                  <el-select  @change="EnvChange" filterable placeholder="请选择" v-model="form.environment_id">
                       <el-option
                               :key="item.id"
                               :label="item.name"
@@ -111,7 +111,7 @@
                   </el-select>
               </el-form-item>
               <el-form-item  label="项目" prop="deploy_project_id">
-                  <el-select @change="ProjectChange" filterable placeholder="请选择" style="width:32.4%" v-model="form.deploy_project_id">
+                  <el-select @change="ProjectChange" filterable placeholder="请选择" v-model="form.deploy_project_id">
                       <el-option
                               :key="item.id"
                               :label="item.name"
@@ -120,7 +120,7 @@
                   </el-select>
               </el-form-item>
               <el-form-item  label="Tag" prop="tag">
-                  <el-select filterable placeholder="请选择" style="width:32.4%" v-model="form.tag">
+                  <el-select filterable placeholder="请选择" v-model="form.tag">
                       <el-option
                               :key="item.id"
                               :label="item.name"
@@ -128,7 +128,7 @@
                               v-for="item in tag_List" />
                   </el-select>
               </el-form-item>
-              <el-form-item label="描述" prop="describe"  style="width:32.4%">
+              <el-form-item label="描述" prop="describe">
                   <el-input autocomplete="off" type="textarea" v-model="form.describe"></el-input>
               </el-form-item>
               <el-form-item label="文件对比" prop="files">
