@@ -104,3 +104,29 @@ func TestingRelease(c *gin.Context) {
 		response.OkWithMessage("提测成功!", c)
 	}
 }
+
+// @Tags Deploy_Testing
+// @Summary 可回滚版本
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "可回滚版本"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /deploy/test/testingRversion [post]
+func TestingRversion(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if IdVerifyErr != nil {
+		response.FailWithMessage(IdVerifyErr.Error(), c)
+		return
+	}
+	err, list := service.TestingRversion(reqId.Id)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.PageResult{
+			List: list,
+		}, c)
+	}
+}

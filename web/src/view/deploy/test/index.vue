@@ -6,7 +6,7 @@
                   <el-button @click="Refresh" type="primary">刷新列表 </el-button>
               </el-form-item>
               <el-form-item style="float: right" >
-                  <el-button @click="openTesttingDialog" type="primary">项目回滚</el-button>
+                  <el-button @click="openTestRollbackDialog" type="primary">项目回滚</el-button>
               </el-form-item>
               <el-form-item style="float: right" >
                   <el-button @click="openTesttingDialog" type="primary">项目提侧</el-button>
@@ -74,7 +74,7 @@
       <el-table-column label="申请人" min-width="150" prop="applicant"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="editProject(scope.row)" size="small" type="primary" >日志</el-button>
+          <el-button @click="TestingLogs(scope.row)" size="small" type="primary" >日志</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -100,6 +100,7 @@
       </div>
     </el-dialog>
 
+      <!-- 项目提测模态框 -->
       <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTesttingVisible">
           <el-form :model="form" :rules="rules" label-width="100px" ref="TesttingForm">
               <el-form-item label="环境" prop="environment_id">
@@ -153,15 +154,70 @@
               <el-button @click="Contrast" type="primary">比较</el-button>
               <el-button :disabled="CommitButton"  @click="enterDialog" type="primary">提交</el-button>
           </div>
-      </el-dialog>
+      </el-dialog>  <!-- 项目提测模态框 -->
 
+      <!-- 项目回滚模态框 -->
+      <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTestRollbackVisible">
+          <el-form :model="form" :rules="rollbackrules" label-width="100px" ref="TesttingForm">
+              <el-form-item label="环境" prop="environment_id">
+                  <el-select  @change="EnvChange" filterable placeholder="请选择" v-model="form.environment_id">
+                      <el-option
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                              v-for="item in env_List" />
+                  </el-select>
+              </el-form-item>
+              <el-form-item  label="项目" prop="deploy_project_id">
+                  <el-select @change="ProjectRollbackChange" filterable placeholder="请选择" v-model="form.deploy_project_id">
+                      <el-option
+                              :key="item.id"
+                              :label="item.name"
+                              :value="item.id"
+                              v-for="item in project_List" />
+                  </el-select>
+              </el-form-item>
+              <el-form-item  label="回滚版本" prop="version">
+                  <el-select filterable placeholder="请选择" v-model="form.version">
+                      <el-option
+                              :key="item.ID"
+                              :label="item.version"
+                              :value="item.ID"
+                              v-for="item in version_List" />
+                  </el-select>
+              </el-form-item>
+              <el-form-item label="描述" prop="describe">
+                  <el-input autocomplete="off" type="textarea" v-model="form.describe"></el-input>
+              </el-form-item>
+              <el-form-item label="文件对比" prop="files">
+                  <el-table
+                          :data="files_list"
+                          style="width: 100%">
+                      <el-table-column
+                              prop="key"
+                              label="待同步文件">
+                          <template slot-scope="scope">
+                              <span class="operate-span-danger" v-if="scope.row.key  && scope.row.key.indexOf('删除') != -1 " > {{ scope.row.key }}</span>
+                              <span class="operate-span-primary" v-else >{{ scope.row.key }}</span>
+                          </template>
+                      </el-table-column>
+                  </el-table>
+              </el-form-item>
+
+          </el-form>
+          <div class="dialog-footer" slot="footer">
+              <el-button @click="closeDialog">取 消</el-button>
+              <el-button @click="Contrast" type="primary">比较</el-button>
+              <el-button :disabled="CommitButton"  @click="enterDialog" type="primary">提交</el-button>
+          </div>
+      </el-dialog>  <!-- 项目回滚模态框 -->
   </div>
 </template>
 
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { testingList, testingContrast, testingRelease} from '@/api/deploy/test'
+  import { testingList, testingContrast, testingRelease, testingRversion} from '@/api/deploy/test'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
   import { projectList } from '@/api/deploy/project'
@@ -175,18 +231,21 @@
         listApi: testingList,
         dialogFormVisible: false,
         dialogFormTesttingVisible: false,
-        dialogTitle: '日志提测',
+        dialogFormTestRollbackVisible: false,
+        dialogTitle: '项目提测',
         dialogType: '',
         result: '',
         env_List: [],
         project_List: [],
         tag_List: [],
         files_list: [],
+        version_List: [],
         CommitButton: true,
         form: {
               id: '',
               tag: '',
               files: '',
+              version: '',
               environment_id: '',
               deploy_project_id: '',
               describe: '',
@@ -194,6 +253,17 @@
         rules: {
               tag: [
                   { required: true, message: '请选择tag', trigger: 'blur' }
+              ],
+              deploy_project_id: [
+                  { required: true, message: '请输入选择项目', trigger: 'blur' }
+              ],
+              environment_id: [
+                  { required: true, message: '请输入选择环境', trigger: 'blur' }
+              ],
+          },
+          rollbackrules: {
+              version: [
+                  { required: true, message: '请选择版本', trigger: 'blur' }
               ],
               deploy_project_id: [
                   { required: true, message: '请输入选择项目', trigger: 'blur' }
@@ -212,6 +282,7 @@
                 id: '',
                 tag: '',
                 files: '',
+                version: '',
                 environment_id: '',
                 deploy_project_id: '',
             },
@@ -223,10 +294,11 @@
       closeDialog() {
         this.initForm()
         this.dialogFormTesttingVisible = false
+        this.dialogFormTestRollbackVisible = false
         this.taget_file_list = []
         this.files_list = []
       },
-      async editProject(row) {
+      async TestingLogs(row) {
         this.dialogTitle = '日志详情'
         this.result = row.result
         this.dialogFormVisible = true
@@ -304,6 +376,18 @@
                     }
                 }
             })
+        },
+        async openTestRollbackDialog(){
+            this.dialogTitle = '项目回滚'
+            this.GetEnvList()
+            this.dialogFormTestRollbackVisible = true
+        },
+        async ProjectRollbackChange(row) {
+          console.log(row)
+            const res = await testingRversion({"id": row})
+            if (res.code === 0) {
+                this.version_List = res.data.list
+            }
         },
         async Refresh() {
             this.getTableData()
