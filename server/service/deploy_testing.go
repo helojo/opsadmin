@@ -92,6 +92,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		err = global.GVA_DB.Create(testOrder).Error
 		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
+
 		for _, value := range project.Server {
 			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
 			err, ret := utils.FileSync(testting.Path, value.User, value.Host, value.Port, project.Directory, exclude)
@@ -101,15 +102,14 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 			result += ret
 		}
 
-		if err != nil {
+		if strings.HasPrefix(result, "同步报错") {
 			err = TestingUpdate(testOrder.ID, 2, result)
-		}
-		err = TestingUpdate(testOrder.ID, 1, result)
-
-		if err == nil {
+		} else {
+			err = TestingUpdate(testOrder.ID, 1, result)
 			project.ReleaseVersion = version
 			err = ProjectStatusUpdate(project)
 		}
+
 		// 删除过期备份
 		_ = ReservedVersionDelete(float64(project.ID))
 	}()
