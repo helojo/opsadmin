@@ -136,6 +136,6 @@ func TestingUpdate(id uint, status int, result string) (err error) {
 
 func TestingRversion(id float64) (err error, list interface{}) {
 	var testing []model.DeployTesting
-	err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", id).Find(&testing).Error
+	err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", id).Group("version").Order("created_at desc").Find(&testing).Error
 	return err, testing
 }

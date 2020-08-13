@@ -67,8 +67,8 @@
                     type="scope">
                 <template slot-scope="scope">
                     <span class="operate-span-danger" v-if="scope.row.status === 0 " >提侧中</span>
-                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >提测成功</span>
-                    <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >提测失败</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >成功</span>
+                    <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >失败</span>
                 </template>
       </el-table-column>            
       <el-table-column label="申请人" min-width="150" prop="applicant"></el-table-column>
@@ -158,7 +158,7 @@
 
       <!-- 项目回滚模态框 -->
       <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTestRollbackVisible">
-          <el-form :model="form" :rules="rollbackrules" label-width="100px" ref="TesttingForm">
+          <el-form :model="form" :rules="rules" label-width="100px" ref="TesttingForm">
               <el-form-item label="环境" prop="environment_id">
                   <el-select  @change="EnvChange" filterable placeholder="请选择" v-model="form.environment_id">
                       <el-option
@@ -261,20 +261,6 @@
                   { required: true, message: '请输入选择环境', trigger: 'blur' }
               ],
           },
-          rollbackrules: {
-              version: [
-                  { required: true, message: '请选择版本', trigger: 'blur' }
-              ],
-              deploy_project_id: [
-                  { required: true, message: '请输入选择项目', trigger: 'blur' }
-              ],
-              environment_id: [
-                  { required: true, message: '请输入选择环境', trigger: 'blur' }
-              ],
-              describe: [
-                  { required: true, message: '请输入描述信息', trigger: 'blur' }
-              ],
-          }
       }
 
     },
