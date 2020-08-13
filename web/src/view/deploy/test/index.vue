@@ -335,7 +335,7 @@
         },
      async GetEnvList(){
             this.env_List = []
-            const ret = await envList({"page": 1, "pageSize": 9999})
+            const ret = await envList({"page": 1, "status": 1, "pageSize": 9999})
             if(ret.code === 0){
                 this.env_List = ret.data.list
             }
