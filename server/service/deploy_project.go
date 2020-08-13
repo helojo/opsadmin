@@ -156,7 +156,6 @@ func ReservedVersionDelete(id float64) (err error) {
 			for _, testOrder := range testting {
 				if testOrder.Version <= deleteVersion {
 					err = os.RemoveAll(testOrder.Path)
-					fmt.Println("删除目录", err)
 					if err == nil {
 						var testorder model.DeployTesting
 						testorder.Isdelete = 2
