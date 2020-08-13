@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"gin-vue-admin/global/response"
+	"gin-vue-admin/middleware"
 	"gin-vue-admin/model/request"
 	resp "gin-vue-admin/model/response"
 	"gin-vue-admin/service"
@@ -62,14 +63,45 @@ func RollbackContrast(c *gin.Context) {
 		response.FailWithMessage(rollbackVerifyErr.Error(), c)
 		return
 	}
-	response.OkWithMessage("到这里了", c)
-	//err, list, path := service.TestingContrast(testting)
-	//if err != nil {
-	//	response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
-	//} else {
-	//	response.OkWithData(resp.ContrastResult{
-	//		List: list,
-	//		Path: path,
-	//	}, c)
-	//}
+
+	err, list, path := service.RollbackContrast(rollback)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.ContrastResult{
+			List: list,
+			Path: path,
+		}, c)
+	}
+}
+
+// @Tags Deploy_Rollback
+// @Summary 回滚同步
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.PageInfo true "回滚同步"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"回滚同步成功"}"
+// @Router /deploy/rollback/rollbackRelease [post]
+func RollbackRelease(c *gin.Context) {
+	var rollback request.RollbackContrast
+	_ = c.ShouldBindJSON(&rollback)
+	projectVerify := utils.Rules{
+		"Version":         {utils.NotEmpty()},
+		"Describe":        {utils.NotEmpty()},
+		"EnvironmentId":   {utils.NotEmpty()},
+		"DeployProjectId": {utils.NotEmpty()},
+	}
+	rollbackVerifyErr := utils.Verify(rollback, projectVerify)
+	if rollbackVerifyErr != nil {
+		response.FailWithMessage(rollbackVerifyErr.Error(), c)
+		return
+	}
+	claims, _ := middleware.NewJWT().ParseToken(c.GetHeader("x-token"))
+	err := service.RollbackRelease(rollback, claims)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("回滚失败，%v", err), c)
+	} else {
+		response.OkWithMessage("回滚成功!", c)
+	}
 }

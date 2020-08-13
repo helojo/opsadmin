@@ -34,3 +34,19 @@ export const rollbackContrast = (data) => {
         data
     })
 }
+
+// @Tags Deploy_Rollback
+// @Summary 回滚同步
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "回滚同步"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /deploy/rollback/rollbackRelease [post]
+export const rollbackRelease = (data) => {
+    return service({
+        url: "/deploy/rollback/rollbackRelease",
+        method: 'post',
+        data
+    })
+}
