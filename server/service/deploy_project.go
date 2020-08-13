@@ -67,13 +67,15 @@ func ProjectCreate(p request.DeployProject) (err error) {
 		fmt.Println(servers)
 		if err == nil {
 			p.ReleaseVersion = 0.1
+			reservedversion, _ := strconv.Atoi(p.Reservedversion)
 			project := model.DeployProject{
-				Name:           p.Name,
-				GitUrl:         p.GitUrl,
-				Directory:      p.Directory,
-				IgnoreFiles:    p.IgnoreFiles,
-				ReleaseVersion: 0.1,
-				EnvironmentId:  p.EnvironmentId,
+				Name:            p.Name,
+				GitUrl:          p.GitUrl,
+				Directory:       p.Directory,
+				IgnoreFiles:     p.IgnoreFiles,
+				ReleaseVersion:  0.1,
+				Reservedversion: reservedversion,
+				EnvironmentId:   p.EnvironmentId,
 			}
 			err = global.GVA_DB.Create(&project).Error
 			if err == nil {
@@ -142,8 +144,7 @@ func ReservedVersionDelete(id float64) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", id).Find(&project).Error
 	if err == nil {
-		Reservedversion, _ := strconv.ParseFloat(project.Reservedversion, 64)
-		deleteVersion := project.ReleaseVersion - Reservedversion*0.1
+		deleteVersion := project.ReleaseVersion - float64(project.Reservedversion)*0.1
 
 		var testting []model.DeployTesting
 		err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", project.ID).Find(&testting).Error

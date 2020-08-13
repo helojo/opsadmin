@@ -271,6 +271,9 @@
               environment_id: [
                   { required: true, message: '请输入选择环境', trigger: 'blur' }
               ],
+              describe: [
+                  { required: true, message: '请输入描述信息', trigger: 'blur' }
+              ],
           }
       }
 

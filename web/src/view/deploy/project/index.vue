@@ -289,7 +289,7 @@
         this.server_List = []
         const ret = await serverList({"page": 1, "pageSize": 9999, "environment_id": row})
         if(ret.code === 0){
-            this.form.resource_server = ''
+            this.form.server = ''
             this.server_List = ret.data.list
           }
      },

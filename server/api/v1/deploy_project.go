@@ -50,7 +50,6 @@ func ProjectList(c *gin.Context) {
 func ProjectCreate(c *gin.Context) {
 	var project request.DeployProject
 	_ = c.ShouldBindJSON(&project)
-	fmt.Println(project)
 	projectVerify := utils.Rules{
 		"Name":            {utils.NotEmpty()},
 		"GitUrl":          {utils.NotEmpty()},

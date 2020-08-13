@@ -58,3 +58,23 @@ export const testingRelease = (data) => {
         data
     })
 }
+
+// @Tags Deploy_Testing
+// @Summary 项目可回滚版本
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "项目可回滚版本"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"项目可回滚版本"}"
+// @Router /deploy/test/estingRversion [post]
+// {
+//  page     int
+//	pageSize int
+// }
+export const testingRversion = (data) => {
+    return service({
+        url: "/deploy/test/testingRversion",
+        method: 'post',
+        data
+    })
+}

@@ -23,6 +23,7 @@ func DBTables() {
 		model.Server{},
 		model.DeployProject{},
 		model.DeployTesting{},
+		model.DeployRollback{},
 		model.GitlabProject{},
 	)
 	global.GVA_LOG.Debug("register table success")
