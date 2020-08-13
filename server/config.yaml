@@ -66,4 +66,4 @@ gitlab:
     token: 'cNwcPatbFYxc85DHndtc'
 
 gitpull:
-    path: '/Users/eagle/data/opsadmin/server/resource/gittemp/'
+    path: './resource/gittemp/'

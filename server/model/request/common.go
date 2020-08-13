@@ -27,7 +27,6 @@ type ProjectPageInfo struct {
 }
 
 type ContrastInfo struct {
-	Path            string `json:"path" form:"path"`
 	Tag             string `json:"tag" form:"tag"`
 	EnvironmentId   int    `json:"environment_id" form:"environment_id"`
 	DeployProjectId int    `json:"deploy_project_id" form:"deploy_project_id"`

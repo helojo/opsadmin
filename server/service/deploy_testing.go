@@ -44,7 +44,8 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
 	}
 
-	path, err = utils.Gitpull(testting.Tag, project.GitUrl)
+	filepath := fmt.Sprintf("%d-%s-%.1f", project.ID, project.Name, project.ReleaseVersion+0.1)
+	path, err = utils.Gitpull(testting.Tag, project.GitUrl, filepath)
 	if err != nil {
 		return errors.New(fmt.Sprint("Git拉取项目报错, 报错信息: %s", err)), list, path
 	}

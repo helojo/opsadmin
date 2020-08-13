@@ -182,7 +182,6 @@
         project_List: [],
         tag_List: [],
         files_list: [],
-        path: "",
         CommitButton: true,
         form: {
               id: '',
@@ -212,7 +211,6 @@
             this.form= {
                 id: '',
                 tag: '',
-                path: '',
                 files: '',
                 environment_id: '',
                 deploy_project_id: '',
@@ -224,7 +222,6 @@
       },
       closeDialog() {
         this.initForm()
-        this.path = ""
         this.dialogFormTesttingVisible = false
         this.taget_file_list = []
         this.files_list = []
