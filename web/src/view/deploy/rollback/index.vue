@@ -54,16 +54,19 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-            :current-page="page"
-            :page-size="pageSize"
-            :page-sizes="[10, 30, 50, 100]"
-            :style="{float:'right',padding:'20px'}"
-            :total="total"
-            @current-change="handleCurrentChange"
-            @size-change="handleSizeChange"
-            layout="total, sizes, prev, pager, next, jumper"
-    ></el-pagination>
+    <el-row justify="center" style="padding-top:20px;" type="flex">
+      <span class="demonstration" />
+      <el-pagination
+              :current-page="page"
+              :page-size="pageSize"
+              :page-sizes="[10, 30, 50, 100]"
+              :style="{float:'right',padding:'20px'}"
+              :total="total"
+              @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
+              layout="total, sizes, prev, pager, next, jumper"
+      ></el-pagination>
+    </el-row>
     <el-dialog :before-close="closeresultDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
       <div style="background: #000000">
         <pre style="color: #e8e8e8"> {{ result }} </pre>
