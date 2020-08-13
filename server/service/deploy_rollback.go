@@ -91,7 +91,6 @@ func RollbackRelease(rollback request.RollbackContrast, username *request.Custom
 			Aperator:        username.NickName,
 			Describe:        rollback.Describe,
 			DeployProjectId: rollback.DeployProjectId,
-			Status:          1,
 		}
 		err = global.GVA_DB.Create(deployrollback).Error
 

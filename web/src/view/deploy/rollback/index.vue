@@ -42,7 +42,7 @@
               prop="status"
               type="scope">
         <template slot-scope="scope">
-          <span class="operate-span-danger" v-if="scope.row.status === 0 " >提侧中</span>
+          <span class="operate-span-danger" v-if="scope.row.status === 0 " >回滚中</span>
           <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >成功</span>
           <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >失败</span>
         </template>
