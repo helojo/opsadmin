@@ -39,6 +39,13 @@ type ContrastInfo struct {
 	DeployProjectId int    `json:"deploy_project_id" form:"deploy_project_id"`
 }
 
+type RollbackContrast struct {
+	Version         int    `json:"version" form:"version"`
+	Describe        string `json:"describe" form:"describe"`
+	EnvironmentId   int    `json:"environment_id" form:"environment_id"`
+	DeployProjectId int    `json:"deploy_project_id" form:"deploy_project_id"`
+}
+
 type TestingReleaseInfo struct {
 	Tag             string   `json:"tag" form:"tag"`
 	Path            string   `json:"path" form:"path"`

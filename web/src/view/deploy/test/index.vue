@@ -207,7 +207,7 @@
           </el-form>
           <div class="dialog-footer" slot="footer">
               <el-button @click="closeDialog">取 消</el-button>
-              <el-button @click="Contrast" type="primary">比较</el-button>
+              <el-button @click="RollbackContrast" type="primary">比较</el-button>
               <el-button :disabled="CommitButton"  @click="enterDialog" type="primary">提交</el-button>
           </div>
       </el-dialog>  <!-- 项目回滚模态框 -->
@@ -218,6 +218,7 @@
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
   import { testingList, testingContrast, testingRelease, testingRversion} from '@/api/deploy/test'
+  import { rollbackContrast } from '@/api/deploy/rollback'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
   import { projectList } from '@/api/deploy/project'
@@ -377,6 +378,24 @@
             if (res.code === 0) {
                 this.version_List = res.data.list
             }
+        },
+        async RollbackContrast(){
+            this.$refs.TesttingForm.validate(async valid => {
+                if (valid) {
+                    {
+                        console.log(this.form)
+                        const res = await rollbackContrast(this.form)
+                        if (res.code === 0) {
+                            console.log(res)
+                            // this.form.files = ""
+                            // this.files_list = res.data.list
+                            // this.path = res.data.path
+                            // this.CommitButton = false
+                            // this.taget_file_list = []
+                        }
+                    }
+                }
+            })
         },
         async Refresh() {
             this.getTableData()

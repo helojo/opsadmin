@@ -38,3 +38,38 @@ func RollbackList(c *gin.Context) {
 		}, c)
 	}
 }
+
+// @Tags Deploy_Rollback
+// @Summary 文件对比
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.PageInfo true "文件对比"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"文件对比成功"}"
+// @Router /deploy/rollback/rollbackContrast [post]
+func RollbackContrast(c *gin.Context) {
+	var rollback request.RollbackContrast
+	_ = c.ShouldBindJSON(&rollback)
+	RollbackVerify := utils.Rules{
+		"Version":         {utils.NotEmpty()},
+		"Describe":        {utils.NotEmpty()},
+		"EnvironmentId":   {utils.NotEmpty()},
+		"DeployProjectId": {utils.NotEmpty()},
+	}
+	fmt.Println(rollback)
+	rollbackVerifyErr := utils.Verify(rollback, RollbackVerify)
+	if rollbackVerifyErr != nil {
+		response.FailWithMessage(rollbackVerifyErr.Error(), c)
+		return
+	}
+	response.OkWithMessage("到这里了", c)
+	//err, list, path := service.TestingContrast(testting)
+	//if err != nil {
+	//	response.FailWithMessage(fmt.Sprintf("对比失败，%v", err), c)
+	//} else {
+	//	response.OkWithData(resp.ContrastResult{
+	//		List: list,
+	//		Path: path,
+	//	}, c)
+	//}
+}

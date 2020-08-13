@@ -9,6 +9,7 @@ import (
 func InitDeployRollbackRouter(Router *gin.RouterGroup) {
 	ApiRouter := Router.Group("deploy/rollback").Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
-		ApiRouter.POST("rollbackList", v1.RollbackList) // 回滚列表
+		ApiRouter.POST("rollbackList", v1.RollbackList)         //回滚列表
+		ApiRouter.POST("rollbackContrast", v1.RollbackContrast) //回滚对比
 	}
 }
