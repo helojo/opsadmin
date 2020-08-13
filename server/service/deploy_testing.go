@@ -61,12 +61,12 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 		}
 		result = append(result, ret...)
 	}
-	_ = ReservedVersionDelete(float64(project.ID))
+
 	return err, result, path
 }
 
 // @title    TestingRelease
-// @description   提交并同步要发布的文件
+// @description   提交并同步要发布的文件，并清理过期备份
 // @auth                      （2020/07/17  19:45）
 // @param     info             request.TestingReleaseInfo
 // @return    err              error
@@ -90,7 +90,6 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		}
 
 		err = global.GVA_DB.Create(testOrder).Error
-
 		result := ""
 		exclude := strings.Fields(project.IgnoreFiles)
 		for _, value := range project.Server {
@@ -111,6 +110,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 			project.ReleaseVersion = version
 			err = ProjectStatusUpdate(project)
 		}
+		// 删除过期备份
 		_ = ReservedVersionDelete(float64(project.ID))
 	}()
 
