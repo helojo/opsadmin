@@ -63,7 +63,6 @@ func ProjectCreate(p request.DeployProject) (err error) {
 		}
 
 		var servers []model.Server
-		fmt.Println("打印：", p.Server)
 		err = global.GVA_DB.Where("id in (?)", p.Server).Find(&servers).Error
 		fmt.Println(servers)
 		if err == nil {
@@ -100,11 +99,9 @@ func ProjectUpdate(project request.DeployProject) (err error) {
 	}
 
 	err = global.GVA_DB.Where("id = ?", project.ID).First(&model.DeployProject{}).Updates(&project).Error
-
 	if err == nil {
 		var servers []model.Server
 		err = global.GVA_DB.Where("id in (?)", project.Server).Find(&servers).Error
-
 		if err == nil {
 			err = global.GVA_DB.Model(&model.DeployProject{ID: project.ID}).Association("Server").Replace(&servers).Error
 		}
@@ -145,7 +142,6 @@ func ReservedVersionDelete(id float64) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", id).Find(&project).Error
 	if err == nil {
-
 		Reservedversion, _ := strconv.ParseFloat(project.Reservedversion, 64)
 		deleteVersion := project.ReleaseVersion - Reservedversion*0.1
 
