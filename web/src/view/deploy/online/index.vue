@@ -76,6 +76,11 @@
       <el-table-column label="申请人" min-width="150" prop="applicant"></el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
+            <el-button @click="handleAuditor(scope.row)" size="mini" type="primary" v-if="scope.row.status === 0 ">开发审核</el-button>
+            <el-button @click="handleAuditor(scope.row)" size="mini" type="primary"  v-else-if="scope.row.status === 1 " >测试审核</el-button>
+            <el-button @click="handleAuditor(scope.row)" size="mini" type="primary" v-else-if="scope.row.status === 2 " >运维审核</el-button>
+            <el-button @click="handleAuditor(scope.row)" size="mini" type="primary" v-else-if="scope.row.status >= 3">详情</el-button>
+            <el-button @click="handleClose(scope.row)" size="mini" type="danger" v-if="scope.row.status !== 5 && scope.row.status !== 4 && scope.row.status !== 3">关闭</el-button>
           <el-button @click="TestingLogs(scope.row)" size="small" type="primary" >日志</el-button>
         </template>
       </el-table-column>
@@ -213,6 +218,44 @@
               <el-button :disabled="CommitButton"  @click="enterRollback" type="primary">提交</el-button>
           </div>
       </el-dialog>  <!-- 项目回滚模态框 -->
+
+      <!-- 审核工单模态框 -->
+      <el-dialog
+              :visible.sync="dialogVisibleForaudit"
+              @close="handleCancelExamine"
+              title="审核工单"
+              width="50%">
+          <el-steps :active="active" finish-status="success" simple style="margin-top: 20px">
+              <el-step :key="item"
+                       :title="item"
+                       v-for="item in online_status"/>
+          </el-steps>
+          <el-form :model="form" label-width="100px" ref="OnlineForm">
+              <el-form-item label="项目名称" prop="deployproject">
+                  <el-input placeholder="" readonly v-model="form.deployproject.name"/>
+              </el-form-item>
+              <el-form-item label="上线版本" prop="version">
+                  <el-input placeholder="" readonly v-model="form.version"/>
+              </el-form-item>
+              <el-form-item label="描述" prop="describe">
+                  <el-input placeholder="" readonly v-model="form.describe"/>
+              </el-form-item>
+              <el-form-item label="开发审核" prop="dev_auditor" v-if="form.dev_auditor !== ''">
+                  <el-input placeholder="" readonly v-model="form.dev_auditor"/>
+              </el-form-item>
+              <el-form-item label="测试审核" prop="test_auditor" v-if="form.test_auditor !== ''">
+                  <el-input placeholder="" readonly v-model="form.test_auditor"/>
+              </el-form-item>
+              <el-form-item label="运维审核" prop="op_auditor" v-if="form.op_auditor !== ''">
+                  <el-input placeholder="" readonly v-model="form.op_auditor"/>
+              </el-form-item>
+          </el-form>
+          <div class="dialog-footer" slot="footer">
+              <el-button @click="enterDialog" type="primary" v-if="form.status !== 3 && form.status !== 5 && form.status !== 4 && form.status !== 6">通过</el-button>
+              <el-button @click="handleCancelExamine">取消</el-button>
+          </div>
+      </el-dialog>
+
   </div>
 </template>
 
@@ -235,6 +278,7 @@
         dialogFormVisible: false,
         dialogFormTesttingVisible: false,
         dialogFormTestRollbackVisible: false,
+        dialogVisibleForaudit: false,
         dialogTitle: '项目提测',
         dialogType: '',
         result: '',
@@ -243,7 +287,9 @@
         tag_List: [],
         files_list: [],
         version_List: [],
+        online_status: [],
         CommitButton: true,
+        active: 1,
         form: {
               id: '',
               tag: '',
@@ -252,6 +298,10 @@
               environment_id: '',
               deploy_project_id: '',
               describe: '',
+              dev_auditor: '',
+              test_auditor: '',
+              op_auditor: '',
+              deployproject: [],
           },
         rules: {
               tag: [
@@ -409,6 +459,19 @@
                 this.getTableData()
                 this.closeDialog()
             }
+        },
+        handleCancelExamine() {
+            this.dialogVisibleForaudit = false
+            this.getTableData()
+        },
+        // 审核工单
+        async handleAuditor(row) {
+            for(let key in this.form){
+                this.form[key] = row[key]
+            }
+            this.dialogVisibleForaudit  = true
+            this.online_status = ['开发审核', '测试审核', '运维审核']
+            this.active = row.status
         },
         async Refresh() {
             this.getTableData()
