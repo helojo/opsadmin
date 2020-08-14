@@ -186,6 +186,7 @@
             break
         }
         this.dialogType = type
+        this.form.server = []
         this.dialogFormVisible = true
       },
       async editProject(row) {
@@ -298,8 +299,7 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        })
-                .then(async () => {
+        }).then(async () => {
                   const res = await projectImport()
                   if (res.code == 0) {
                     this.$message({
