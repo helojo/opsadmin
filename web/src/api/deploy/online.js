@@ -52,6 +52,38 @@ export const onlineCreate = (data) => {
 }
 
 // @Tags Deploy_Online
+// @Summary 项目开发审核
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "项目开发审核"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"项目开发审核成功"}"
+// @Router /deploy/online/devAudit [post]
+export const devAudit = (data) => {
+    return service({
+        url: "/deploy/online/devAudit",
+        method: 'post',
+        data
+    })
+}
+
+// @Tags Deploy_Online
+// @Summary 项目测试审核
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "项目测试审核"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"项目测试审核成功"}"
+// @Router /deploy/online/testAudit [post]
+export const testAudit = (data) => {
+    return service({
+        url: "/deploy/online/testAudit",
+        method: 'post',
+        data
+    })
+}
+
+// @Tags Deploy_Online
 // @Summary 项目可回滚版本
 // @Security ApiKeyAuth
 // @accept application/json

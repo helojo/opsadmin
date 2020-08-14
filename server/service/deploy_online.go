@@ -137,3 +137,25 @@ func OnlineRversion(id float64) (err error, list interface{}) {
 	err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", id).Group("version").Order("created_at desc").Find(&online).Error
 	return err, online
 }
+
+// @title   DevAudit
+// @description    开发审核
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func DevAudit(id float64, username string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: 1, DevAuditor: username}).Error
+	return err
+}
+
+// @title   TestAudit
+// @description    测试审核
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func TestAudit(id float64, username string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: 2, TestAuditor: username}).Error
+	return err
+}

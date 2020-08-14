@@ -251,7 +251,7 @@
               </el-form-item>
           </el-form>
           <div class="dialog-footer" slot="footer">
-              <el-button @click="enterDialog" type="primary" v-if="form.status !== 3 && form.status !== 5 && form.status !== 4 && form.status !== 6">通过</el-button>
+              <el-button @click="handleauditDialog" type="primary" v-if="form.status !== 3 && form.status !== 5 && form.status !== 4 && form.status !== 6">通过</el-button>
               <el-button @click="handleCancelExamine">取消</el-button>
           </div>
       </el-dialog>
@@ -262,7 +262,7 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { onlineList, onlineContrast, onlineCreate, onlineRversion} from '@/api/deploy/online'
+  import { onlineList, onlineContrast, onlineCreate, onlineRversion, devAudit, testAudit} from '@/api/deploy/online'
   import { rollbackContrast, rollbackRelease } from '@/api/deploy/rollback'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
@@ -291,10 +291,11 @@
         CommitButton: true,
         active: 1,
         form: {
-              id: '',
+              ID: '',
               tag: '',
               files: '',
               version: '',
+              status: '',
               environment_id: '',
               deploy_project_id: '',
               describe: '',
@@ -321,12 +322,18 @@
       initForm() {
             this.$refs.TesttingForm.resetFields()
             this.form= {
-                id: '',
+                ID: '',
                 tag: '',
                 files: '',
                 version: '',
+                status: '',
                 environment_id: '',
                 deploy_project_id: '',
+                describe: '',
+                dev_auditor: '',
+                test_auditor: '',
+                op_auditor: '',
+                deployproject: [],
             },
                 this.files_list = []
       },
@@ -472,6 +479,54 @@
             this.dialogVisibleForaudit  = true
             this.online_status = ['开发审核', '测试审核', '运维审核']
             this.active = row.status
+        },
+        // 通过审核
+        async handleauditDialog(){
+            switch (this.form.status) {
+                // 开发审核
+                case 0:
+                {
+                    const res = await devAudit({"id": this.form.ID})
+                    if (res.code === 0) {
+                        this.$message({
+                            type: 'success',
+                            message: '开发审核成功!'
+                        })
+                        this.dialogVisibleForaudit = false
+                        this.getTableData()
+                        this.closeDialog()
+                    }
+                }
+                    break;
+                case 1 :
+                {
+                    const res = await testAudit({"id": this.form.ID})
+                    if (res.code === 0) {
+                        this.$message({
+                            type: 'success',
+                            message: '测试审核成功!'
+                        })
+                        this.dialogVisibleForaudit = false
+                        this.getTableData()
+                        this.closeDialog()
+                    }
+                }
+                    break;
+                // case 2:
+                // {
+                //     const res = await orderOp({"id": this.form.ID})
+                //     if (res.code === 0) {
+                //         this.$message({
+                //             type: 'success',
+                //             message: '运维审核成功!'
+                //         })
+                //         this.dialogVisibleForEdit = false
+                //         this.getTableData()
+                //         this.closeDialog()
+                //     }
+                // }
+                //     break;
+            }
         },
         async Refresh() {
             this.getTableData()
