@@ -23,6 +23,7 @@ func DBTables() {
 		model.Server{},
 		model.DeployProject{},
 		model.DeployTesting{},
+		model.DeployOnline{},
 		model.DeployRollback{},
 		model.GitlabProject{},
 	)

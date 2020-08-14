@@ -134,13 +134,46 @@ func ProjectDelete(id float64) (err error) {
 	return err
 }
 
-// @title    ProjectversionDelete
+// @title    TestingversionDelete
 // @description    删除多余的备份版本
 // @auth                     （2020/07/10  15:11）
 // @param     id
 // @return    err             error
 
-func ReservedVersionDelete(id float64) (err error) {
+func TestingVersionDelete(id float64) (err error) {
+	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ?", id).Find(&project).Error
+	if err == nil {
+		deleteVersion := project.ReleaseVersion - float64(project.Reservedversion)*0.1
+
+		var testting []model.DeployTesting
+		err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", project.ID).Find(&testting).Error
+		fmt.Println(testting)
+		if err == nil {
+			for _, testOrder := range testting {
+				if testOrder.Version <= deleteVersion {
+					err = os.RemoveAll(testOrder.Path)
+					if err == nil {
+						var testorder model.DeployTesting
+						testorder.Isdelete = 2
+						err = global.GVA_DB.Where("id = ?", testOrder.ID).First(&model.DeployTesting{}).Updates(&testorder).Error
+					}
+				}
+			}
+
+		}
+	}
+
+	return err
+}
+
+// @title    OnlineVersionDelete
+// @description    删除多余的备份版本
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func OnlineVersionDelete(id float64) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", id).Find(&project).Error
 	if err == nil {

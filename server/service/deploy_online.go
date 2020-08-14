@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// @title    TestingList
+// @title    OnlineList
 // @description   get test order list by pagination, 分页获取数据
 // @auth                      （2020/04/05  20:22）
 // @param     info             request.PageInfo
@@ -19,17 +19,17 @@ import (
 // @return    list             interface{}
 // @return    total            int
 
-func TestingList(info request.PageInfo) (err error, list interface{}, total int) {
+func OnlineList(info request.PageInfo) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GVA_DB.Model(&model.DeployTesting{})
-	var testingList []model.DeployTesting
+	db := global.GVA_DB.Model(&model.DeployOnline{})
+	var onlineList []model.DeployOnline
 	err = db.Count(&total).Error
-	err = db.Order("id DESC ").Preload("DeployProject.Environment").Preload("DeployProject.Server").Limit(limit).Offset(offset).Find(&testingList).Error
-	return err, testingList, total
+	err = db.Order("id DESC ").Preload("DeployProject.Environment").Preload("DeployProject.Server").Limit(limit).Offset(offset).Find(&onlineList).Error
+	return err, onlineList, total
 }
 
-// @title    TestingContrast
+// @title    OnlineContrast
 // @description   对比文件
 // @auth                      （2020/07/15  09:50）
 // @param     info             request.ContrastInfo
@@ -37,15 +37,15 @@ func TestingList(info request.PageInfo) (err error, list interface{}, total int)
 // @return    list             interface{}
 // @return    path             string
 
-func TestingContrast(testting request.ContrastInfo) (err error, list interface{}, path string) {
+func OnlineContrast(online request.ContrastInfo) (err error, list interface{}, path string) {
 	var project model.DeployProject
-	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("Server").First(&project).Error
+	err = global.GVA_DB.Where("id = ?", online.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
 	}
 
 	filepath := fmt.Sprintf("%d-%s-%.1f", project.ID, project.Name, project.ReleaseVersion+0.1)
-	path, err = utils.Gitpull(testting.Tag, project.GitUrl, filepath)
+	path, err = utils.Gitpull(online.Tag, project.GitUrl, filepath)
 	if err != nil {
 		return errors.New(fmt.Sprint("Git拉取项目报错, 报错信息: %s", err)), list, path
 	}
@@ -65,26 +65,26 @@ func TestingContrast(testting request.ContrastInfo) (err error, list interface{}
 	return err, result, path
 }
 
-// @title    TestingRelease
+// @title    OnlineRelease
 // @description   提交并同步要发布的文件，并清理过期备份
 // @auth                      （2020/07/17  19:45）
 // @param     info             request.TestingReleaseInfo
 // @return    err              error
 
-func TestingRelease(testting request.TestingReleaseInfo, username *request.CustomClaims) (err error) {
+func OnlineRelease(online request.TestingReleaseInfo, username *request.CustomClaims) (err error) {
 	var project model.DeployProject
-	err = global.GVA_DB.Where("id = ?", testting.DeployProjectId).Preload("Server").First(&project).Error
+	err = global.GVA_DB.Where("id = ?", online.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
 	go func() {
 		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
-		testOrder := &model.DeployTesting{
+		testOrder := &model.DeployOnline{
 			Applicant:       username.NickName,
-			Tag:             testting.Tag,
-			DeployProjectId: testting.DeployProjectId,
-			Describe:        testting.Describe,
-			Path:            testting.Path,
+			Tag:             online.Tag,
+			DeployProjectId: online.DeployProjectId,
+			Describe:        online.Describe,
+			Path:            online.Path,
 			Version:         version,
 			Isdelete:        1,
 		}
@@ -95,7 +95,7 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 
 		for _, value := range project.Server {
 			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
-			err, ret := utils.FileSync(testting.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+			err, ret := utils.FileSync(online.Path, value.User, value.Host, value.Port, project.Directory, exclude)
 			if err != nil {
 				result += fmt.Sprintf("同步报错: %s", err)
 			}
@@ -103,39 +103,39 @@ func TestingRelease(testting request.TestingReleaseInfo, username *request.Custo
 		}
 
 		if strings.HasPrefix(result, "同步报错") {
-			err = TestingUpdate(testOrder.ID, 2, result)
+			err = OnlineUpdate(testOrder.ID, 2, result)
 		} else {
-			err = TestingUpdate(testOrder.ID, 1, result)
+			err = OnlineUpdate(testOrder.ID, 1, result)
 			project.ReleaseVersion = version
 			err = ProjectStatusUpdate(project)
 		}
 
 		// 删除过期备份
-		_ = TestingVersionDelete(float64(project.ID))
+		_ = OnlineVersionDelete(float64(project.ID))
 	}()
 
 	return err
 }
 
-// @title    TestingUpdate
+// @title    OnlineUpdate
 // @description    更新上线工单
 // @auth                     （2020/04/05  20:22）
-// @param     env             model.DeployTesting
+// @param     env             model.DeployOnline
 // @return                    error
 
-func TestingUpdate(id uint, status int, result string) (err error) {
-	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployTesting{}).Updates(&model.DeployTesting{Status: status, Result: result}).Error
+func OnlineUpdate(id uint, status int, result string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: status, Result: result}).Error
 	return err
 }
 
-// @title   ProjectRversion
+// @title   OnlineRversion
 // @description    可回滚版本
 // @auth                     （2020/07/10  15:11）
 // @param     id
 // @return    err             error
 
-func TestingRversion(id float64) (err error, list interface{}) {
-	var testing []model.DeployTesting
-	err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", id).Group("version").Order("created_at desc").Find(&testing).Error
-	return err, testing
+func OnlineRversion(id float64) (err error, list interface{}) {
+	var online []model.DeployOnline
+	err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", id).Group("version").Order("created_at desc").Find(&online).Error
+	return err, online
 }
