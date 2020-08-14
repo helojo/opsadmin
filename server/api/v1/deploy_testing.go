@@ -51,14 +51,14 @@ func TestingList(c *gin.Context) {
 func TestingContrast(c *gin.Context) {
 	var testting request.ContrastInfo
 	_ = c.ShouldBindJSON(&testting)
-	projectVerify := utils.Rules{
+	testVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
 		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 	}
-	projectVerifyErr := utils.Verify(testting, projectVerify)
-	if projectVerifyErr != nil {
-		response.FailWithMessage(projectVerifyErr.Error(), c)
+	testVerifyErr := utils.Verify(testting, testVerify)
+	if testVerifyErr != nil {
+		response.FailWithMessage(testVerifyErr.Error(), c)
 		return
 	}
 
@@ -84,16 +84,16 @@ func TestingContrast(c *gin.Context) {
 func TestingRelease(c *gin.Context) {
 	var testting request.TestingReleaseInfo
 	_ = c.ShouldBindJSON(&testting)
-	projectVerify := utils.Rules{
+	testVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
 		"Path":            {utils.NotEmpty()},
 		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 		"Files":           {utils.NotEmpty()},
 	}
-	projectVerifyErr := utils.Verify(testting, projectVerify)
-	if projectVerifyErr != nil {
-		response.FailWithMessage(projectVerifyErr.Error(), c)
+	testVerifyErr := utils.Verify(testting, testVerify)
+	if testVerifyErr != nil {
+		response.FailWithMessage(testVerifyErr.Error(), c)
 		return
 	}
 	claims, _ := middleware.NewJWT().ParseToken(c.GetHeader("x-token"))
@@ -116,9 +116,9 @@ func TestingRelease(c *gin.Context) {
 func TestingRversion(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)
-	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
-	if IdVerifyErr != nil {
-		response.FailWithMessage(IdVerifyErr.Error(), c)
+	testVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if testVerifyErr != nil {
+		response.FailWithMessage(testVerifyErr.Error(), c)
 		return
 	}
 	err, list := service.TestingRversion(reqId.Id)

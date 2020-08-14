@@ -57,7 +57,7 @@ func RollbackContrast(c *gin.Context) {
 		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 	}
-	fmt.Println(rollback)
+
 	rollbackVerifyErr := utils.Verify(rollback, RollbackVerify)
 	if rollbackVerifyErr != nil {
 		response.FailWithMessage(rollbackVerifyErr.Error(), c)
@@ -86,13 +86,13 @@ func RollbackContrast(c *gin.Context) {
 func RollbackRelease(c *gin.Context) {
 	var rollback request.RollbackContrast
 	_ = c.ShouldBindJSON(&rollback)
-	projectVerify := utils.Rules{
+	rollbackVerify := utils.Rules{
 		"Version":         {utils.NotEmpty()},
 		"Describe":        {utils.NotEmpty()},
 		"EnvironmentId":   {utils.NotEmpty()},
 		"DeployProjectId": {utils.NotEmpty()},
 	}
-	rollbackVerifyErr := utils.Verify(rollback, projectVerify)
+	rollbackVerifyErr := utils.Verify(rollback, rollbackVerify)
 	if rollbackVerifyErr != nil {
 		response.FailWithMessage(rollbackVerifyErr.Error(), c)
 		return

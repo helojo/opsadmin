@@ -91,9 +91,9 @@ func ProjectUpdate(c *gin.Context) {
 		"Server":        {utils.Gt("0")},
 		"EnvironmentId": {utils.NotEmpty()},
 	}
-	ServerVerifyErr := utils.Verify(project, projectVerify)
-	if ServerVerifyErr != nil {
-		response.FailWithMessage(ServerVerifyErr.Error(), c)
+	projectVerifyErr := utils.Verify(project, projectVerify)
+	if projectVerifyErr != nil {
+		response.FailWithMessage(projectVerifyErr.Error(), c)
 		return
 	}
 	err := service.ProjectUpdate(project)
