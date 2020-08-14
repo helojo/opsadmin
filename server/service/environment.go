@@ -20,15 +20,15 @@ func EnvList(info request.EnvironmentPageInfo) (err error, list interface{}, tot
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.Environment{})
 	var envList []model.Environment
-	//if info.Status == 1 {
-	//	err = db.Where("env_label <= 2 ").Count(&total).Error
-	//	err = db.Where("env_label <= 2 ").Limit(limit).Offset(offset).Find(&envList).Error
-	//	return err, envList, total
-	//} else if info.Status == 2 {
-	//	err = db.Where("env_label > 2 ").Count(&total).Error
-	//	err = db.Where("env_label > 2 ").Limit(limit).Offset(offset).Find(&envList).Error
-	//	return err, envList, total
-	//}
+	if info.Status == 1 {
+		err = db.Where("env_label <= 2 ").Count(&total).Error
+		err = db.Where("env_label <= 2 ").Limit(limit).Offset(offset).Find(&envList).Error
+		return err, envList, total
+	} else if info.Status == 2 {
+		err = db.Where("env_label > 2 ").Count(&total).Error
+		err = db.Where("env_label > 2 ").Limit(limit).Offset(offset).Find(&envList).Error
+		return err, envList, total
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&envList).Error
 	return err, envList, total
