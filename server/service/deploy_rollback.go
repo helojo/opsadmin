@@ -43,23 +43,39 @@ func RollbackContrast(rollback request.RollbackContrast) (err error, list interf
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
 	}
 
-	var rollbackOrder model.DeployTesting
-	err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
-
-	if err != nil {
-		return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err)), list, path
-	}
-
-	exclude := strings.Fields(project.IgnoreFiles)
-
 	var result []map[string]string
-	var errMsg string
-	for _, value := range project.Server {
-		err, ret := utils.FileContrast(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+	if rollback.Status == 1 {
+		var rollbackOrder model.DeployTesting
+		err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
 		if err != nil {
-			errMsg += fmt.Sprint("对比文件报错, 报错信息: %s", err)
+			return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err)), list, path
 		}
-		result = append(result, ret...)
+		exclude := strings.Fields(project.IgnoreFiles)
+		var errMsg string
+		for _, value := range project.Server {
+			err, ret := utils.FileContrast(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+			if err != nil {
+				errMsg += fmt.Sprint("对比文件报错, 报错信息: %s", err)
+			}
+			result = append(result, ret...)
+		}
+
+	} else if rollback.Status == 2 {
+		var rollbackOrder model.DeployOnline
+		err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
+		if err != nil {
+			return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err)), list, path
+		}
+		exclude := strings.Fields(project.IgnoreFiles)
+
+		var errMsg string
+		for _, value := range project.Server {
+			err, ret := utils.FileContrast(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+			if err != nil {
+				errMsg += fmt.Sprint("对比文件报错, 报错信息: %s", err)
+			}
+			result = append(result, ret...)
+		}
 	}
 
 	return err, result, path
@@ -77,43 +93,83 @@ func RollbackRelease(rollback request.RollbackContrast, username *request.Custom
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
-	var rollbackOrder model.DeployTesting
-	err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
+	if rollback.Status == 1 {
+		var rollbackOrder model.DeployTesting
+		err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
 
-	if err != nil {
-		return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err))
-	}
-
-	go func() {
-		deployrollback := &model.DeployRollback{
-			ReleaseVersion:  project.ReleaseVersion,
-			AfterVersion:    rollbackOrder.Version,
-			Aperator:        username.NickName,
-			Describe:        rollback.Describe,
-			DeployProjectId: rollback.DeployProjectId,
+		if err != nil {
+			return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err))
 		}
-		err = global.GVA_DB.Create(deployrollback).Error
 
-		result := ""
-		exclude := strings.Fields(project.IgnoreFiles)
-		for _, value := range project.Server {
-			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
-			err, ret := utils.FileSync(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
-			if err != nil {
-				result += fmt.Sprintf("同步报错: %s", err)
+		go func() {
+			deployrollback := &model.DeployRollback{
+				ReleaseVersion:  project.ReleaseVersion,
+				AfterVersion:    rollbackOrder.Version,
+				Aperator:        username.NickName,
+				Describe:        rollback.Describe,
+				DeployProjectId: rollback.DeployProjectId,
 			}
-			result += ret
+			err = global.GVA_DB.Create(deployrollback).Error
 
+			result := ""
+			exclude := strings.Fields(project.IgnoreFiles)
+			for _, value := range project.Server {
+				result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
+				err, ret := utils.FileSync(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+				if err != nil {
+					result += fmt.Sprintf("同步报错: %s", err)
+				}
+				result += ret
+
+			}
+
+			if strings.HasPrefix(result, "同步报错") {
+				err = RollbackUpdate(deployrollback.ID, 2, result)
+			} else {
+				err = RollbackUpdate(deployrollback.ID, 1, result)
+				project.ReleaseVersion = rollbackOrder.Version
+				err = ProjectStatusUpdate(project)
+			}
+		}()
+	} else if rollback.Status == 2 {
+		var rollbackOrder model.DeployOnline
+		err = global.GVA_DB.Where("id = ?", rollback.Version).First(&rollbackOrder).Error
+
+		if err != nil {
+			return errors.New(fmt.Sprint("查询回滚工单项目报错, 报错信息: %s", err))
 		}
 
-		if strings.HasPrefix(result, "同步报错") {
-			err = RollbackUpdate(deployrollback.ID, 2, result)
-		} else {
-			err = RollbackUpdate(deployrollback.ID, 1, result)
-			project.ReleaseVersion = rollbackOrder.Version
-			err = ProjectStatusUpdate(project)
-		}
-	}()
+		go func() {
+			deployrollback := &model.DeployRollback{
+				ReleaseVersion:  project.ReleaseVersion,
+				AfterVersion:    rollbackOrder.Version,
+				Aperator:        username.NickName,
+				Describe:        rollback.Describe,
+				DeployProjectId: rollback.DeployProjectId,
+			}
+			err = global.GVA_DB.Create(deployrollback).Error
+
+			result := ""
+			exclude := strings.Fields(project.IgnoreFiles)
+			for _, value := range project.Server {
+				result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
+				err, ret := utils.FileSync(rollbackOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+				if err != nil {
+					result += fmt.Sprintf("同步报错: %s", err)
+				}
+				result += ret
+
+			}
+
+			if strings.HasPrefix(result, "同步报错") {
+				err = RollbackUpdate(deployrollback.ID, 2, result)
+			} else {
+				err = RollbackUpdate(deployrollback.ID, 1, result)
+				project.ReleaseVersion = rollbackOrder.Version
+				err = ProjectStatusUpdate(project)
+			}
+		}()
+	}
 
 	return err
 }

@@ -40,6 +40,7 @@ type ContrastInfo struct {
 }
 
 type RollbackContrast struct {
+	Status          int    `json:"status" form:"status"`
 	Version         int    `json:"version" form:"version"`
 	Describe        string `json:"describe" form:"describe"`
 	EnvironmentId   int    `json:"environment_id" form:"environment_id"`

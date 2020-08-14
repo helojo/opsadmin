@@ -382,6 +382,7 @@
             this.$refs.TesttingForm.validate(async valid => {
                 if (valid) {
                     {
+                        this.form.status = 1
                         const res = await rollbackContrast(this.form)
                         if (res.code === 0) {
                             console.log(res)
@@ -397,6 +398,7 @@
         },
         async enterRollback(){
           console.log(this.form)
+            this.form.status = 1
             const res = await rollbackRelease(this.form)
             if (res.code === 0) {
                 this.$message({
