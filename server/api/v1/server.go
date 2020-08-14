@@ -77,7 +77,7 @@ func ServerCreate(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.ResourceServer true "修改主机信息"
+// @Param data body model.Server true "修改主机信息"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"修改成功"}"
 // @Router /resource/server/serverUpdate [post]
 func ServerUpdate(c *gin.Context) {

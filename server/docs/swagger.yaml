@@ -14,6 +14,18 @@ definitions:
       modelPath:
         type: string
     type: object
+  config.Gitlab:
+    properties:
+      token:
+        type: string
+      url:
+        type: string
+    type: object
+  config.Gitpull:
+    properties:
+      path:
+        type: string
+    type: object
   config.JWT:
     properties:
       signingKey:
@@ -81,6 +93,12 @@ definitions:
         type: object
       casbin:
         $ref: '#/definitions/config.Casbin'
+        type: object
+      gitlab:
+        $ref: '#/definitions/config.Gitlab'
+        type: object
+      gitpull:
+        $ref: '#/definitions/config.Gitpull'
         type: object
       jwt:
         $ref: '#/definitions/config.JWT'
@@ -153,6 +171,12 @@ definitions:
       directory:
         description: 项目目录绝对路径
         type: string
+      environment:
+        $ref: '#/definitions/model.Environment'
+        type: object
+      environment_id:
+        description: 关联环境
+        type: integer
       git_url:
         description: git项目地址
         type: string
@@ -165,7 +189,27 @@ definitions:
         description: 项目名称
         type: string
       release_version:
+        description: 生产版本
         type: number
+      reservedversion:
+        description: 保留版本数
+        type: integer
+      server:
+        description: 关联主机
+        items:
+          $ref: '#/definitions/model.Server'
+        type: array
+    type: object
+  model.Environment:
+    properties:
+      env_label:
+        description: '0: 无标签 1: 开发 2:测试, 3:灰度 4: 生产'
+        type: integer
+      id:
+        type: integer
+      name:
+        description: 环境名称
+        type: string
     type: object
   model.ExaCustomer:
     properties:
@@ -209,16 +253,13 @@ definitions:
       fieldType:
         type: string
     type: object
-  model.ResourceEnv:
+  model.Server:
     properties:
-      id:
+      environment:
+        $ref: '#/definitions/model.Environment'
+        type: object
+      environment_id:
         type: integer
-      name:
-        description: 环境名称
-        type: string
-    type: object
-  model.ResourceServer:
-    properties:
       host:
         description: 主机地址
         type: string
@@ -233,13 +274,8 @@ definitions:
       pwd:
         description: 密码
         type: string
-      resource_env_id:
-        type: integer
-      resourceenv:
-        $ref: '#/definitions/model.ResourceEnv'
-        type: object
       status:
-        description: 测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常
+        description: 测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常, 5.推送公钥成功，6。推送公钥失败
         type: integer
       user:
         description: 用户名
@@ -1043,6 +1079,29 @@ paths:
       summary: 创建项目
       tags:
       - Deploy_Project
+  /deploy/project/projectDelete:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除项目
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除项目成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除项目
+      tags:
+      - Deploy_Project
   /deploy/project/projectList:
     post:
       consumes:
@@ -1066,6 +1125,190 @@ paths:
       summary: 分页获取项目列表
       tags:
       - Deploy_Project
+  /deploy/project/projectUpdate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新项目
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.DeployProject'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新项目成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新项目
+      tags:
+      - Deploy_Project
+  /deploy/rollback/rollbackContrast:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件对比
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"文件对比成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 文件对比
+      tags:
+      - Deploy_Rollback
+  /deploy/rollback/rollbackList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页获取回滚列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取回滚列表
+      tags:
+      - Deploy_Rollback
+  /deploy/rollback/rollbackRelease:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 回滚同步
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"回滚同步成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 回滚同步
+      tags:
+      - Deploy_Rollback
+  /deploy/test/testingContrast:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件对比
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"文件对比成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 文件对比
+      tags:
+      - Deploy_Testing
+  /deploy/test/testingList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分页获取提测列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取提测列表
+      tags:
+      - Deploy_Testing
+  /deploy/test/testingRelease:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 提测发布
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PageInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"提测发布成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 提测发布
+      tags:
+      - Deploy_Testing
+  /deploy/test/testingRversion:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 可回滚版本
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 可回滚版本
+      tags:
+      - Deploy_Testing
   /fileUploadAndDownload/breakpointContinue:
     post:
       consumes:
@@ -1198,6 +1441,34 @@ paths:
       summary: 上传文件示例
       tags:
       - ExaFileUploadAndDownload
+  /gitlab/project/projectImport:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"Gitlab 项目导入 成功！"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Gitlab 项目导入
+      tags:
+      - Gitlab_Project
+  /gitlab/project/projectTags:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取项目tag 成功！"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 获取项目分支和tag
+      tags:
+      - Gitlab_Project
   /jwt/jsonInBlacklist:
     post:
       consumes:
@@ -1450,7 +1721,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ResourceEnv'
+          $ref: '#/definitions/model.Environment'
       produces:
       - application/json
       responses:
@@ -1496,7 +1767,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ResourceEnv'
+          $ref: '#/definitions/model.Environment'
       produces:
       - application/json
       responses:
@@ -1565,7 +1836,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ResourceEnv'
+          $ref: '#/definitions/model.Environment'
       produces:
       - application/json
       responses:
@@ -1624,6 +1895,29 @@ paths:
       summary: 分页获取主机列表
       tags:
       - Resource_Server
+  /resource/server/serverPushKey:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 推送公钥
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetById'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"推送公钥成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 推送公钥
+      tags:
+      - Resource_Server
   /resource/server/serverUpdate:
     post:
       consumes:
@@ -1634,7 +1928,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.ResourceServer'
+          $ref: '#/definitions/model.Server'
       produces:
       - application/json
       responses:

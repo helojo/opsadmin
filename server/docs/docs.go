@@ -958,6 +958,44 @@ var doc = `{
                 }
             }
         },
+        "/deploy/project/projectDelete": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Project"
+                ],
+                "summary": "删除项目",
+                "parameters": [
+                    {
+                        "description": "删除项目",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"删除项目成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/deploy/project/projectList": {
             "post": {
                 "security": [
@@ -983,6 +1021,310 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/project/projectUpdate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Project"
+                ],
+                "summary": "更新项目",
+                "parameters": [
+                    {
+                        "description": "更新项目",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DeployProject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"更新项目成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/rollback/rollbackContrast": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Rollback"
+                ],
+                "summary": "文件对比",
+                "parameters": [
+                    {
+                        "description": "文件对比",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"文件对比成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/rollback/rollbackList": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Rollback"
+                ],
+                "summary": "分页获取回滚列表",
+                "parameters": [
+                    {
+                        "description": "分页获取回滚列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/rollback/rollbackRelease": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Rollback"
+                ],
+                "summary": "回滚同步",
+                "parameters": [
+                    {
+                        "description": "回滚同步",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"回滚同步成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/test/testingContrast": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Testing"
+                ],
+                "summary": "文件对比",
+                "parameters": [
+                    {
+                        "description": "文件对比",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"文件对比成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/test/testingList": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Testing"
+                ],
+                "summary": "分页获取提测列表",
+                "parameters": [
+                    {
+                        "description": "分页获取提测列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/test/testingRelease": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Testing"
+                ],
+                "summary": "提测发布",
+                "parameters": [
+                    {
+                        "description": "提测发布",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PageInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"提测发布成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/deploy/test/testingRversion": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deploy_Testing"
+                ],
+                "summary": "可回滚版本",
+                "parameters": [
+                    {
+                        "description": "可回滚版本",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
                         }
                     }
                 ],
@@ -1206,6 +1548,54 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"success\":true,\"data\":{},\"msg\":\"上传成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/gitlab/project/projectImport": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gitlab_Project"
+                ],
+                "summary": "Gitlab 项目导入",
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"Gitlab 项目导入 成功！\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/gitlab/project/projectTags": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gitlab_Project"
+                ],
+                "summary": "获取项目分支和tag",
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"获取项目tag 成功！\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -1638,7 +2028,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ResourceEnv"
+                            "$ref": "#/definitions/model.Environment"
                         }
                     }
                 ],
@@ -1714,7 +2104,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ResourceEnv"
+                            "$ref": "#/definitions/model.Environment"
                         }
                     }
                 ],
@@ -1828,7 +2218,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ResourceEnv"
+                            "$ref": "#/definitions/model.Environment"
                         }
                     }
                 ],
@@ -1918,6 +2308,44 @@ var doc = `{
                 }
             }
         },
+        "/resource/server/serverPushKey": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource_Server"
+                ],
+                "summary": "推送公钥",
+                "parameters": [
+                    {
+                        "description": "推送公钥",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetById"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"推送公钥成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/resource/server/serverUpdate": {
             "post": {
                 "security": [
@@ -1942,7 +2370,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ResourceServer"
+                            "$ref": "#/definitions/model.Server"
                         }
                     }
                 ],
@@ -2296,6 +2724,25 @@ var doc = `{
                 }
             }
         },
+        "config.Gitlab": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.Gitpull": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
         "config.JWT": {
             "type": "object",
             "properties": {
@@ -2399,6 +2846,14 @@ var doc = `{
                 "casbin": {
                     "type": "object",
                     "$ref": "#/definitions/config.Casbin"
+                },
+                "gitlab": {
+                    "type": "object",
+                    "$ref": "#/definitions/config.Gitlab"
+                },
+                "gitpull": {
+                    "type": "object",
+                    "$ref": "#/definitions/config.Gitpull"
                 },
                 "jwt": {
                     "type": "object",
@@ -2504,6 +2959,14 @@ var doc = `{
                     "description": "项目目录绝对路径",
                     "type": "string"
                 },
+                "environment": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Environment"
+                },
+                "environment_id": {
+                    "description": "关联环境",
+                    "type": "integer"
+                },
                 "git_url": {
                     "description": "git项目地址",
                     "type": "string"
@@ -2520,7 +2983,35 @@ var doc = `{
                     "type": "string"
                 },
                 "release_version": {
+                    "description": "生产版本",
                     "type": "number"
+                },
+                "reservedversion": {
+                    "description": "保留版本数",
+                    "type": "integer"
+                },
+                "server": {
+                    "description": "关联主机",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Server"
+                    }
+                }
+            }
+        },
+        "model.Environment": {
+            "type": "object",
+            "properties": {
+                "env_label": {
+                    "description": "0: 无标签 1: 开发 2:测试, 3:灰度 4: 生产",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "环境名称",
+                    "type": "string"
                 }
             }
         },
@@ -2588,21 +3079,16 @@ var doc = `{
                 }
             }
         },
-        "model.ResourceEnv": {
+        "model.Server": {
             "type": "object",
             "properties": {
-                "id": {
+                "environment": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.Environment"
+                },
+                "environment_id": {
                     "type": "integer"
                 },
-                "name": {
-                    "description": "环境名称",
-                    "type": "string"
-                }
-            }
-        },
-        "model.ResourceServer": {
-            "type": "object",
-            "properties": {
                 "host": {
                     "description": "主机地址",
                     "type": "string"
@@ -2622,15 +3108,8 @@ var doc = `{
                     "description": "密码",
                     "type": "string"
                 },
-                "resource_env_id": {
-                    "type": "integer"
-                },
-                "resourceenv": {
-                    "type": "object",
-                    "$ref": "#/definitions/model.ResourceEnv"
-                },
                 "status": {
-                    "description": "测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常",
+                    "description": "测试连接，1.未测试，2.连接中, 3.连接成功, 4. 连接异常, 5.推送公钥成功，6。推送公钥失败",
                     "type": "integer"
                 },
                 "user": {

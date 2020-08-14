@@ -9,7 +9,6 @@ import (
 // @title    ProjectImport
 // @description    Gitlab  项目导入
 // @auth                     （2020/07/13  18:58）
-// @param     id
 // @return    err             error
 
 func ProjectImport() (err error) {
@@ -35,7 +34,6 @@ func ProjectImport() (err error) {
 // @title    ProjectTags
 // @description    获取项目tag
 // @auth                     （2020/07/14  10:06）
-// @param     id
 // @return    err             error
 func ProjectTags(p model.DeployProject) (taglist []interface{}, err error) {
 	var project model.DeployProject

@@ -29,7 +29,6 @@ func ProjectImport(c *gin.Context) {
 // @Summary 获取项目分支和tag
 // @Security ApiKeyAuth
 // @Produce  application/json
-// @Param data body request.GetApplicationId true "获取项目tag"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取项目tag 成功！"}"
 // @Router /gitlab/project/projectTags [post]
 func ProjectTags(c *gin.Context) {
