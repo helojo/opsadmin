@@ -95,11 +95,3 @@ func DePwdCode(pwd string) ([]byte, error) {
 	//执行AES解密
 	return AesDeCrypt(pwdByte, PwdKey)
 }
-
-//func main() {
-//	str := []byte("123456")
-//	pwd, _ := EnPwdCode(str)
-//	fmt.Println(pwd)
-//	bytes, _ := DePwdCode(pwd)
-//	fmt.Println(string(bytes))
-//}
