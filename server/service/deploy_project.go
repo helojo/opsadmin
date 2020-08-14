@@ -179,17 +179,16 @@ func OnlineVersionDelete(id float64) (err error) {
 	if err == nil {
 		deleteVersion := project.ReleaseVersion - float64(project.Reservedversion)*0.1
 
-		var testting []model.DeployTesting
-		err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", project.ID).Find(&testting).Error
-		fmt.Println(testting)
+		var onlineting []model.DeployOnline
+		err = global.GVA_DB.Where("deploy_project_id = ? and isdelete = 1", project.ID).Find(&onlineting).Error
 		if err == nil {
-			for _, testOrder := range testting {
-				if testOrder.Version <= deleteVersion {
-					err = os.RemoveAll(testOrder.Path)
+			for _, OnOrder := range onlineting {
+				if OnOrder.Version <= deleteVersion {
+					err = os.RemoveAll(OnOrder.Path)
 					if err == nil {
-						var testorder model.DeployTesting
-						testorder.Isdelete = 2
-						err = global.GVA_DB.Where("id = ?", testOrder.ID).First(&model.DeployTesting{}).Updates(&testorder).Error
+						var onlineorder model.DeployOnline
+						onlineorder.Isdelete = 2
+						err = global.GVA_DB.Where("id = ?", OnOrder.ID).First(&model.DeployOnline{}).Updates(&onlineorder).Error
 					}
 				}
 			}

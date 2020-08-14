@@ -84,6 +84,22 @@ export const testAudit = (data) => {
 }
 
 // @Tags Deploy_Online
+// @Summary 项目运维审核
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "项目运维审核"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"项目运维审核成功"}"
+// @Router /deploy/online/opsAudit [post]
+export const opsAudit = (data) => {
+    return service({
+        url: "/deploy/online/opsAudit",
+        method: 'post',
+        data
+    })
+}
+
+// @Tags Deploy_Online
 // @Summary 项目可回滚版本
 // @Security ApiKeyAuth
 // @accept application/json

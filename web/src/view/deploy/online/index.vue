@@ -109,7 +109,7 @@
 
       <!-- 项目提测模态框 -->
       <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTesttingVisible">
-          <el-form :model="form" :rules="rules" label-width="100px" ref="TesttingForm">
+          <el-form :model="form" :rules="rules" label-width="100px" ref="OnlinesForm">
               <el-form-item label="环境" prop="environment_id">
                   <el-select  @change="EnvChange" filterable placeholder="请选择" v-model="form.environment_id">
                       <el-option
@@ -165,7 +165,7 @@
 
       <!-- 项目回滚模态框 -->
       <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormTestRollbackVisible">
-          <el-form :model="form" :rules="rules" label-width="100px" ref="TesttingForm">
+          <el-form :model="form" :rules="rules" label-width="100px" ref="OnlinesForm">
               <el-form-item label="环境" prop="environment_id">
                   <el-select  @change="EnvChange" filterable placeholder="请选择" v-model="form.environment_id">
                       <el-option
@@ -230,7 +230,7 @@
                        :title="item"
                        v-for="item in online_status"/>
           </el-steps>
-          <el-form :model="form" label-width="100px" ref="OnlineForm">
+          <el-form :model="form" label-width="100px" ref="OnlinesForm">
               <el-form-item label="项目名称" prop="deployproject">
                   <el-input placeholder="" readonly v-model="form.deployproject.name"/>
               </el-form-item>
@@ -262,7 +262,7 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { onlineList, onlineContrast, onlineCreate, onlineRversion, devAudit, testAudit} from '@/api/deploy/online'
+  import { onlineList, onlineContrast, onlineCreate, onlineRversion, devAudit, testAudit, opsAudit} from '@/api/deploy/online'
   import { rollbackContrast, rollbackRelease } from '@/api/deploy/rollback'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
@@ -320,7 +320,7 @@
     },
     methods: {
       initForm() {
-            this.$refs.TesttingForm.resetFields()
+          this.$refs.OnlinesForm.resetFields()
             this.form= {
                 ID: '',
                 tag: '',
@@ -359,7 +359,7 @@
           this.dialogFormTesttingVisible = true
       },
         async enterDialog() {
-            this.$refs.TesttingForm.validate(async valid => {
+            this.$refs.OnlinesForm.validate(async valid => {
                 if (valid) {
                     this.form.files = this.taget_file_list
                     this.form.path = this.path
@@ -407,7 +407,7 @@
             }
         },
         async Contrast(){
-            this.$refs.TesttingForm.validate(async valid => {
+            this.$refs.OnlinesForm.validate(async valid => {
                 if (valid) {
                     {
                         this.files_list = []
@@ -438,7 +438,7 @@
         },
         async RollbackContrast(){
             this.form.tag = "rollback"
-            this.$refs.TesttingForm.validate(async valid => {
+            this.$refs.OnlinesForm.validate(async valid => {
                 if (valid) {
                     {
                         const res = await rollbackContrast(this.form)
@@ -512,20 +512,20 @@
                     }
                 }
                     break;
-                // case 2:
-                // {
-                //     const res = await orderOp({"id": this.form.ID})
-                //     if (res.code === 0) {
-                //         this.$message({
-                //             type: 'success',
-                //             message: '运维审核成功!'
-                //         })
-                //         this.dialogVisibleForEdit = false
-                //         this.getTableData()
-                //         this.closeDialog()
-                //     }
-                // }
-                //     break;
+                case 2:
+                {
+                    const res = await opsAudit({"id": this.form.ID})
+                    if (res.code === 0) {
+                        this.$message({
+                            type: 'success',
+                            message: '运维审核成功!'
+                        })
+                        this.dialogVisibleForaudit = false
+                        this.getTableData()
+                        this.closeDialog()
+                    }
+                }
+                    break;
             }
         },
         async Refresh() {

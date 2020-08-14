@@ -156,6 +156,31 @@ func TestAudit(c *gin.Context) {
 }
 
 // @Tags Deploy_Online
+// @Summary 运维审核
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body request.GetById true "测试审核"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"测试审核成功"}"
+// @Router /deploy/online/opsAudit [post]
+func OpsAudit(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+	if IdVerifyErr != nil {
+		response.FailWithMessage(IdVerifyErr.Error(), c)
+		return
+	}
+	claims, _ := middleware.NewJWT().ParseToken(c.GetHeader("x-token"))
+	err := service.OpsAudit(reqId.Id, claims.NickName)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("测试审核失败，%v", err), c)
+	} else {
+		response.OkWithMessage("测试审核成功!", c)
+	}
+}
+
+// @Tags Deploy_Online
 // @Summary 可回滚版本
 // @Security ApiKeyAuth
 // @accept application/json

@@ -44,6 +44,12 @@ func OnlineContrast(online request.ContrastInfo) (err error, list interface{}, p
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err)), list, path
 	}
 
+	var onlineOrder model.DeployOnline
+	nofound := global.GVA_DB.Where("deploy_project_id = ? and status < 3", online.DeployProjectId).First(&onlineOrder).RecordNotFound()
+	if !nofound {
+		return errors.New(fmt.Sprint("该项目有未完成工单！")), list, path
+	}
+
 	filepath := fmt.Sprintf("%d-%s-%.1f", project.ID, project.Name, project.ReleaseVersion+0.1)
 	path, err = utils.Gitpull(online.Tag, project.GitUrl, filepath)
 	if err != nil {
@@ -72,7 +78,19 @@ func OnlineContrast(online request.ContrastInfo) (err error, list interface{}, p
 // @return    err              error
 
 func OnlineCreate(online request.OnlineInfo, username *request.CustomClaims) (err error) {
+
+	var onlineOrder model.DeployOnline
+	nofound := global.GVA_DB.Where("deploy_project_id = ? and status < 3", online.DeployProjectId).First(&onlineOrder).RecordNotFound()
+	if !nofound {
+		return errors.New(fmt.Sprint("该项目有未完成工单！"))
+	}
+
 	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ? ", online.DeployProjectId).First(&project).Error
+	if err != nil {
+		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
+	}
+
 	err = global.GVA_DB.Where("id = ?", online.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
@@ -89,29 +107,6 @@ func OnlineCreate(online request.OnlineInfo, username *request.CustomClaims) (er
 	}
 
 	err = global.GVA_DB.Create(testOrder).Error
-	//result := ""
-	//exclude := strings.Fields(project.IgnoreFiles)
-	//
-	//for _, value := range project.Server {
-	//	result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
-	//	err, ret := utils.FileSync(online.Path, value.User, value.Host, value.Port, project.Directory, exclude)
-	//	if err != nil {
-	//		result += fmt.Sprintf("同步报错: %s", err)
-	//	}
-	//	result += ret
-	//}
-	//
-	//if strings.HasPrefix(result, "同步报错") {
-	//	err = OnlineUpdate(testOrder.ID, 2, result)
-	//} else {
-	//	err = OnlineUpdate(testOrder.ID, 1, result)
-	//	project.ReleaseVersion = version
-	//	err = ProjectStatusUpdate(project)
-	//}
-	//
-	//// 删除过期备份
-	//_ = OnlineVersionDelete(float64(project.ID))
-
 	return err
 }
 
@@ -121,8 +116,8 @@ func OnlineCreate(online request.OnlineInfo, username *request.CustomClaims) (er
 // @param     env             model.DeployOnline
 // @return                    error
 
-func OnlineUpdate(id uint, status int, result string) (err error) {
-	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: status, Result: result}).Error
+func OnlineUpdate(id uint, status int, username string, result string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: status, OpAuditor: username, Result: result}).Error
 	return err
 }
 
@@ -157,5 +152,54 @@ func DevAudit(id float64, username string) (err error) {
 
 func TestAudit(id float64, username string) (err error) {
 	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: 2, TestAuditor: username}).Error
+	return err
+}
+
+// @title  OpsAudit
+// @description    运维审核
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func OpsAudit(id float64, username string) (err error) {
+	//err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: 3, OpAuditor: username}).Error
+
+	var onlineOrder model.DeployOnline
+	err = global.GVA_DB.Where("id = ?", id).First(&onlineOrder).Error
+	if err != nil {
+		return errors.New(fmt.Sprint("查询上线工单报错, 报错信息: %s", err))
+	}
+
+	var project model.DeployProject
+	err = global.GVA_DB.Where("id = ?", onlineOrder.DeployProjectId).Preload("Server").First(&project).Error
+	if err != nil {
+		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
+	}
+
+	err = OnlineUpdate(onlineOrder.ID, 4, username, "文件同步中")
+	go func() {
+		result := ""
+		exclude := strings.Fields(project.IgnoreFiles)
+		for _, value := range project.Server {
+			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
+			err, ret := utils.FileSync(onlineOrder.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+			if err != nil {
+				result += fmt.Sprintf("同步报错: %s", err)
+			}
+			result += ret
+		}
+
+		if strings.HasPrefix(result, "同步报错") {
+			err = OnlineUpdate(onlineOrder.ID, 2, username, result)
+		} else {
+			err = OnlineUpdate(onlineOrder.ID, 3, username, result)
+			project.ReleaseVersion = onlineOrder.Version
+			err = ProjectStatusUpdate(project)
+		}
+
+		// 删除过期备份
+		_ = OnlineVersionDelete(float64(project.ID))
+	}()
+
 	return err
 }
