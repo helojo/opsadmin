@@ -18,7 +18,7 @@ import (
 // @Produce application/json
 // @Param data body request.PageInfo true "分页获取环境列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /resource/env/EnvList [post]
+// @Router /resource/env/envList [post]
 func EnvList(c *gin.Context) {
 	var pageInfo request.EnvironmentPageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
