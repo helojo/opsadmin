@@ -9,7 +9,7 @@
                   <el-button @click="openTestRollbackDialog" type="primary">项目回滚</el-button>
               </el-form-item>
               <el-form-item style="float: right" >
-                  <el-button @click="openTesttingDialog" type="primary">项目提侧</el-button>
+                  <el-button @click="openTesttingDialog" type="primary">项目发布</el-button>
               </el-form-item>
           </el-form>
       </div>
@@ -65,9 +65,12 @@
                     prop="status"
                     type="scope">
                 <template slot-scope="scope">
-                    <span class="operate-span-danger" v-if="scope.row.status === 0 " >提侧中</span>
-                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >成功</span>
-                    <span class="operate-span-danger" v-else-if="scope.row.status === 2 " >失败</span>
+                    <span class="operate-span-primary" v-if="scope.row.status === 0 " >开发审核</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 1 " >测试审核</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 2 " >运维审核</span>
+                    <span class="operate-span-primary" v-else-if="scope.row.status === 3 " >已上线</span>
+                    <span class="operate-span-danger"  v-else-if="scope.row.status === 4"  >审核中</span>
+                    <span class="operate-span-danger"  v-else-if="scope.row.status === 5"  >已关闭</span>
                 </template>
       </el-table-column>            
       <el-table-column label="申请人" min-width="150" prop="applicant"></el-table-column>
@@ -216,7 +219,7 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { onlineList, onlineContrast, onlineRelease, onlineRversion} from '@/api/deploy/online'
+  import { onlineList, onlineContrast, onlineCreate, onlineRversion} from '@/api/deploy/online'
   import { rollbackContrast, rollbackRelease } from '@/api/deploy/rollback'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
@@ -303,11 +306,11 @@
                 if (valid) {
                     this.form.files = this.taget_file_list
                     this.form.path = this.path
-                    const res = await onlineRelease(this.form)
+                    const res = await onlineCreate(this.form)
                     if (res.code === 0) {
                         this.$message({
                             type: 'success',
-                            message: '提侧成功',
+                            message: '提交成功',
                         })
                      this.dialogFormTesttingVisible = false
                      this.getTableData()

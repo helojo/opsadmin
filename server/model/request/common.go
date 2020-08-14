@@ -54,3 +54,12 @@ type TestingReleaseInfo struct {
 	EnvironmentId   int      `json:"environment_id" form:"environment_id"`
 	DeployProjectId int      `json:"deploy_project_id" form:"deploy_project_id"`
 }
+
+type OnlineInfo struct {
+	Tag             string   `json:"tag" form:"tag"`
+	Path            string   `json:"path" form:"path"`
+	Files           []string `json:"files" form:"files"`
+	Describe        string   `json:"describe" form:"describe"`
+	EnvironmentId   int      `json:"environment_id" form:"environment_id"`
+	DeployProjectId int      `json:"deploy_project_id" form:"deploy_project_id"`
+}

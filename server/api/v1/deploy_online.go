@@ -80,9 +80,9 @@ func OnlineContrast(c *gin.Context) {
 // @Produce application/json
 // @Param data body request.PageInfo true "提测发布"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"提测发布成功"}"
-// @Router /deploy/online/onlineRelease [post]
-func OnlineRelease(c *gin.Context) {
-	var testting request.TestingReleaseInfo
+// @Router /deploy/online/OnlineCreate [post]
+func OnlineCreate(c *gin.Context) {
+	var testting request.OnlineInfo
 	_ = c.ShouldBindJSON(&testting)
 	onlineVerify := utils.Rules{
 		"Tag":             {utils.NotEmpty()},
@@ -97,7 +97,7 @@ func OnlineRelease(c *gin.Context) {
 		return
 	}
 	claims, _ := middleware.NewJWT().ParseToken(c.GetHeader("x-token"))
-	err := service.OnlineRelease(testting, claims)
+	err := service.OnlineCreate(testting, claims)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("提测失败，%v", err), c)
 	} else {

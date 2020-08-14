@@ -65,54 +65,52 @@ func OnlineContrast(online request.ContrastInfo) (err error, list interface{}, p
 	return err, result, path
 }
 
-// @title    OnlineRelease
-// @description   提交并同步要发布的文件，并清理过期备份
+// @title    OnlineCreate
+// @description   创建上线工单
 // @auth                      （2020/07/17  19:45）
 // @param     info             request.TestingReleaseInfo
 // @return    err              error
 
-func OnlineRelease(online request.TestingReleaseInfo, username *request.CustomClaims) (err error) {
+func OnlineCreate(online request.OnlineInfo, username *request.CustomClaims) (err error) {
 	var project model.DeployProject
 	err = global.GVA_DB.Where("id = ?", online.DeployProjectId).Preload("Server").First(&project).Error
 	if err != nil {
 		return errors.New(fmt.Sprint("查询项目报错, 报错信息: %s", err))
 	}
-	go func() {
-		version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
-		testOrder := &model.DeployOnline{
-			Applicant:       username.NickName,
-			Tag:             online.Tag,
-			DeployProjectId: online.DeployProjectId,
-			Describe:        online.Describe,
-			Path:            online.Path,
-			Version:         version,
-			Isdelete:        1,
-		}
+	version, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", project.ReleaseVersion+0.1), 64)
+	testOrder := &model.DeployOnline{
+		Applicant:       username.NickName,
+		Tag:             online.Tag,
+		DeployProjectId: online.DeployProjectId,
+		Describe:        online.Describe,
+		Path:            online.Path,
+		Version:         version,
+		Isdelete:        1,
+	}
 
-		err = global.GVA_DB.Create(testOrder).Error
-		result := ""
-		exclude := strings.Fields(project.IgnoreFiles)
-
-		for _, value := range project.Server {
-			result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
-			err, ret := utils.FileSync(online.Path, value.User, value.Host, value.Port, project.Directory, exclude)
-			if err != nil {
-				result += fmt.Sprintf("同步报错: %s", err)
-			}
-			result += ret
-		}
-
-		if strings.HasPrefix(result, "同步报错") {
-			err = OnlineUpdate(testOrder.ID, 2, result)
-		} else {
-			err = OnlineUpdate(testOrder.ID, 1, result)
-			project.ReleaseVersion = version
-			err = ProjectStatusUpdate(project)
-		}
-
-		// 删除过期备份
-		_ = OnlineVersionDelete(float64(project.ID))
-	}()
+	err = global.GVA_DB.Create(testOrder).Error
+	//result := ""
+	//exclude := strings.Fields(project.IgnoreFiles)
+	//
+	//for _, value := range project.Server {
+	//	result += fmt.Sprintf("==========================主机开始同步文件: %s=========================\n", value.Host)
+	//	err, ret := utils.FileSync(online.Path, value.User, value.Host, value.Port, project.Directory, exclude)
+	//	if err != nil {
+	//		result += fmt.Sprintf("同步报错: %s", err)
+	//	}
+	//	result += ret
+	//}
+	//
+	//if strings.HasPrefix(result, "同步报错") {
+	//	err = OnlineUpdate(testOrder.ID, 2, result)
+	//} else {
+	//	err = OnlineUpdate(testOrder.ID, 1, result)
+	//	project.ReleaseVersion = version
+	//	err = ProjectStatusUpdate(project)
+	//}
+	//
+	//// 删除过期备份
+	//_ = OnlineVersionDelete(float64(project.ID))
 
 	return err
 }

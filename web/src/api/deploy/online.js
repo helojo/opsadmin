@@ -42,10 +42,10 @@ export const onlineContrast = (data) => {
 // @Produce application/json
 // @Param data body modelInterface.PageInfo true "项目提侧"
 // @Success 200 {string} json "{"success":true,"data":{},"msg":"项目提侧成功"}"
-// @Router /deploy/online/onlineRelease [post]
-export const onlineRelease = (data) => {
+// @Router /deploy/online/onlineCreate [post]
+export const onlineCreate = (data) => {
     return service({
-        url: "/deploy/online/onlineRelease",
+        url: "/deploy/online/onlineCreate",
         method: 'post',
         data
     })
