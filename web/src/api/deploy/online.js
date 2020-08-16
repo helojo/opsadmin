@@ -114,3 +114,19 @@ export const onlineRversion = (data) => {
         data
     })
 }
+
+// @Tags Deploy_Online
+// @Summary 上线工单关闭
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body modelInterface.PageInfo true "上线工单关闭"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"上线工单关闭成功"}"
+// @Router /deploy/online/onlineClose [post]
+export const onlineClose = (data) => {
+    return service({
+        url: "/deploy/online/onlineClose",
+        method: 'post',
+        data
+    })
+}
