@@ -148,8 +148,8 @@
                               prop="key"
                               label="待同步文件">
                           <template slot-scope="scope">
-                              <span class="operate-span-danger" v-if="scope.row.key  && scope.row.key.indexOf('删除') != -1 " > {{ scope.row.key }}</span>
-                              <span class="operate-span-primary" v-else >{{ scope.row.key }}</span>
+                              <span class="operate-span-danger" v-if="scope.row.key  && scope.row.key.indexOf('deleting') != -1 " >删除 {{ scope.row.key }}</span>
+                              <span class="operate-span-primary" v-else >更新 {{ scope.row.key }}</span>
                           </template>
                       </el-table-column>
                   </el-table>
