@@ -203,3 +203,14 @@ func OpsAudit(id float64, username string) (err error) {
 
 	return err
 }
+
+// @title   OnlineClose
+// @description    关闭工单
+// @auth                     （2020/07/10  15:11）
+// @param     id
+// @return    err             error
+
+func OnlineClose(id float64, username string) (err error) {
+	err = global.GVA_DB.Where("id = ?", id).First(&model.DeployOnline{}).Updates(&model.DeployOnline{Status: 5}).Error
+	return err
+}

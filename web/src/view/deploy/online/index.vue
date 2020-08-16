@@ -262,7 +262,7 @@
 
 <script>
   // 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
-  import { onlineList, onlineContrast, onlineCreate, onlineRversion, devAudit, testAudit, opsAudit} from '@/api/deploy/online'
+  import { onlineList, onlineContrast, onlineCreate, onlineClose , onlineRversion, devAudit, testAudit, opsAudit} from '@/api/deploy/online'
   import { rollbackContrast, rollbackRelease } from '@/api/deploy/rollback'
   import { envList } from '@/api/resource/env'
   import { projectTags } from '@/api/gitlab'
@@ -529,6 +529,29 @@
                 }
                     break;
             }
+        },
+        // 关闭工单
+        async handleClose(row){
+            this.$confirm('此操作将关闭上线工单, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                    const res = await onlineClose({"id": row.ID})
+                    if (res.code === 0) {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        })
+                        this.getTableData()
+                    }
+                })
+                .catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消关闭！'
+                    })
+                })
         },
         async Refresh() {
             this.getTableData()

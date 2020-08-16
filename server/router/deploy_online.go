@@ -15,6 +15,7 @@ func InitDeployOnlineRouter(Router *gin.RouterGroup) {
 		ApiRouter.POST("devAudit", v1.DevAudit)             // 上线开发审核
 		ApiRouter.POST("testAudit", v1.TestAudit)           // 上线测试审核
 		ApiRouter.POST("opsAudit", v1.OpsAudit)             // 上线运维审核
+		ApiRouter.POST("onlineClose", v1.OnlineClose)       // 关闭工单
 		ApiRouter.POST("onlineRversion", v1.OnlineRversion) // 获取可回退版本
 	}
 }
