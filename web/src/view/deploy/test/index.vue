@@ -141,8 +141,8 @@
                               prop="key"
                               label="待同步文件">
                           <template slot-scope="scope">
-                              <span class="operate-span-danger" v-if="scope.row.key  && scope.row.key.indexOf('删除') != -1 " > {{ scope.row.key }}</span>
-                              <span class="operate-span-primary" v-else >{{ scope.row.key }}</span>
+                              <span class="operate-span-danger" v-if="scope.row.key  && scope.row.key.indexOf('deleting') != -1 " > 删除 {{ scope.row.key }}</span>
+                              <span class="operate-span-primary" v-else >更新 {{ scope.row.key }}</span>
                           </template>
                       </el-table-column>
                   </el-table>
@@ -371,7 +371,6 @@
             this.dialogFormTestRollbackVisible = true
         },
         async ProjectRollbackChange(row) {
-          console.log(row)
             const res = await testingRversion({"id": row})
             if (res.code === 0) {
                 this.version_List = res.data.list
@@ -385,7 +384,6 @@
                         this.form.status = 1
                         const res = await rollbackContrast(this.form)
                         if (res.code === 0) {
-                            console.log(res)
                             this.form.files = ""
                             this.files_list = res.data.list
                             this.path = res.data.path
@@ -397,7 +395,6 @@
             })
         },
         async enterRollback(){
-          console.log(this.form)
             this.form.status = 1
             const res = await rollbackRelease(this.form)
             if (res.code === 0) {
