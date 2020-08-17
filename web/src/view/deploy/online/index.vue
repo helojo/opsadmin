@@ -471,6 +471,7 @@
         },
         handleCancelExamine() {
             this.dialogVisibleForaudit = false
+            this.closeDialog()
             this.getTableData()
         },
         // 审核工单
